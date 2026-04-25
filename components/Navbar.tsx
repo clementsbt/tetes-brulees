@@ -58,14 +58,6 @@ export default function Navbar() {
 
       </div>
 
-      {/* Overlay */}
-      {isOpen && (
-        <div 
-          className="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden"
-          onClick={() => setIsOpen(false)}
-        />
-      )}
-
       {/* Mobile Sidebar */}
       <div className={`
         fixed top-0 right-0 h-full w-64 bg-orange-500 shadow-2xl z-50 md:hidden
