@@ -7,7 +7,7 @@ import { useState } from 'react';
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   return (
-    <nav className="bg-orange-500 shadow-lg">
+    <nav className="bg-orange-500 shadow-lg fixed top-0 left-0 right-0 z-50">
       <div className="container mx-auto px-4 py-3">
         <div className="flex items-center justify-between">
           {/* Logo */}
@@ -56,39 +56,61 @@ export default function Navbar() {
           </button>
         </div>
 
-        {/* Mobile Menu */}
-        {isOpen && (
-          <div className="md:hidden mt-4 pb-4 space-y-2">
-            <Link 
-              href="/" 
-              className="block text-white hover:text-yellow-200 transition-colors font-medium py-2"
-              onClick={() => setIsOpen(false)}
-            >
-              Accueil
-            </Link>
-            <Link 
-              href="/evenements" 
-              className="block text-white hover:text-yellow-200 transition-colors font-medium py-2"
-              onClick={() => setIsOpen(false)}
-            >
-              Événements
-            </Link>
-            <Link 
-              href="/membres" 
-              className="block text-white hover:text-yellow-200 transition-colors font-medium py-2"
-              onClick={() => setIsOpen(false)}
-            >
-              Membres
-            </Link>
-            <Link 
-              href="/valfrjus" 
-              className="block text-white hover:text-yellow-200 transition-colors font-medium py-2"
-              onClick={() => setIsOpen(false)}
-            >
-              Valfréjus
-            </Link>
-          </div>
-        )}
+      </div>
+
+      {/* Overlay */}
+      {isOpen && (
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden"
+          onClick={() => setIsOpen(false)}
+        />
+      )}
+
+      {/* Mobile Sidebar */}
+      <div className={`
+        fixed top-0 right-0 h-full w-64 bg-orange-500 shadow-2xl z-50 md:hidden
+        transform transition-transform duration-300 ease-in-out
+        ${isOpen ? 'translate-x-0' : 'translate-x-full'}
+      `}>
+        <div className="p-6 space-y-4">
+          <button 
+            onClick={() => setIsOpen(false)}
+            className="text-white mb-8 ml-auto block"
+          >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+          
+          <Link 
+            href="/" 
+            className="block text-white hover:text-yellow-200 transition-colors font-medium py-3 border-b border-white/20"
+            onClick={() => setIsOpen(false)}
+          >
+            Accueil
+          </Link>
+          <Link 
+            href="/evenements" 
+            className="block text-white hover:text-yellow-200 transition-colors font-medium py-3 border-b border-white/20"
+            onClick={() => setIsOpen(false)}
+          >
+            Événements
+          </Link>
+          <Link 
+            href="/membres" 
+            className="block text-white hover:text-yellow-200 transition-colors font-medium py-3 border-b border-white/20"
+            onClick={() => setIsOpen(false)}
+          >
+            Membres
+          </Link>
+          <Link 
+            href="/valfrjus" 
+            className="block text-white hover:text-yellow-200 transition-colors font-medium py-3 border-b border-white/20"
+            onClick={() => setIsOpen(false)}
+          >
+            Valfréjus
+          </Link>
+        </div>
       </div>
     </nav>
   );
