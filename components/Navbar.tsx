@@ -39,6 +39,9 @@ export default function Navbar() {
               <Link href="/valfrjus" className="text-white hover:text-yellow-200 transition-colors font-medium">
                 Valfréjus
               </Link>
+              <Link href="/location" className="text-white hover:text-yellow-200 transition-colors font-medium">
+                Location
+              </Link>
             </div>
 
             {/* Mobile Menu Button */}
@@ -102,6 +105,13 @@ export default function Navbar() {
             onClick={() => setIsOpen(false)}
           >
             Valfréjus
+          </Link>
+          <Link 
+            href="/location" 
+            className="block text-white hover:text-yellow-200 transition-colors font-medium py-3 border-b border-white/20"
+            onClick={() => setIsOpen(false)}
+          >
+            Location
           </Link>
         </div>
       </div>
