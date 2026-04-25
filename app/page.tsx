@@ -18,7 +18,7 @@ export default function HomePage() {
         </div>
 
         {/* Navigation Cards */}
-        <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl mx-auto">
           {/* Membres */}
           <Link href="/membres" className="group">
             <div className="bg-white rounded-lg shadow-lg p-8 hover:shadow-2xl transition-all transform hover:-translate-y-1">
@@ -54,6 +54,19 @@ export default function HomePage() {
               </h2>
               <p className="text-gray-600">
                 Sessions et sorties du club
+              </p>
+            </div>
+          </Link>
+
+          {/* Location */}
+          <Link href="/location" className="group">
+            <div className="bg-white rounded-lg shadow-lg p-8 hover:shadow-2xl transition-all transform hover:-translate-y-1">
+              <div className="text-5xl mb-4">🏠</div>
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                Location
+              </h2>
+              <p className="text-gray-600">
+                Appartements à Valfréjus
               </p>
             </div>
           </Link>
