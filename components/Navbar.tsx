@@ -14,11 +14,11 @@ export default function Navbar() {
             {/* Logo */}
             <Link href="/" className="flex items-center space-x-3">
               <Image 
-                src="/logo.jpg" 
+                src="/logo.png" 
                 alt="Têtes Brûlées" 
                 width={48}
                 height={48}
-                className="h-12 w-12 object-contain rounded-lg shadow-md"
+                className="h-12 w-12 object-contain"
               />
               <span className="text-white text-2xl font-bold tracking-tight">
                 Têtes Brûlées
