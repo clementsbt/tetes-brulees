@@ -15,23 +15,29 @@ export default function HomePage() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Calcul de l'opacité et du blur en fonction du scroll
+  // Calcul de l'opacité, blur et zoom en fonction du scroll
   const maxScroll = 400; // Distance de scroll avant effet complet
   const scrollProgress = Math.min(scrollY / maxScroll, 1);
   const overlayOpacity = 0.25 + (0.35 * scrollProgress); // De 0.25 à 0.6 (plus sombre pour les cartes)
   const blurAmount = 2 * (1 - scrollProgress); // De 2px à 0px
+  const zoomScale = 1 + (scrollProgress * 0.15); // De 1 à 1.15 (zoom de 15%)
 
   return (
     <div className="min-h-screen">
       {/* Image de fond fixe pour toute la page */}
-      <div className="fixed inset-0 pointer-events-none">
-        <Image
-          src="/hero-mountain.jpg"
-          alt="Montagne enneigée"
-          fill
-          className="object-cover"
-          priority
-        />
+      <div className="fixed inset-0 pointer-events-none overflow-hidden">
+        <div 
+          className="w-full h-full transition-transform duration-300 ease-out"
+          style={{ transform: `scale(${zoomScale})` }}
+        >
+          <Image
+            src="/hero-mountain.jpg"
+            alt="Montagne enneigée"
+            fill
+            className="object-cover"
+            priority
+          />
+        </div>
         {/* Overlay dynamique qui diminue avec le scroll */}
         <div 
           className="absolute inset-0 bg-black transition-opacity duration-300"
