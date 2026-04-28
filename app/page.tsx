@@ -54,6 +54,17 @@ export default function HomePage() {
         
         {/* Contenu du hero sticky */}
         <div className="sticky top-1/2 -translate-y-1/2 z-10 text-center px-4">
+          {/* Logo */}
+          <div className="flex justify-center mb-8">
+            <Image
+              src="/logo.png"
+              alt="Logo Têtes Brûlées"
+              width={120}
+              height={120}
+              className="drop-shadow-2xl"
+            />
+          </div>
+          
           <h1 className="text-6xl md:text-7xl font-bold text-white mb-6 drop-shadow-2xl">
             Les Têtes Brûlées
           </h1>
