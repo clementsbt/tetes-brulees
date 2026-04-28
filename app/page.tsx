@@ -1,25 +1,53 @@
+'use client';
+
 import Link from 'next/link';
 import Image from 'next/image';
+import { useEffect, useState } from 'react';
 
 export default function HomePage() {
+  const [scrollY, setScrollY] = useState(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrollY(window.scrollY);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Calcul de l'opacité et du blur en fonction du scroll
+  const maxScroll = 400; // Distance de scroll avant effet complet
+  const scrollProgress = Math.min(scrollY / maxScroll, 1);
+  const overlayOpacity = 0.25 * (1 - scrollProgress); // De 0.25 à 0
+  const blurAmount = 2 * (1 - scrollProgress); // De 2px à 0px
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
       {/* Hero Section avec image de fond */}
       <div className="relative h-screen flex items-center justify-center">
-        {/* Image de fond */}
-        <Image
-          src="/hero-mountain.jpg"
-          alt="Montagne enneigée"
-          fill
-          className="object-cover"
-          priority
+        {/* Image de fond fixe */}
+        <div className="fixed inset-0 h-screen">
+          <Image
+            src="/hero-mountain.jpg"
+            alt="Montagne enneigée"
+            fill
+            className="object-cover"
+            priority
+          />
+        </div>
+        
+        {/* Overlay dynamique qui diminue avec le scroll */}
+        <div 
+          className="fixed inset-0 h-screen bg-black transition-opacity duration-300"
+          style={{
+            opacity: overlayOpacity,
+            backdropFilter: `blur(${blurAmount}px)`,
+            WebkitBackdropFilter: `blur(${blurAmount}px)`,
+          }}
         />
         
-        {/* Overlay avec léger blur */}
-        <div className="absolute inset-0 bg-black/25 backdrop-blur-[2px]" />
-        
-        {/* Contenu du hero */}
-        <div className="relative z-10 text-center px-4">
+        {/* Contenu du hero sticky */}
+        <div className="sticky top-1/2 -translate-y-1/2 z-10 text-center px-4">
           <h1 className="text-6xl md:text-7xl font-bold text-white mb-6 drop-shadow-2xl">
             Les Têtes Brûlées
           </h1>
