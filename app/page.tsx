@@ -26,7 +26,7 @@ export default function HomePage() {
       {/* Hero Section avec image de fond */}
       <div className="relative h-screen flex items-center justify-center">
         {/* Image de fond fixe */}
-        <div className="fixed inset-0 h-screen">
+        <div className="fixed inset-0 h-screen pointer-events-none">
           <Image
             src="/hero-mountain.jpg"
             alt="Montagne enneigée"
@@ -34,17 +34,16 @@ export default function HomePage() {
             className="object-cover"
             priority
           />
+          {/* Overlay dynamique qui diminue avec le scroll */}
+          <div 
+            className="absolute inset-0 bg-black transition-opacity duration-300"
+            style={{
+              opacity: overlayOpacity,
+              backdropFilter: `blur(${blurAmount}px)`,
+              WebkitBackdropFilter: `blur(${blurAmount}px)`,
+            }}
+          />
         </div>
-        
-        {/* Overlay dynamique qui diminue avec le scroll */}
-        <div 
-          className="fixed inset-0 h-screen bg-black transition-opacity duration-300"
-          style={{
-            opacity: overlayOpacity,
-            backdropFilter: `blur(${blurAmount}px)`,
-            WebkitBackdropFilter: `blur(${blurAmount}px)`,
-          }}
-        />
         
         {/* Contenu du hero sticky */}
         <div className="sticky top-1/2 -translate-y-1/2 z-10 text-center px-4">
@@ -61,7 +60,8 @@ export default function HomePage() {
       </div>
 
       {/* Section des cartes */}
-      <div className="container mx-auto px-4 py-16">
+      <div className="relative z-20 bg-gradient-to-br from-blue-50 to-indigo-100">
+        <div className="container mx-auto px-4 py-16">
 
         {/* Navigation Cards */}
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl mx-auto">
@@ -142,6 +142,7 @@ export default function HomePage() {
               </Link>
             </div>
           </div>
+        </div>
         </div>
       </div>
     </div>
