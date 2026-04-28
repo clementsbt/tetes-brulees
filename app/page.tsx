@@ -21,6 +21,7 @@ export default function HomePage() {
   const overlayOpacity = 0.25 + (0.35 * scrollProgress); // De 0.25 à 0.6 (plus sombre pour les cartes)
   const blurAmount = 2 * (1 - scrollProgress); // De 2px à 0px
   const zoomScale = 1 + (scrollProgress * 0.15); // De 1 à 1.15 (zoom de 15%)
+  const heroOpacity = 1 - scrollProgress; // De 1 à 0 (disparition du hero)
 
   return (
     <div className="min-h-screen">
@@ -53,7 +54,10 @@ export default function HomePage() {
       <div className="relative h-screen flex items-center justify-center">
         
         {/* Contenu du hero centré */}
-        <div className="relative z-10 text-center px-4">
+        <div 
+          className="relative z-10 text-center px-4 transition-opacity duration-300"
+          style={{ opacity: heroOpacity }}
+        >
           {/* Logo */}
           <div className="flex justify-center mb-8">
             <Image
