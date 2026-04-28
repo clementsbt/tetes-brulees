@@ -15,8 +15,8 @@ export default function HomePage() {
           priority
         />
         
-        {/* Overlay avec blur */}
-        <div className="absolute inset-0 bg-black/30 backdrop-blur-sm" />
+        {/* Overlay léger */}
+        <div className="absolute inset-0 bg-black/20" />
         
         {/* Contenu du hero */}
         <div className="relative z-10 text-center px-4">
