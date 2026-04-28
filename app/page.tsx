@@ -7,13 +7,13 @@ export default function HomePage() {
         {/* Hero Section */}
         <div className="text-center mb-16">
           <h1 className="text-6xl font-bold text-gray-900 mb-4">
-            ⛷️ Les Têtes Brûlées 🪂
+            Les Têtes Brûlées
           </h1>
           <p className="text-2xl text-gray-700 mb-2">
-            Club de Speedriding à Valfréjus
+            Club de vol libre
           </p>
           <p className="text-lg text-gray-600">
-            Passion • Montagne • Communauté
+            Speedriding • Speedflying • Parapente
           </p>
         </div>
 
