@@ -52,8 +52,8 @@ export default function HomePage() {
       {/* Hero Section */}
       <div className="relative h-screen flex items-center justify-center">
         
-        {/* Contenu du hero sticky */}
-        <div className="sticky top-1/2 -translate-y-1/2 z-10 text-center px-4">
+        {/* Contenu du hero centré */}
+        <div className="relative z-10 text-center px-4">
           {/* Logo */}
           <div className="flex justify-center mb-8">
             <Image
