@@ -1,12 +1,10 @@
-import Link from 'next/link';
+import BackButton from '@/components/BackButton';
 
 export default function ConnexionPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
       <div className="container mx-auto px-4 py-16">
-        <Link href="/" className="text-indigo-600 hover:text-indigo-800 mb-8 inline-block">
-          ← Retour
-        </Link>
+        <BackButton />
         
         <div className="max-w-md mx-auto">
           <h1 className="text-4xl font-bold text-gray-900 mb-8 text-center">

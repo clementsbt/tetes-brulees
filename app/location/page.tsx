@@ -1,5 +1,4 @@
-import Image from 'next/image';
-import Link from 'next/link';
+import BackButton from '@/components/BackButton';
 
 export default function LocationPage() {
   const apartments = [
@@ -38,6 +37,7 @@ export default function LocationPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 pt-20">
       <div className="container mx-auto px-4 py-16">
+        <BackButton />
         {/* Hero Section */}
         <div className="text-center mb-16">
           <h1 className="text-5xl font-bold text-gray-900 mb-4">
