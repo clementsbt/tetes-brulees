@@ -4,7 +4,7 @@ export default function BackButton() {
   return (
     <Link 
       href="/" 
-      className="inline-flex items-center gap-2 bg-white px-4 py-2 rounded-lg shadow hover:shadow-md transition-all text-gray-700 hover:text-indigo-600 font-medium mb-8"
+      className="inline-flex items-center gap-2 bg-white px-4 py-2 rounded-lg shadow hover:shadow-md transition-all text-gray-700 hover:text-indigo-600 font-medium mb-8 mt-20"
     >
       <svg 
         xmlns="http://www.w3.org/2000/svg" 
