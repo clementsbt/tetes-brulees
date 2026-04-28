@@ -18,7 +18,7 @@ export default function HomePage() {
   // Calcul de l'opacité et du blur en fonction du scroll
   const maxScroll = 400; // Distance de scroll avant effet complet
   const scrollProgress = Math.min(scrollY / maxScroll, 1);
-  const overlayOpacity = 0.25 * (1 - scrollProgress); // De 0.25 à 0
+  const overlayOpacity = 0.25 + (0.35 * scrollProgress); // De 0.25 à 0.6 (plus sombre pour les cartes)
   const blurAmount = 2 * (1 - scrollProgress); // De 2px à 0px
 
   return (
@@ -61,7 +61,7 @@ export default function HomePage() {
       </div>
 
       {/* Section des cartes */}
-      <div className="relative z-20 bg-gradient-to-br from-blue-50 to-indigo-100">
+      <div className="relative z-20">
         <div className="container mx-auto px-4 py-16">
 
         {/* Navigation Cards */}
