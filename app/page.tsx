@@ -22,28 +22,29 @@ export default function HomePage() {
   const blurAmount = 2 * (1 - scrollProgress); // De 2px à 0px
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-      {/* Hero Section avec image de fond */}
+    <div className="min-h-screen">
+      {/* Image de fond fixe pour toute la page */}
+      <div className="fixed inset-0 pointer-events-none">
+        <Image
+          src="/hero-mountain.jpg"
+          alt="Montagne enneigée"
+          fill
+          className="object-cover"
+          priority
+        />
+        {/* Overlay dynamique qui diminue avec le scroll */}
+        <div 
+          className="absolute inset-0 bg-black transition-opacity duration-300"
+          style={{
+            opacity: overlayOpacity,
+            backdropFilter: `blur(${blurAmount}px)`,
+            WebkitBackdropFilter: `blur(${blurAmount}px)`,
+          }}
+        />
+      </div>
+
+      {/* Hero Section */}
       <div className="relative h-screen flex items-center justify-center">
-        {/* Image de fond fixe */}
-        <div className="fixed inset-0 h-screen pointer-events-none">
-          <Image
-            src="/hero-mountain.jpg"
-            alt="Montagne enneigée"
-            fill
-            className="object-cover"
-            priority
-          />
-          {/* Overlay dynamique qui diminue avec le scroll */}
-          <div 
-            className="absolute inset-0 bg-black transition-opacity duration-300"
-            style={{
-              opacity: overlayOpacity,
-              backdropFilter: `blur(${blurAmount}px)`,
-              WebkitBackdropFilter: `blur(${blurAmount}px)`,
-            }}
-          />
-        </div>
         
         {/* Contenu du hero sticky */}
         <div className="sticky top-1/2 -translate-y-1/2 z-10 text-center px-4">
