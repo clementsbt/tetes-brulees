@@ -1,21 +1,39 @@
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 pt-20">
-      <div className="container mx-auto px-4 py-16">
-        {/* Hero Section */}
-        <div className="text-center mb-16">
-          <h1 className="text-6xl font-bold text-gray-900 mb-4">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+      {/* Hero Section avec image de fond */}
+      <div className="relative h-screen flex items-center justify-center">
+        {/* Image de fond */}
+        <Image
+          src="/hero-mountain.jpg"
+          alt="Montagne enneigée"
+          fill
+          className="object-cover"
+          priority
+        />
+        
+        {/* Overlay avec blur */}
+        <div className="absolute inset-0 bg-black/30 backdrop-blur-sm" />
+        
+        {/* Contenu du hero */}
+        <div className="relative z-10 text-center px-4">
+          <h1 className="text-6xl md:text-7xl font-bold text-white mb-6 drop-shadow-2xl">
             Les Têtes Brûlées
           </h1>
-          <p className="text-2xl text-gray-700 mb-2">
+          <p className="text-3xl md:text-4xl text-white mb-4 drop-shadow-lg">
             Club de vol libre
           </p>
-          <p className="text-lg text-gray-600">
+          <p className="text-xl md:text-2xl text-white/90 drop-shadow-lg">
             Speedriding • Speedflying • Parapente
           </p>
         </div>
+      </div>
+
+      {/* Section des cartes */}
+      <div className="container mx-auto px-4 py-16">
 
         {/* Navigation Cards */}
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl mx-auto">
@@ -73,7 +91,7 @@ export default function HomePage() {
         </div>
 
         {/* CTA Section */}
-        <div className="text-center mt-16">
+        <div className="text-center mt-16 mb-16">
           <div className="bg-white rounded-lg shadow-lg p-8 max-w-2xl mx-auto">
             <h3 className="text-2xl font-bold text-gray-900 mb-4">
               Rejoignez-nous !
