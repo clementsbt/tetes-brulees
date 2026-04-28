@@ -51,11 +51,11 @@ export default function HomePage() {
       </div>
 
       {/* Hero Section */}
-      <div className="relative h-screen flex items-center justify-center">
+      <div className="relative h-screen">
         
-        {/* Contenu du hero centré */}
+        {/* Contenu du hero fixe (ne bouge pas au scroll) */}
         <div 
-          className="relative z-10 text-center px-4 transition-opacity duration-300"
+          className="fixed inset-0 flex items-center justify-center z-10 text-center px-4 transition-opacity duration-300 pointer-events-none"
           style={{ opacity: heroOpacity }}
         >
           {/* Logo */}
