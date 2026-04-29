@@ -156,20 +156,20 @@ export default function HomePage() {
               >
                 S'inscrire
               </Link>
+              <Link 
+                href="/connexion" 
+                className="bg-gray-200 text-gray-900 px-6 py-3 rounded-lg font-semibold hover:bg-gray-300 transition-colors text-center flex-1 min-w-[140px] max-w-[200px]"
+              >
+                Se connecter
+              </Link>
               <a 
                 href="https://intranet.ffvl.fr/ffvl_licenceonline/pre_rempli/NEW/1431" 
                 target="_blank"
                 rel="noopener noreferrer"
-                className="bg-green-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors text-center flex-1 min-w-[140px] max-w-[200px]"
+                className="bg-green-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors text-center w-full"
               >
                 Prendre sa licence FFVL
               </a>
-              <Link 
-                href="/connexion" 
-                className="bg-gray-200 text-gray-900 px-8 py-3 rounded-lg font-semibold hover:bg-gray-300 transition-colors text-center w-full sm:w-auto"
-              >
-                Se connecter
-              </Link>
             </div>
           </div>
         </div>
