@@ -22,7 +22,8 @@ export async function POST(request: Request) {
       );
     }
 
-    const isValid = compareSync(password, user.password);
+    // Simple comparison for demo (without bcrypt)
+    const isValid = user.password === password || compareSync(password, user.password);
     if (!isValid) {
       return NextResponse.json(
         { error: 'Email ou mot de passe incorrect' },

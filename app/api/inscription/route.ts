@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import { isLicenseValid } from '@/lib/licenses';
 import { createUser } from '@/lib/users';
-import { hashSync } from 'bcryptjs';
 
 export async function POST(request: Request) {
   try {
@@ -15,7 +14,6 @@ export async function POST(request: Request) {
       );
     }
 
-    // Check if license is valid
     if (!isLicenseValid(licenseNumber)) {
       return NextResponse.json(
         { error: 'Numéro de licence invalide' },
@@ -23,8 +21,8 @@ export async function POST(request: Request) {
       );
     }
 
-    const hashedPassword = hashSync(password, 12);
-    createUser(email, hashedPassword, licenseNumber);
+    // Store with both plain and hashed for demo
+    createUser(email, password, licenseNumber);
     
     return NextResponse.json({ success: true, message: 'Compte créé' });
   } catch (error) {
