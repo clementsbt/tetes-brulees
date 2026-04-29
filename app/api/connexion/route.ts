@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { prisma as getPrisma } from '@/lib/prisma';
 import { compareSync } from 'bcryptjs';
 
 export async function POST(request: Request) {
@@ -15,7 +15,7 @@ export async function POST(request: Request) {
     }
 
     // Trouver l'utilisateur
-    const user = await prisma.user.findUnique({
+    const user = await getPrisma().then(p => p.user.findUnique({
       where: { email },
     });
 

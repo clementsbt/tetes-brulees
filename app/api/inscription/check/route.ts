@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { prisma as getPrisma } from '@/lib/prisma';
 
 export async function POST(request: Request) {
   try {
@@ -14,7 +14,7 @@ export async function POST(request: Request) {
     }
 
     // Vérifier que le numéro de licence n'est pas déjà utilisé
-    const existingLicense = await prisma.usedLicense.findUnique({
+    const existingLicense = await getPrisma().then(p => p.usedLicense.findUnique({
       where: { licenseNumber },
     });
 
@@ -26,7 +26,7 @@ export async function POST(request: Request) {
     }
 
     // Vérifier que l'email n'est pas déjà utilisé
-    const existingUser = await prisma.user.findUnique({
+    const existingUser = await getPrisma().then(p => p.user.findUnique({
       where: { email },
     });
 
