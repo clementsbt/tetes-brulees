@@ -14,7 +14,7 @@ export default function ValfrejusPage() {
           <div>
             <h2 className="text-2xl font-bold text-gray-900 mb-3">Notre Terrain de Jeu</h2>
             <p className="text-gray-600">
-              Valfréjus est le spot de prédilection des Têtes Brûlées pour le speedriding.
+              Valfréjus est le spot favorite des Têtes Brûlées pour le speedriding.
             </p>
           </div>
           
