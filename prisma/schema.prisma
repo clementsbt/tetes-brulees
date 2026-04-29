@@ -114,3 +114,13 @@ model Presence {
   @@unique([userId, date])
   @@map("presences")
 }
+
+// Codes de licence FFVL utilisés (un seul use par licence)
+model UsedLicense {
+  id            String   @id @default(cuid())
+  licenseNumber String   @unique
+  usedById      String?  @unique // User qui a utilisé ce code
+  usedAt        DateTime @default(now())
+
+  @@map("used_licenses")
+}

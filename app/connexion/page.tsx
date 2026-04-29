@@ -1,6 +1,49 @@
+'use client';
+
+import { useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import Link from 'next/link';
 import BackButton from '@/components/BackButton';
 
 export default function ConnexionPage() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const inscrit = searchParams.get('inscrit');
+  
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+    setLoading(true);
+
+    try {
+      const res = await fetch('/api/connexion', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.error || 'Erreur lors de la connexion');
+        return;
+      }
+
+      // Connexion réussie - stocker en localStorage et rediriger
+      localStorage.setItem('user', JSON.stringify(data.user));
+      router.push('/membres');
+    } catch {
+      setError('Erreur de connexion');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
       <div className="container mx-auto px-4 py-16">
@@ -12,11 +55,61 @@ export default function ConnexionPage() {
           </h1>
           
           <div className="bg-white rounded-lg shadow-lg p-8">
-            <p className="text-gray-600 mb-4">
-              Le formulaire de connexion sera bientôt disponible !
-            </p>
-            <p className="text-gray-500 text-sm">
-              Les membres validés pourront se connecter pour accéder au calendrier et aux événements.
+            {inscrit && (
+              <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
+                <p className="text-green-800 text-sm">
+                  ✓ Inscription réussie ! Vous pouvez maintenant vous connecter.
+                </p>
+              </div>
+            )}
+            
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Email
+                </label>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  placeholder="votre@email.com"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Mot de passe
+                </label>
+                <input
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  placeholder="••••••••"
+                />
+              </div>
+
+              {error && (
+                <p className="text-red-600 text-sm">{error}</p>
+              )}
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full bg-indigo-600 text-white py-3 rounded-lg font-semibold hover:bg-indigo-700 transition-colors disabled:opacity-50"
+              >
+                {loading ? 'Connexion...' : 'Se connecter'}
+              </button>
+            </form>
+
+            <p className="text-center text-gray-600 text-sm mt-6">
+              Pas encore de compte ?{' '}
+              <Link href="/inscription" className="text-indigo-600 hover:underline">
+                S'inscrire
+              </Link>
             </p>
           </div>
         </div>
