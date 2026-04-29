@@ -13,14 +13,16 @@ export async function POST(request: Request) {
       );
     }
 
-    // Check if license is valid (in VALID_LICENSES env var)
+    // Check if license is in the valid list
     if (!isLicenseValid(licenseNumber)) {
       return NextResponse.json(
-        { error: 'Numéro de licence invalide ou déjà utilisé' },
+        { error: 'Numéro de licence invalide' },
         { status: 400 }
       );
     }
 
+    // In production, you would check a database for already used licenses
+    // For now, just allow the license if it's in the valid list
     return NextResponse.json({ valid: true });
   } catch (error) {
     console.error('Check license error:', error);
