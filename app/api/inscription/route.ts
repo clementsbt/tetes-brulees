@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { isLicenseValid } from '@/lib/licenses';
+import { createUser } from '@/lib/users';
 import { hashSync } from 'bcryptjs';
 
 export async function POST(request: Request) {
@@ -23,14 +24,9 @@ export async function POST(request: Request) {
     }
 
     const hashedPassword = hashSync(password, 12);
-
-    // In production, save to database here
-    // For now, just return success
-    return NextResponse.json({ 
-      success: true, 
-      message: 'Compte créé',
-      user: { email, licenseNumber }
-    });
+    createUser(email, hashedPassword, licenseNumber);
+    
+    return NextResponse.json({ success: true, message: 'Compte créé' });
   } catch (error) {
     console.error('Inscription error:', error);
     return NextResponse.json(

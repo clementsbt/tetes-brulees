@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { prisma as getPrisma } from '@/lib/prisma';
+import { findUser, validateUser } from '@/lib/users';
 import { compareSync } from 'bcryptjs';
 
 export async function POST(request: Request) {
@@ -14,12 +14,8 @@ export async function POST(request: Request) {
       );
     }
 
-    const prisma = await getPrisma();
-    const user = await prisma.user.findUnique({
-      where: { email },
-    });
-
-    if (!user || !user.password) {
+    const user = findUser(email);
+    if (!user) {
       return NextResponse.json(
         { error: 'Email ou mot de passe incorrect' },
         { status: 401 }
@@ -27,7 +23,6 @@ export async function POST(request: Request) {
     }
 
     const isValid = compareSync(password, user.password);
-
     if (!isValid) {
       return NextResponse.json(
         { error: 'Email ou mot de passe incorrect' },
@@ -37,10 +32,8 @@ export async function POST(request: Request) {
 
     return NextResponse.json({
       user: {
-        id: user.id,
         email: user.email,
-        name: user.name,
-        role: user.role,
+        licenseNumber: user.licenseNumber,
       },
     });
   } catch (error) {
