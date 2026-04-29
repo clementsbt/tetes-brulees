@@ -149,10 +149,10 @@ export default function HomePage() {
             <p className="text-gray-600 mb-6">
               Membre FFVL ? Inscrivez-vous pour accéder au calendrier de présence et organiser vos sessions.
             </p>
-            <div className="flex gap-4 justify-center">
+            <div className="flex flex-wrap gap-4 justify-center">
               <Link 
                 href="/inscription" 
-                className="bg-indigo-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-indigo-700 transition-colors"
+                className="bg-indigo-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-indigo-700 transition-colors text-center flex-1 min-w-[140px] max-w-[200px]"
               >
                 S'inscrire
               </Link>
@@ -160,13 +160,13 @@ export default function HomePage() {
                 href="https://intranet.ffvl.fr/ffvl_licenceonline/pre_rempli/NEW/1431" 
                 target="_blank"
                 rel="noopener noreferrer"
-                className="bg-green-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors"
+                className="bg-green-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors text-center flex-1 min-w-[140px] max-w-[200px]"
               >
                 Prendre sa licence FFVL
               </a>
               <Link 
                 href="/connexion" 
-                className="bg-gray-200 text-gray-900 px-8 py-3 rounded-lg font-semibold hover:bg-gray-300 transition-colors"
+                className="bg-gray-200 text-gray-900 px-8 py-3 rounded-lg font-semibold hover:bg-gray-300 transition-colors text-center w-full sm:w-auto"
               >
                 Se connecter
               </Link>
