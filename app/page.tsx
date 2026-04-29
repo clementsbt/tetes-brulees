@@ -154,7 +154,7 @@ export default function HomePage() {
                 href="/inscription" 
                 className="bg-indigo-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-indigo-700 transition-colors"
               >
-                S'inscrire
+                Adhérer au club
               </Link>
               <Link 
                 href="/connexion" 
