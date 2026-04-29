@@ -154,8 +154,16 @@ export default function HomePage() {
                 href="/inscription" 
                 className="bg-indigo-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-indigo-700 transition-colors"
               >
-                Adhérer au club
+                S'inscrire
               </Link>
+              <a 
+                href="https://intranet.ffvl.fr/ffvl_licenceonline/pre_rempli/NEW/1431" 
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-green-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors"
+              >
+                Prendre sa licence FFVL
+              </a>
               <Link 
                 href="/connexion" 
                 className="bg-gray-200 text-gray-900 px-8 py-3 rounded-lg font-semibold hover:bg-gray-300 transition-colors"
