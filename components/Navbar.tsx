@@ -26,7 +26,7 @@ export default function Navbar() {
             </Link>
 
             {/* Navigation Links */}
-            <div className="hidden md:flex space-x-6">
+            <div className="hidden md:flex items-center space-x-6">
               <Link href="/" className="text-white hover:text-yellow-200 transition-colors font-medium">
                 Accueil
               </Link>
@@ -42,6 +42,20 @@ export default function Navbar() {
               <Link href="/location" className="text-white hover:text-yellow-200 transition-colors font-medium">
                 Location
               </Link>
+              <div className="flex items-center space-x-2 ml-4">
+                <Link 
+                  href="/inscription" 
+                  className="bg-white text-orange-600 px-4 py-2 rounded-lg font-semibold hover:bg-yellow-100 transition-colors"
+                >
+                  S'inscrire
+                </Link>
+                <Link 
+                  href="/connexion" 
+                  className="text-white hover:text-yellow-200 transition-colors font-medium"
+                >
+                  Se connecter
+                </Link>
+              </div>
             </div>
 
             {/* Mobile Menu Button */}
@@ -112,6 +126,20 @@ export default function Navbar() {
             onClick={() => setIsOpen(false)}
           >
             Location
+          </Link>
+          <Link 
+            href="/inscription" 
+            className="block bg-white text-orange-600 px-4 py-3 rounded-lg font-semibold mt-4"
+            onClick={() => setIsOpen(false)}
+          >
+            S'inscrire
+          </Link>
+          <Link 
+            href="/connexion" 
+            className="block text-white hover:text-yellow-200 transition-colors font-medium py-3"
+            onClick={() => setIsOpen(false)}
+          >
+            Se connecter
           </Link>
         </div>
       </div>
