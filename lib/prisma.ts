@@ -3,7 +3,8 @@ let prismaClient: any;
 
 export async function prisma() {
   if (!prismaClient) {
-    const { PrismaClient } = await import('@prisma/client');
+    const pc = await import('@prisma/client');
+    const PrismaClient = pc.default.PrismaClient || Object.values(pc)[0] as any;
     prismaClient = new PrismaClient();
   }
   return prismaClient;
