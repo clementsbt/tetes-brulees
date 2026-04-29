@@ -108,7 +108,7 @@ export default function HomePage() {
                 Valfréjus
               </h2>
               <p className="text-gray-600">
-                Infos sur notre spot de prédilection
+                Infos sur notre spot favorite
               </p>
             </div>
           </Link>
