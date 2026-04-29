@@ -13,8 +13,8 @@ export async function POST(request: Request) {
       );
     }
 
-    // Vérifier que le numéro de licence n'est pas déjà utilisé
-    const existingLicense = await getPrisma().then(p => p.usedLicense.findUnique({
+    const prisma = await getPrisma();
+    const existingLicense = await prisma.usedLicense.findUnique({
       where: { licenseNumber },
     });
 
@@ -25,8 +25,7 @@ export async function POST(request: Request) {
       );
     }
 
-    // Vérifier que l'email n'est pas déjà utilisé
-    const existingUser = await getPrisma().then(p => p.user.findUnique({
+    const existingUser = await prisma.user.findUnique({
       where: { email },
     });
 

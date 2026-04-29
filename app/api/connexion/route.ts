@@ -14,8 +14,8 @@ export async function POST(request: Request) {
       );
     }
 
-    // Trouver l'utilisateur
-    const user = await getPrisma().then(p => p.user.findUnique({
+    const prisma = await getPrisma();
+    const user = await prisma.user.findUnique({
       where: { email },
     });
 
@@ -26,7 +26,6 @@ export async function POST(request: Request) {
       );
     }
 
-    // Vérifier le mot de passe
     const isValid = compareSync(password, user.password);
 
     if (!isValid) {
@@ -36,7 +35,6 @@ export async function POST(request: Request) {
       );
     }
 
-    // Retourner les infos utilisateur (sans le mot de passe)
     return NextResponse.json({
       user: {
         id: user.id,

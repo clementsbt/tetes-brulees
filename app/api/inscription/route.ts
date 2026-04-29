@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { prisma as getPrisma } from '@/lib/prisma';
-import { hashSync, compareSync } from 'bcryptjs';
+import { hashSync } from 'bcryptjs';
 
 export async function POST(request: Request) {
   try {
@@ -14,8 +14,9 @@ export async function POST(request: Request) {
       );
     }
 
-    // Vérifier que le numéro de licence n'est pas déjà utilisé
-    const existingLicense = await getPrisma().then(p => p.usedLicense.findUnique({
+    const prisma = await getPrisma();
+    
+    const existingLicense = await prisma.usedLicense.findUnique({
       where: { licenseNumber },
     });
 
@@ -26,8 +27,7 @@ export async function POST(request: Request) {
       );
     }
 
-    // Vérifier que l'email n'est pas déjà utilisé
-    const existingUser = await getPrisma().then(p => p.user.findUnique({
+    const existingUser = await prisma.user.findUnique({
       where: { email },
     });
 
@@ -38,11 +38,9 @@ export async function POST(request: Request) {
       );
     }
 
-    // Hasher le mot de passe
     const hashedPassword = hashSync(password, 12);
 
-    // Créer l'utilisateur
-    const user = await getPrisma().then(p => p.user.create({
+    const user = await prisma.user.create({
       data: {
         email,
         password: hashedPassword,
@@ -52,8 +50,7 @@ export async function POST(request: Request) {
       },
     });
 
-    // Marquer la licence comme utilisée
-    await getPrisma().then(p => p.usedLicense.create({
+    await prisma.usedLicense.create({
       data: {
         licenseNumber,
         usedById: user.id,
