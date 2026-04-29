@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { prisma as getPrisma } from '@/lib/prisma';
+import { isLicenseValid } from '@/lib/licenses';
 
 export async function POST(request: Request) {
   try {
@@ -13,25 +13,10 @@ export async function POST(request: Request) {
       );
     }
 
-    const prisma = await getPrisma();
-    const existingLicense = await prisma.usedLicense.findUnique({
-      where: { licenseNumber },
-    });
-
-    if (existingLicense) {
+    // Check if license is valid (in VALID_LICENSES env var)
+    if (!isLicenseValid(licenseNumber)) {
       return NextResponse.json(
-        { error: 'Ce numéro de licence a déjà été utilisé' },
-        { status: 400 }
-      );
-    }
-
-    const existingUser = await prisma.user.findUnique({
-      where: { email },
-    });
-
-    if (existingUser) {
-      return NextResponse.json(
-        { error: 'Un compte avec cet email existe déjà' },
+        { error: 'Numéro de licence invalide ou déjà utilisé' },
         { status: 400 }
       );
     }
