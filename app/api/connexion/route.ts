@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import bcrypt from 'bcryptjs';
+import { compareSync } from 'bcryptjs';
 
 export async function POST(request: Request) {
   try {
@@ -27,7 +27,7 @@ export async function POST(request: Request) {
     }
 
     // Vérifier le mot de passe
-    const isValid = await bcrypt.compare(password, user.password);
+    const isValid = compareSync(password, user.password);
 
     if (!isValid) {
       return NextResponse.json(

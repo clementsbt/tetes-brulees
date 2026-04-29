@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import bcrypt from 'bcryptjs';
+import { hashSync, compareSync } from 'bcryptjs';
 
 export async function POST(request: Request) {
   try {
@@ -39,33 +39,28 @@ export async function POST(request: Request) {
     }
 
     // Hasher le mot de passe
-    const hashedPassword = await bcrypt.hash(password, 12);
+    const hashedPassword = hashSync(password, 12);
 
-    // Créer le user et marquer la licence comme utilisée en transaction
-    const result = await prisma.$transaction(async (tx) => {
-      // Créer l'utilisateur
-      const user = await tx.user.create({
-        data: {
-          email,
-          password: hashedPassword,
-          ffvlLicense: licenseNumber,
-          validated: true,
-          role: 'MEMBER',
-        },
-      });
-
-      // Marquer la licence comme utilisée
-      await tx.usedLicense.create({
-        data: {
-          licenseNumber,
-          usedById: user.id,
-        },
-      });
-
-      return user;
+    // Créer l'utilisateur
+    const user = await prisma.user.create({
+      data: {
+        email,
+        password: hashedPassword,
+        ffvlLicense: licenseNumber,
+        validated: true,
+        role: 'MEMBER',
+      },
     });
 
-    return NextResponse.json({ success: true, userId: result.id });
+    // Marquer la licence comme utilisée
+    await prisma.usedLicense.create({
+      data: {
+        licenseNumber,
+        usedById: user.id,
+      },
+    });
+
+    return NextResponse.json({ success: true, userId: user.id });
   } catch (error) {
     console.error('Inscription error:', error);
     return NextResponse.json(
