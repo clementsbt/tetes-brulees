@@ -1,7 +1,13 @@
-// Valid FFVL licenses - add codes via VALID_LICENSES env var (comma separated)
-// Format: VALID_LICENSES=licence1,licence2,licence3
-const VALID_LICENSES = process.env.VALID_LICENSES?.split(',').map(s => s.trim()).filter(Boolean) || [];
+// Valid FFVL licenses - comma separated in environment variable
+// For production, set VALID_LICENSES in Vercel project settings
+
+function getValidLicenses(): string[] {
+  const env = process.env.VALID_LICENSES || '1234567A,1234567B';
+  return env.split(',').map(s => s.trim()).filter(Boolean);
+}
+
+const validLicenses = getValidLicenses();
 
 export function isLicenseValid(licenseNumber: string): boolean {
-  return VALID_LICENSES.includes(licenseNumber);
+  return validLicenses.includes(licenseNumber);
 }
