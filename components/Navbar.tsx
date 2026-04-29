@@ -129,7 +129,7 @@ export default function Navbar() {
           </Link>
           <Link 
             href="/inscription" 
-            className="block bg-white text-orange-600 px-4 py-3 rounded-lg font-semibold mt-4"
+            className="block text-white hover:text-yellow-200 transition-colors font-medium py-3 border-b border-white/20"
             onClick={() => setIsOpen(false)}
           >
             S'inscrire
