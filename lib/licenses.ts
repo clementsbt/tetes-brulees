@@ -1,21 +1,8 @@
-// Valid FFVL licenses for the club
-// To add more licenses, edit this file or set VALID_LICENSES env var
+// Hardcoded valid licenses for the Têtes Brûlées club
+// To add more: edit this file and push
 
-const DEFAULT_LICENSES = ['1234567A', '1234567B'];
-
-function getValidLicenses(): string[] {
-  const env = process.env.VALID_LICENSES;
-  if (env) {
-    return env.split(',').map(s => s.trim()).filter(Boolean);
-  }
-  return DEFAULT_LICENSES;
-}
-
-let validLicenses: string[] | null = null;
+const VALID_LICENSES = ['1234567A', '1234567B'];
 
 export function isLicenseValid(licenseNumber: string): boolean {
-  if (!validLicenses) {
-    validLicenses = getValidLicenses();
-  }
-  return validLicenses.includes(licenseNumber);
+  return VALID_LICENSES.includes(licenseNumber);
 }
