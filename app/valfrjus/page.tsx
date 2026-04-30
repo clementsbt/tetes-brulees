@@ -34,9 +34,12 @@ export default function ValfrejusPage() {
         
         const texte = doc.body.textContent || '';
         
-        // Extract vent
-        const ventMatch = texte.match(/vent\s+(.+?)(?:\n|$)/i);
-        const vent = ventMatch ? ventMatch[1].trim() : 'Non spécifié';
+        // Extract vent (direction et force)
+        let vent = 'Non spécifié';
+        const ventMatch = texte.match(/(variable|modéré|faible|fort)\s*,?\s*(par endroits)?/i);
+        if (ventMatch) {
+          vent = ventMatch[1] + (ventMatch[2] ? ' par endroits' : '');
+        }
         
         // Extract neige (quantité)
         const neigeMatch = texte.match(/neige\s+(qui tombe|s|\s)+?\s*(au-dessus de\s*\d+\s*m)?/i);
