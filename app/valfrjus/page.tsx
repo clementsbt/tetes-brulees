@@ -5,7 +5,9 @@ import BackButton from '@/components/BackButton';
 
 interface MeteoData {
   vent: string;
+  direction: string;
   neige: string;
+  prevision: string;
   risque: string;
   chargement: boolean;
   erreur: string | null;
@@ -14,7 +16,9 @@ interface MeteoData {
 export default function ValfrejusPage() {
   const [meteo, setMeteo] = useState<MeteoData>({
     vent: '',
+    direction: '',
     neige: '',
+    prevision: '',
     risque: '',
     chargement: true,
     erreur: null,
@@ -29,43 +33,42 @@ export default function ValfrejusPage() {
         }
         
         const html = data.html;
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(html, 'text/html');
         
-        const texte = doc.body.textContent || '';
+        // Extract Punta Bagna data from the HTML structure
+        // Look for the card with "Punta Bagna" - 2737m
+        const puntaBagnaMatch = html.match(/Punta Bagna[\s\S]*?2737[\s\S]*?<div class="meteo">([\s\S]*?)<div class="avalanche">/);
         
-        // Extract vent (direction et force)
-        let vent = 'Non spécifié';
-        const ventMatch = texte.match(/(variable|modéré|faible|fort)\s*,?\s*(par endroits)?/i);
-        if (ventMatch) {
-          vent = ventMatch[1] + (ventMatch[2] ? ' par endroits' : '');
+        if (!puntaBagnaMatch) {
+          throw new Error('Données non trouvées');
         }
         
-        // Extract neige (quantité)
-        const neigeMatch = texte.match(/neige\s+(qui tombe|s|\s)+?\s*(au-dessus de\s*\d+\s*m)?/i);
-        let neige = 'Non spécifié';
-        if (texte.includes('neige qui tombe')) {
-          const hauteurMatch = texte.match(/neige qui tombe au-dessus de\s*(\d+)\s*mètres?/i);
-          neige = hauteurMatch ? `Au-dessus de ${hauteurMatch[1]}m` : 'Neige prévu';
-        } else if (texte.includes('c\'est de la neige')) {
-          const hauteurMatch = texte.match(/c\'est de la neige qui tombe au-dessus de\s*(\d+)\s*mètres?/i);
-          neige = hauteurMatch ? `Au-dessus de ${hauteurMatch[1]}m` : 'Neige prévu';
-        }
+        const puntaBagnaHtml = puntaBagnaMatch[1];
         
-        // Extract risque avalanche (format /5)
-        const risqueMatch = texte.match(/risque\s*(d\'avalanche|\s+)[:\s]*(\d)\/5?/i);
-        let risque = 'Non spécifié';
-        if (!risqueMatch) {
-          // Try to find any number followed by /5
-          const simpleMatch = texte.match(/(\d)\/5/);
-          risque = simpleMatch ? `${simpleMatch[1]}/5` : 'Non spécifié';
-        } else {
-          risque = risqueMatch[2] ? `${risqueMatch[2]}/5` : 'Non spécifié';
-        }
+        // Extract vent speed
+        const ventMatch = puntaBagnaHtml.match(/<img[^>]*wind\.svg[^>]*>[\s\S]*?<span class="subtext">(\d+km\/h)<\/span>/);
+        const vent = ventMatch ? ventMatch[1] : 'Non spécifié';
+        
+        // Extract wind direction
+        const dirMatch = puntaBagnaHtml.match(/<img[^>]*windDirection\/SE[^>]*>[\s\S]*?<span class="subtext">(Sud[\s-]*Est)<\/span>/);
+        const direction = dirMatch ? dirMatch[1] : 'Non spécifié';
+        
+        // Extract snow amount
+        const neigeMatch = puntaBagnaHtml.match(/<img[^>]*image_neige\.svg[^>]*>[\s\S]*?<span class="text">(\d+[\s]*cm)<\/span>/);
+        const neige = neigeMatch ? neigeMatch[1].trim() : 'Non spécifié';
+        
+        // Extract snow forecast
+        const previsionMatch = puntaBagnaHtml.match(/<img[^>]*calendrier_neige\.svg[^>]*>[\s\S]*?<span class="text">(\d+[\s]*cm)<\/span>[\s\S]*?<span class="text_italic">/);
+        const prevision = previsionMatch ? previsionMatch[1].trim() : 'Non spécifié';
+        
+        // Extract avalanche risk
+        const risqueMatch = puntaBagnaHtml.match(/<div class="avalanche_score"><span class="bold">(\d)<\/span>\/5<\/div>/);
+        const risque = risqueMatch ? `${risqueMatch[1]}/5` : 'Non spécifié';
         
         setMeteo({
           vent,
+          direction,
           neige,
+          prevision,
           risque,
           chargement: false,
           erreur: null,
@@ -74,7 +77,9 @@ export default function ValfrejusPage() {
       .catch(() => {
         setMeteo({
           vent: '',
+          direction: '',
           neige: '',
+          prevision: '',
           risque: '',
           chargement: false,
           erreur: 'Impossible de charger la météo',
@@ -101,7 +106,9 @@ export default function ValfrejusPage() {
             {meteo.chargement ? (
               <p className="text-gray-500">Chargement...</p>
             ) : (
-              <p className="text-gray-700 capitalize">{meteo.vent}</p>
+              <p className="text-gray-700">
+                {meteo.vent} {meteo.direction && `(${meteo.direction})`}
+              </p>
             )}
           </div>
           
