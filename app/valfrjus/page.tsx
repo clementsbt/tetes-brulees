@@ -3,21 +3,19 @@
 import { useEffect, useState } from 'react';
 import BackButton from '@/components/BackButton';
 
-interface Bulletin {
-  jour: string;
-  texte: string;
-  lendemain?: string;
-}
-
 interface MeteoData {
-  bulletin: Bulletin;
+  vent: string;
+  neige: string;
+  risque: string;
   chargement: boolean;
   erreur: string | null;
 }
 
 export default function ValfrejusPage() {
   const [meteo, setMeteo] = useState<MeteoData>({
-    bulletin: { jour: '', texte: '' },
+    vent: '',
+    neige: '',
+    risque: '',
     chargement: true,
     erreur: null,
   });
@@ -31,28 +29,50 @@ export default function ValfrejusPage() {
         }
         
         const html = data.html;
-        // Parse the HTML content
         const parser = new DOMParser();
         const doc = parser.parseFromString(html, 'text/html');
         
         const texte = doc.body.textContent || '';
         
-        // Clean up the text
-        const cleanedTexte = texte
-          .replace(/Bulletin du jour/g, '')
-          .replace(/Bulletin du lendemain/g, '\n\n--- Demain ---\n')
-          .replace(/Cette nuit:/g, '\n\nCette nuit:')
-          .trim();
+        // Extract vent
+        const ventMatch = texte.match(/vent\s+(.+?)(?:\n|$)/i);
+        const vent = ventMatch ? ventMatch[1].trim() : 'Non spécifié';
+        
+        // Extract neige (quantité)
+        const neigeMatch = texte.match(/neige\s+(qui tombe|s|\s)+?\s*(au-dessus de\s*\d+\s*m)?/i);
+        let neige = 'Non spécifié';
+        if (texte.includes('neige qui tombe')) {
+          const hauteurMatch = texte.match(/neige qui tombe au-dessus de\s*(\d+)\s*mètres?/i);
+          neige = hauteurMatch ? `Au-dessus de ${hauteurMatch[1]}m` : 'Neige prévu';
+        } else if (texte.includes('c\'est de la neige')) {
+          const hauteurMatch = texte.match(/c\'est de la neige qui tombe au-dessus de\s*(\d+)\s*mètres?/i);
+          neige = hauteurMatch ? `Au-dessus de ${hauteurMatch[1]}m` : 'Neige prévu';
+        }
+        
+        // Extract risque avalanche (format /5)
+        const risqueMatch = texte.match(/risque\s*(d\'avalanche|\s+)[:\s]*(\d)\/5?/i);
+        let risque = 'Non spécifié';
+        if (!risqueMatch) {
+          // Try to find any number followed by /5
+          const simpleMatch = texte.match(/(\d)\/5/);
+          risque = simpleMatch ? `${simpleMatch[1]}/5` : 'Non spécifié';
+        } else {
+          risque = risqueMatch[2] ? `${risqueMatch[2]}/5` : 'Non spécifié';
+        }
         
         setMeteo({
-          bulletin: { jour: '', texte: cleanedTexte },
+          vent,
+          neige,
+          risque,
           chargement: false,
           erreur: null,
         });
       })
       .catch(() => {
         setMeteo({
-          bulletin: { jour: '', texte: '' },
+          vent: '',
+          neige: '',
+          risque: '',
           chargement: false,
           erreur: 'Impossible de charger la météo',
         });
@@ -65,29 +85,57 @@ export default function ValfrejusPage() {
         <BackButton />
         
         <h1 className="text-4xl font-bold text-gray-900 mb-8">
-          🏔️ Valfréjus (2737m)
+          🏔️ Punta Bagna - 2737m
         </h1>
         
-        {/* Weather Bulletin */}
-        <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
-          <h2 className="text-xl font-bold text-gray-900 mb-4">
-            ☁️ Bulletin Météo
-          </h2>
+        {/* Meteo Cards */}
+        <div className="grid md:grid-cols-3 gap-4 mb-6">
+          {/* Vent */}
+          <div className="bg-white rounded-lg shadow-lg p-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">
+              💨 Vent
+            </h3>
+            {meteo.chargement ? (
+              <p className="text-gray-500">Chargement...</p>
+            ) : (
+              <p className="text-gray-700 capitalize">{meteo.vent}</p>
+            )}
+          </div>
           
-          {meteo.chargement ? (
-            <p className="text-gray-500">Chargement...</p>
-          ) : meteo.erreur ? (
-            <p className="text-red-500">{meteo.erreur}</p>
-          ) : (
-            <div className="text-gray-700 whitespace-pre-line">
-              {meteo.bulletin.texte}
-            </div>
-          )}
+          {/* Neige */}
+          <div className="bg-white rounded-lg shadow-lg p-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">
+              ❄️ Neige
+            </h3>
+            {meteo.chargement ? (
+              <p className="text-gray-500">Chargement...</p>
+            ) : (
+              <p className="text-gray-700">{meteo.neige}</p>
+            )}
+          </div>
           
-          <p className="text-xs text-gray-400 mt-4">
-            Source: Lumiplan • Mise à jour: {new Date().toLocaleDateString('fr-FR')}
-          </p>
+          {/* Risque avalanche */}
+          <div className="bg-white rounded-lg shadow-lg p-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">
+              ⚠️ Risque Avalanche
+            </h3>
+            {meteo.chargement ? (
+              <p className="text-gray-500">Chargement...</p>
+            ) : (
+              <p className={`text-2xl font-bold ${
+                parseInt(meteo.risque) >= 4 ? 'text-red-600' :
+                parseInt(meteo.risque) >= 2 ? 'text-orange-500' : 'text-green-500'
+              }`}>
+                {meteo.risque}
+              </p>
+            )}
+          </div>
         </div>
+        
+        {/* Source */}
+        <p className="text-xs text-gray-400 mb-6">
+          Source: Lumiplan
+        </p>
         
         {/* Spot Info */}
         <div className="bg-white rounded-lg shadow-lg p-8 space-y-6">
