@@ -10,6 +10,10 @@ interface MeteoData {
   prevision: string;
   risque: string;
   lastUpdate: string;
+  forecast: {
+    today: string;
+    tomorrow: string;
+  };
   chargement: boolean;
   erreur: string | null;
 }
@@ -22,6 +26,7 @@ export default function ValfrejusPage() {
     prevision: '',
     risque: '',
     lastUpdate: '',
+    forecast: { today: '', tomorrow: '' },
     chargement: true,
     erreur: null,
   });
@@ -70,6 +75,13 @@ export default function ValfrejusPage() {
         const lastUpdateMatch = html.match(/Mis à jour le (\d{2}\/\d{2}\/\d{4} à \d{2}:\d{2})/);
         const lastUpdate = lastUpdateMatch ? lastUpdateMatch[1] : '';
         
+        // Extract forecasts
+        const forecastMatch = html.match(/Bulletin du jour[\s\S]*?<div class="text_prevision">([^<]+)<\/div>[\s\S]*?Bulletin du lendemain[\s\S]*?<div class="text_prevision">([^<]+)<\/div>/);
+        const forecast = forecastMatch ? {
+          today: forecastMatch[1].trim(),
+          tomorrow: forecastMatch[2].trim()
+        } : { today: '', tomorrow: '' };
+        
         setMeteo({
           vent,
           direction,
@@ -77,6 +89,7 @@ export default function ValfrejusPage() {
           prevision,
           risque,
           lastUpdate,
+          forecast,
           chargement: false,
           erreur: null,
         });
@@ -89,6 +102,7 @@ export default function ValfrejusPage() {
           prevision: '',
           risque: '',
           lastUpdate: '',
+          forecast: { today: '', tomorrow: '' },
           chargement: false,
           erreur: 'Impossible de charger la météo',
         });
@@ -159,6 +173,27 @@ export default function ValfrejusPage() {
         <p className="text-xs text-gray-400 mb-6">
           Source: Lumiplan
         </p>
+        
+        {/* Forecast */}
+        {meteo.forecast.today && (
+          <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">
+              📋 Prévisions
+            </h3>
+            <div className="space-y-4">
+              <div>
+                <h4 className="font-medium text-gray-700">Aujourd'hui</h4>
+                <p className="text-gray-600 text-sm">{meteo.forecast.today}</p>
+              </div>
+              {meteo.forecast.tomorrow && (
+                <div>
+                  <h4 className="font-medium text-gray-700">Demain</h4>
+                  <p className="text-gray-600 text-sm">{meteo.forecast.tomorrow}</p>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
         
         {/* Spot Info */}
         <div className="bg-white rounded-lg shadow-lg p-8 space-y-6">
