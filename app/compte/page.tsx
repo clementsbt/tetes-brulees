@@ -27,6 +27,7 @@ export default function ComptePage() {
     
     if (!userData) {
       // Not logged in - redirect to login
+      setLoading(false);
       router.push('/connexion');
       return;
     }
@@ -34,10 +35,11 @@ export default function ComptePage() {
     try {
       const parsedUser = JSON.parse(userData);
       setUser(parsedUser);
+      setLoading(false);
     } catch {
       // Invalid stored data - redirect to login
+      setLoading(false);
       router.push('/connexion');
-      return;
     }
   }, [router]);
 
