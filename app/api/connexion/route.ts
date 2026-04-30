@@ -30,13 +30,13 @@ export async function POST(request: Request) {
       );
     }
 
-    // Create JWT token
+    // Create JWT token - expires in 5 minutes
     const token = await new SignJWT({ 
       email, 
       name: user.name 
     })
       .setProtectedHeader({ alg: 'HS256' })
-      .setExpirationTime('7d')
+      .setExpirationTime('5m')
       .sign(JWT_SECRET);
 
     const response = NextResponse.json({ 
@@ -44,12 +44,12 @@ export async function POST(request: Request) {
       user: { email, name: user.name }
     });
 
-    // Set httpOnly cookie
+    // Set httpOnly cookie - 5 min for inactivity timeout
     response.cookies.set('auth-token', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
-      maxAge: 60 * 60 * 24 * 7, // 7 days
+      maxAge: 60 * 5, // 5 minutes
       path: '/',
     });
 
