@@ -6,14 +6,8 @@ import Link from 'next/link';
 import BackButton from '@/components/BackButton';
 
 interface User {
-  id: string;
   email: string;
-  prenom: string;
-  nom: string;
-  telephone?: string;
-  niveau?: string;
-  licenceFFVL?: string;
-  dateInscription?: string;
+  name?: string;
 }
 
 export default function ComptePage() {
@@ -22,29 +16,33 @@ export default function ComptePage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check if user is logged in
-    const userData = localStorage.getItem('user');
-    
-    if (!userData) {
-      // Not logged in - redirect to login
-      setLoading(false);
-      router.push('/connexion');
-      return;
-    }
+    const checkAuth = async () => {
+      try {
+        const res = await fetch('/api/auth/user');
+        const data = await res.json();
+        
+        if (!res.ok || !data.user) {
+          router.push('/connexion');
+          return;
+        }
+        
+        setUser(data.user);
+      } catch {
+        router.push('/connexion');
+      } finally {
+        setLoading(false);
+      }
+    };
 
-    try {
-      const parsedUser = JSON.parse(userData);
-      setUser(parsedUser);
-      setLoading(false);
-    } catch {
-      // Invalid stored data - redirect to login
-      setLoading(false);
-      router.push('/connexion');
-    }
+    checkAuth();
   }, [router]);
 
-  const handleLogout = () => {
-    localStorage.removeItem('user');
+  const handleLogout = async () => {
+    try {
+      await fetch('/api/connexion', { method: 'DELETE' });
+    } catch {
+      // Ignore
+    }
     window.dispatchEvent(new Event('auth-change'));
     router.push('/');
   };
@@ -58,8 +56,10 @@ export default function ComptePage() {
   }
 
   if (!user) {
-    return null; // Will redirect
+    return null;
   }
+
+  const nameParts = user.name?.split(' ') || ['', ''];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
@@ -77,15 +77,15 @@ export default function ComptePage() {
               <div className="flex items-center gap-4">
                 <div className="w-20 h-20 bg-indigo-100 rounded-full flex items-center justify-center">
                   <span className="text-3xl font-bold text-indigo-600">
-                    {user.prenom?.[0]}{user.nom?.[0]}
+                    {nameParts[0]?.[0]}{nameParts[1]?.[0] || ''}
                   </span>
                 </div>
                 <div>
                   <h2 className="text-2xl font-bold text-gray-900">
-                    {user.prenom} {user.nom}
+                    {user.name}
                   </h2>
                   <p className="text-gray-500 text-sm">
-                    Membre depuis {user.dateInscription || 'récemment'}
+                    Membre du club
                   </p>
                 </div>
               </div>
@@ -102,27 +102,6 @@ export default function ComptePage() {
                 <span className="text-gray-600">Email</span>
                 <span className="text-gray-900 font-medium">{user.email}</span>
               </div>
-              
-              {user.telephone && (
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Téléphone</span>
-                  <span className="text-gray-900 font-medium">{user.telephone}</span>
-                </div>
-              )}
-              
-              {user.niveau && (
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Niveau</span>
-                  <span className="text-gray-900 font-medium">{user.niveau}</span>
-                </div>
-              )}
-              
-              {user.licenceFFVL && (
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Licence FFVL</span>
-                  <span className="text-gray-900 font-medium">{user.licenceFFVL}</span>
-                </div>
-              )}
             </div>
           </div>
 

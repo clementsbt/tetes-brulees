@@ -6,10 +6,8 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
 interface User {
-  id: string;
   email: string;
-  prenom: string;
-  nom: string;
+  name?: string;
 }
 
 export default function Navbar() {
@@ -18,35 +16,35 @@ export default function Navbar() {
   const router = useRouter();
 
   useEffect(() => {
-    const userData = localStorage.getItem('user');
-    if (userData) {
-      try {
-        setUser(JSON.parse(userData));
-      } catch {
-        // Invalid data
-      }
-    }
-
     // Listen for auth changes
-    const handleAuthChange = () => {
-      const newUserData = localStorage.getItem('user');
-      if (newUserData) {
-        try {
-          setUser(JSON.parse(newUserData));
-        } catch {
+    const handleAuthChange = async () => {
+      try {
+        const res = await fetch('/api/auth/user');
+        const data = await res.json();
+        if (res.ok && data.user) {
+          setUser(data.user);
+        } else {
           setUser(null);
         }
-      } else {
+      } catch {
         setUser(null);
       }
     };
+
+    // Check initial auth
+    handleAuthChange();
 
     window.addEventListener('auth-change', handleAuthChange);
     return () => window.removeEventListener('auth-change', handleAuthChange);
   }, []);
 
-  const handleLogout = () => {
-    localStorage.removeItem('user');
+  const handleLogout = async () => {
+    try {
+      await fetch('/api/connexion', { method: 'DELETE' });
+    } catch {
+      // Ignore
+    }
+    setUser(null);
     window.dispatchEvent(new Event('auth-change'));
     router.push('/');
     setIsOpen(false);

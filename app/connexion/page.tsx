@@ -34,7 +34,7 @@ function ConnexionForm() {
         return;
       }
 
-      localStorage.setItem('user', JSON.stringify(data.user));
+      // User is stored in httpOnly cookie now
       window.dispatchEvent(new Event('auth-change'));
       router.push('/membres');
     } catch {
