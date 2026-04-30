@@ -22,6 +22,7 @@ export default function CalendrierPage() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [presences, setPresences] = useState<Presence[]>([]);
+  const [currentMonth, setCurrentMonth] = useState(new Date());
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -47,7 +48,7 @@ export default function CalendrierPage() {
           users: (users as PresenceUser[]) || [],
         }));
         
-        setPresences(presenceList.sort((a, b) => a.date.localeCompare(b.date)));
+        setPresences(presenceList);
       } catch {
         // Ignore
       }
@@ -77,19 +78,44 @@ export default function CalendrierPage() {
     }
   };
 
-  const days: Date[] = [];
-  for (let i = 0; i < 14; i++) {
-    const d = new Date();
-    d.setDate(d.getDate() + i);
-    days.push(d);
-  }
-
-  const formatDate = (d: Date) => d.toISOString().split('T')[0];
-  const formatDisplay = (d: Date) => d.toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric', month: 'short' });
-
   const getUsersForDate = (dateKey: string) => {
     return presences.find(p => p.date === dateKey)?.users || [];
   };
+
+  // Generate calendar days
+  const year = currentMonth.getFullYear();
+  const month = currentMonth.getMonth();
+  const firstDay = new Date(year, month, 1);
+  const lastDay = new Date(year, month + 1, 0);
+  const startingDay = firstDay.getDay();
+  const totalDays = lastDay.getDate();
+
+  const days: (Date | null)[] = [];
+  // Fill empty slots before first day
+  for (let i = 0; i < startingDay; i++) {
+    days.push(null);
+  }
+  // Fill actual days
+  for (let i = 1; i <= totalDays; i++) {
+    days.push(new Date(year, month, i));
+  }
+
+  const monthNames = [
+    'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
+    'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'
+  ];
+
+  const dayNames = ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'];
+
+  const prevMonth = () => {
+    setCurrentMonth(new Date(year, month - 1, 1));
+  };
+
+  const nextMonth = () => {
+    setCurrentMonth(new Date(year, month + 1, 1));
+  };
+
+  const formatDate = (d: Date) => d.toISOString().split('T')[0];
 
   if (loading) {
     return (
@@ -125,71 +151,120 @@ export default function CalendrierPage() {
       <div className="container mx-auto px-4 py-16">
         <BackButton />
         
-        <h1 className="text-4xl font-bold text-gray-900 mb-8">
-          📅 Calendrier de présence - Valfréjus
+        <h1 className="text-4xl font-bold text-gray-900 mb-2">
+          📅 Calendrier de présence
         </h1>
-        
         <p className="text-gray-600 mb-6">
-          Clique sur un jour pour indiquer si tu seras là !
+          Clique sur un jour pour indiquer si tu seras à Valfréjus
         </p>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3 mb-8">
-          {days.map((day) => {
-            const dateKey = formatDate(day);
-            const dayUsers = getUsersForDate(dateKey);
-            const isPresent = dayUsers.some(u => u.email === user.email);
-            const isPast = day < new Date();
+        {/* Calendar */}
+        <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
+          {/* Month Navigation */}
+          <div className="flex justify-between items-center mb-4">
+            <button 
+              onClick={prevMonth}
+              className="text-gray-600 hover:text-gray-900"
+            >
+              ← Précédent
+            </button>
+            <h2 className="text-xl font-bold">
+              {monthNames[month]} {year}
+            </h2>
+            <button 
+              onClick={nextMonth}
+              className="text-gray-600 hover:text-gray-900"
+            >
+              Suivant →
+            </button>
+          </div>
 
-            return (
-              <button
-                key={dateKey}
-                onClick={() => !isPast && togglePresence(dateKey)}
-                disabled={isPast}
-                className={`
-                  p-4 rounded-lg text-left transition-all
-                  ${isPast ? 'opacity-50 cursor-not-allowed bg-gray-100' : 'hover:shadow-lg cursor-pointer'}
-                  ${isPresent ? 'bg-green-100 border-2 border-green-500' : 'bg-white border border-gray-200'}
-                `}
-              >
-                <div className="font-medium text-gray-900">
-                  {formatDisplay(day)}
-                </div>
-                <div className="text-sm text-gray-500 mt-1">
-                  {dayUsers.length} présent(s)
-                </div>
-                {dayUsers.length > 0 && (
-                  <div className="text-xs text-green-600 mt-1 truncate">
-                    {dayUsers.map(u => u.name).join(', ')}
+          {/* Day headers */}
+          <div className="grid grid-cols-7 gap-1 mb-2">
+            {dayNames.map((day) => (
+              <div key={day} className="text-center font-medium text-gray-500 text-sm py-2">
+                {day}
+              </div>
+            ))}
+          </div>
+
+          {/* Calendar grid */}
+          <div className="grid grid-cols-7 gap-1">
+            {days.map((day, idx) => {
+              if (!day) {
+                return <div key={`empty-${idx}`} className="h-24"></div>;
+              }
+
+              const dateKey = formatDate(day);
+              const dayUsers = getUsersForDate(dateKey);
+              const isPresent = dayUsers.some(u => u.email === user.email);
+              const isToday = day.toDateString() === new Date().toDateString();
+              const isPast = day < new Date();
+              const isFuture = day > new Date();
+
+              return (
+                <button
+                  key={dateKey}
+                  onClick={() => !isPast && togglePresence(dateKey)}
+                  disabled={isPast}
+                  className={`
+                    h-24 p-2 rounded text-left transition-all flex flex-col
+                    ${isPast ? 'opacity-40 cursor-not-allowed bg-gray-50' : 'hover:bg-gray-50 cursor-pointer'}
+                    ${isPresent ? 'bg-green-100 border-2 border-green-500' : 'bg-white border border-gray-200'}
+                    ${isToday ? 'ring-2 ring-indigo-500' : ''}
+                  `}
+                >
+                  <div className={`font-medium ${isToday ? 'text-indigo-600' : 'text-gray-900'}`}>
+                    {day.getDate()}
                   </div>
-                )}
-                {isPresent && (
-                  <div className="text-xs text-green-600 font-medium mt-1">
-                    ✓ Tu es inscrit
-                  </div>
-                )}
-              </button>
-            );
-          })}
+                  {dayUsers.length > 0 && (
+                    <div className="text-xs text-green-600 truncate mt-auto">
+                      {isPresent ? '✓ ' : ''}{dayUsers.length} présent{dayUsers.length > 1 ? 's' : ''}
+                    </div>
+                  )}
+                </button>
+              );
+            })}
+          </div>
         </div>
 
+        {/* Legend */}
+        <div className="bg-white rounded-lg shadow-lg p-4 mb-6">
+          <div className="flex gap-6 text-sm">
+            <div className="flex items-center gap-2">
+              <div className="w-4 h-4 bg-green-100 border-2 border-green-500 rounded"></div>
+              <span className="text-gray-600">Tu es inscrit</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-4 h-4 bg-white border border-gray-200 rounded"></div>
+              <span className="text-gray-600">Non inscrit</span>
+            </div>
+          </div>
+        </div>
+
+        {/* List */}
         <div className="bg-white rounded-lg shadow-lg p-6">
           <h2 className="text-xl font-bold text-gray-900 mb-4">
-            Résumé des présences
+            Prochains jours avec des présences
           </h2>
           {presences.length === 0 ? (
             <p className="text-gray-500">Aucune présence prévue</p>
           ) : (
             <div className="space-y-3">
-              {presences.map((p) => (
-                <div key={p.date} className="flex justify-between items-center border-b border-gray-100 pb-2">
-                  <span className="font-medium">
-                    {new Date(p.date).toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })}
-                  </span>
-                  <span className="text-gray-600">
-                    {p.users.map(u => u.name).join(', ') || 'Personne'}
-                  </span>
-                </div>
-              ))}
+              {presences
+                .filter(p => new Date(p.date) >= new Date())
+                .sort((a, b) => a.date.localeCompare(b.date))
+                .slice(0, 7)
+                .map((p) => (
+                  <div key={p.date} className="flex justify-between items-center border-b border-gray-100 pb-2">
+                    <span className="font-medium">
+                      {new Date(p.date).toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })}
+                    </span>
+                    <span className="text-gray-600">
+                      {p.users.map(u => u.name).join(', ') || 'Personne'}
+                    </span>
+                  </div>
+                ))}
             </div>
           )}
         </div>
