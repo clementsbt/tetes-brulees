@@ -3,93 +3,109 @@
 import { useEffect, useState } from 'react';
 import BackButton from '@/components/BackButton';
 
-// WMO Weather codes to French descriptions
-const getWeatherDesc = (code: number): string => {
-  const codes: Record<number, string> = {
-    0: '☀️ Clair',
-    1: '🌤️ Mainly Clear',
-    2: '⛅ Partly Cloudy',
-    3: '☁️ Cloudy',
-    45: '🌫️ Brouillard',
-    48: '🌫️ Brouillard givrant',
-    51: '🌧️ Bruine légère',
-    53: '🌧️ Bruine modérée',
-    55: '🌧️ Bruine dense',
-    61: '🌧️ Pluie légère',
-    63: '🌧️ Pluie modérée',
-    65: '🌧️ Pluie forte',
-    71: '🌨️ Neige légère',
-    73: '🌨️ Neige modérée',
-    75: '🌨️ Neige forte',
-    77: '❄️ Grêle',
-    80: '🌦️ Averses',
-    81: '🌦️ Averses',
-    82: '🌦️ Averses fortes',
-    85: '🌨️ Averses de neige',
-    95: '⛈️ Orage',
-  96: '⛈️ Orage avec grêle',
-    99: '⛈️ Orage violent',
-  };
-  return codes[code] || '❓ Inconnu';
-};
-
-const getWindDirection = (deg: number): string => {
-  const dirs = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
-  const idx = Math.round(deg / 45) % 8;
-  return dirs[idx];
-};
-
-interface DayForecast {
-  date: string;
-  tempMax: number;
-  tempMin: number;
-  weather: string;
-  windSpeed: number;
-  windDir: string;
-}
-
 interface MeteoData {
-  current: {
-    temp: number;
-    wind: number;
-    weather: string;
+  vent: string;
+  direction: string;
+  neige: string;
+  prevision: string;
+  risque: string;
+  lastUpdate: string;
+  forecast: {
+    today: string;
+    tomorrow: string;
   };
-  days: DayForecast[];
+  chargement: boolean;
+  erreur: string | null;
 }
 
 export default function ValfrejusPage() {
-  const [meteo, setMeteo] = useState<MeteoData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [meteo, setMeteo] = useState<MeteoData>({
+    vent: '',
+    direction: '',
+    neige: '',
+    prevision: '',
+    risque: '',
+    lastUpdate: '',
+    forecast: { today: '', tomorrow: '' },
+    chargement: true,
+    erreur: null,
+  });
 
   useEffect(() => {
-    // Punta Bagna - Valfréjus: 45.1325, 6.7143
-    fetch('https://api.open-meteo.com/v1/forecast?latitude=45.1325&longitude=6.7143&current=temperature_2m,weather_code,wind_speed_10m,wind_direction_10m&daily=temperature_2m_max,temperature_2m_min,weather_code,wind_speed_10m_max&timezone=auto&forecast_days=7')
-      .then(res => res.json())
-      .then(data => {
-        const daily = data.daily;
-        const days: DayForecast[] = daily.time.map((t: string, i: number) => ({
-          date: new Date(t).toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric' }),
-          tempMax: Math.round(daily.temperature_2m_max[i]),
-          tempMin: Math.round(daily.temperature_2m_min[i]),
-          weather: getWeatherDesc(daily.weather_code[i]),
-          windSpeed: Math.round(daily.wind_speed_10m_max[i]),
-          windDir: getWindDirection(data.current?.wind_direction_10m || 0),
-        }));
-
+    fetch('/api/meteo')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.error) {
+          throw new Error(data.error);
+        }
+        
+        const html = data.html;
+        
+        // Extract Punta Bagna data from the HTML structure
+        // Look for the card with "Punta Bagna" - 2737m
+        const puntaBagnaMatch = html.match(/Punta Bagna[\s\S]*?2737[\s\S]*?<div class="meteo">([\s\S]*?)<div class="avalanche">/);
+        
+        if (!puntaBagnaMatch) {
+          throw new Error('Données non trouvées');
+        }
+        
+        const puntaBagnaHtml = puntaBagnaMatch[1];
+        
+        // Extract vent speed
+        const ventMatch = puntaBagnaHtml.match(/<img[^>]*wind\.svg[^>]*>[\s\S]*?<span class="subtext">(\d+km\/h)<\/span>/);
+        const vent = ventMatch ? ventMatch[1] : 'Non spécifié';
+        
+        // Extract wind direction
+        const dirMatch = puntaBagnaHtml.match(/<img[^>]*windDirection\/SE[^>]*>[\s\S]*?<span class="subtext">(Sud[\s-]*Est)<\/span>/);
+        const direction = dirMatch ? dirMatch[1] : 'Non spécifié';
+        
+        // Extract snow amount
+        const neigeMatch = puntaBagnaHtml.match(/<img[^>]*image_neige\.svg[^>]*>[\s\S]*?<span class="text">(\d+[\s]*cm)<\/span>/);
+        const neige = neigeMatch ? neigeMatch[1].trim() : 'Non spécifié';
+        
+        // Extract snow forecast
+        const previsionMatch = puntaBagnaHtml.match(/<img[^>]*calendrier_neige\.svg[^>]*>[\s\S]*?<span class="text">(\d+[\s]*cm)<\/span>[\s\S]*?<span class="text_italic">/);
+        const prevision = previsionMatch ? previsionMatch[1].trim() : 'Non spécifié';
+        
+        // Extract avalanche risk - look for the risk in Punta Bagna section
+        const risqueMatch = html.match(/<div class="avalanche_score"><span class="bold">(\d)<\/span>\/5<\/div>[\s\S]*?<img class="avalanche_image" src="image\/avalanche_risk\/R(\d)\.svg"/);
+        const risque = risqueMatch ? `${risqueMatch[1]}/5` : 'Non spécifié';
+        
+        // Extract last update time
+        const lastUpdateMatch = html.match(/Mis à jour le (\d{2}\/\d{2}\/\d{4} à \d{2}:\d{2})/);
+        const lastUpdate = lastUpdateMatch ? lastUpdateMatch[1] : '';
+        
+        // Extract forecasts
+        const forecastMatch = html.match(/Bulletin du jour[\s\S]*?<div class="text_prevision">([^<]+)<\/div>[\s\S]*?Bulletin du lendemain[\s\S]*?<div class="text_prevision">([^<]+)<\/div>/);
+        const forecast = forecastMatch ? {
+          today: forecastMatch[1].trim(),
+          tomorrow: forecastMatch[2].trim()
+        } : { today: '', tomorrow: '' };
+        
         setMeteo({
-          current: {
-            temp: Math.round(data.current?.temperature_2m || 0),
-            wind: Math.round(data.current?.wind_speed_10m || 0),
-            weather: getWeatherDesc(data.current?.weather_code || 0),
-          },
-          days,
+          vent,
+          direction,
+          neige,
+          prevision,
+          risque,
+          lastUpdate,
+          forecast,
+          chargement: false,
+          erreur: null,
         });
-        setLoading(false);
       })
       .catch(() => {
-        setError('Erreur chargement météo');
-        setLoading(false);
+        setMeteo({
+          vent: '',
+          direction: '',
+          neige: '',
+          prevision: '',
+          risque: '',
+          lastUpdate: '',
+          forecast: { today: '', tomorrow: '' },
+          chargement: false,
+          erreur: 'Impossible de charger la météo',
+        });
       });
   }, []);
 
@@ -100,70 +116,84 @@ export default function ValfrejusPage() {
         
         <h1 className="text-4xl font-bold text-gray-900 mb-8">
           🏔️ Punta Bagna - 2737m
+          {meteo.lastUpdate && (
+            <span className="text-lg font-normal text-gray-500 ml-2">
+              (maj {meteo.lastUpdate})
+            </span>
+          )}
         </h1>
         
-        {error && (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-            {error}
-          </div>
-        )}
-        
-        {/* Current Weather */}
-        {!loading && meteo && (
-          <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">
-              ☁️ Maintenant
+        {/* Meteo Cards */}
+        <div className="grid md:grid-cols-3 gap-4 mb-6">
+          {/* Vent */}
+          <div className="bg-white rounded-lg shadow-lg p-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">
+              💨 Vent
             </h3>
-            <div className="grid grid-cols-3 gap-4 text-center">
-              <div>
-                <p className="text-3xl font-bold">{meteo.current.temp}°</p>
-                <p className="text-gray-500 text-sm">Temp</p>
-              </div>
-              <div>
-                <p className="text-3xl font-bold">{meteo.current.weather}</p>
-                <p className="text-gray-500 text-sm">Météo</p>
-              </div>
-              <div>
-                <p className="text-3xl font-bold">{meteo.current.wind} km/h</p>
-                <p className="text-gray-500 text-sm">Vent</p>
-              </div>
-            </div>
+            {meteo.chargement ? (
+              <p className="text-gray-500">Chargement...</p>
+            ) : (
+              <p className="text-gray-700">
+                {meteo.vent} {meteo.direction && `(${meteo.direction})`}
+              </p>
+            )}
           </div>
-        )}
-        
-        {/* 7 Day Forecast */}
-        {!loading && meteo && (
-          <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">
-              📅 Prévisions 7 jours
+          
+          {/* Neige */}
+          <div className="bg-white rounded-lg shadow-lg p-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">
+              ❄️ Neige
             </h3>
-            <div className="space-y-3">
-              {meteo.days.map((day, i) => (
-                <div key={i} className="flex items-center justify-between py-2 border-b border-gray-100 last:border-0">
-                  <span className="font-medium w-24">{day.date}</span>
-                  <span className="w-24 text-center">{day.weather}</span>
-                  <span className="w-20 text-right text-gray-600">
-                    {day.tempMin}° / {day.tempMax}°
-                  </span>
-                  <span className="w-20 text-right">
-                    💨 {day.windSpeed} km/h
-                  </span>
-                </div>
-              ))}
-            </div>
+            {meteo.chargement ? (
+              <p className="text-gray-500">Chargement...</p>
+            ) : (
+              <p className="text-gray-700">{meteo.neige}</p>
+            )}
           </div>
-        )}
-        
-        {loading && (
-          <div className="text-center py-8">
-            <p className="text-gray-500">Chargement...</p>
+          
+          {/* Risque avalanche */}
+          <div className="bg-white rounded-lg shadow-lg p-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">
+              ⚠️ Risque Avalanche
+            </h3>
+            {meteo.chargement ? (
+              <p className="text-gray-500">Chargement...</p>
+            ) : (
+              <p className={`text-2xl font-bold ${
+                parseInt(meteo.risque) >= 4 ? 'text-red-600' :
+                parseInt(meteo.risque) >= 2 ? 'text-orange-500' : 'text-green-500'
+              }`}>
+                {meteo.risque}
+              </p>
+            )}
           </div>
-        )}
+        </div>
         
         {/* Source */}
         <p className="text-xs text-gray-400 mb-6">
-          Source: Open-Meteo
+          Source: Lumiplan
         </p>
+        
+        {/* Forecast */}
+        {meteo.forecast.today && (
+          <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">
+              📋 Prévisions
+            </h3>
+            <div className="space-y-4">
+              <div>
+                <h4 className="font-medium text-gray-700">Aujourd'hui</h4>
+                <p className="text-gray-600 text-sm">{meteo.forecast.today}</p>
+              </div>
+              {meteo.forecast.tomorrow && (
+                <div>
+                  <h4 className="font-medium text-gray-700">Demain</h4>
+                  <p className="text-gray-600 text-sm">{meteo.forecast.tomorrow}</p>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
         
         {/* Spot Info */}
         <div className="bg-white rounded-lg shadow-lg p-8 space-y-6">
@@ -187,6 +217,10 @@ export default function ValfrejusPage() {
               Idéal pour le speedriding avec de nombreuses pistes adaptées et des décollages variés.
             </p>
           </div>
+          
+          <p className="text-gray-500 text-sm mt-8">
+            Plus d'informations détaillées à venir !
+          </p>
         </div>
       </div>
     </div>
