@@ -208,7 +208,7 @@ export default function CalendrierPage() {
                   onClick={() => !isPast && togglePresence(dateKey)}
                   disabled={isPast}
                   className={`
-                    h-24 p-2 rounded text-left transition-all flex flex-col
+                    h-28 p-2 rounded text-left transition-all flex flex-col text-xs
                     ${isPast ? 'opacity-40 cursor-not-allowed bg-gray-50' : 'hover:bg-gray-50 cursor-pointer'}
                     ${isPresent ? 'bg-green-100 border-2 border-green-500' : 'bg-white border border-gray-200'}
                     ${isToday ? 'ring-2 ring-indigo-500' : ''}
@@ -217,9 +217,14 @@ export default function CalendrierPage() {
                   <div className={`font-medium ${isToday ? 'text-indigo-600' : 'text-gray-900'}`}>
                     {day.getDate()}
                   </div>
-                  {dayUsers.length > 0 && (
-                    <div className="text-xs text-green-600 truncate mt-auto">
-                      {isPresent ? '✓ ' : ''}{dayUsers.length} présent{dayUsers.length > 1 ? 's' : ''}
+                  {dayUsers.length > 0 ? (
+                    <div className="text-green-600 truncate mt-auto">
+                      {dayUsers.slice(0, 2).map(u => u.name?.split(' ')[0]).join(', ')}
+                      {dayUsers.length > 2 && ` +${dayUsers.length - 2}`}
+                    </div>
+                  ) : (
+                    <div className="text-gray-400 truncate mt-auto text-xs">
+                      -
                     </div>
                   )}
                 </button>
