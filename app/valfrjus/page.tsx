@@ -174,27 +174,6 @@ export default function ValfrejusPage() {
           Source: Lumiplan
         </p>
         
-        {/* Forecast */}
-        {meteo.forecast.today && (
-          <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">
-              📋 Prévisions
-            </h3>
-            <div className="space-y-4">
-              <div>
-                <h4 className="font-medium text-gray-700">Aujourd'hui</h4>
-                <p className="text-gray-600 text-sm">{meteo.forecast.today}</p>
-              </div>
-              {meteo.forecast.tomorrow && (
-                <div>
-                  <h4 className="font-medium text-gray-700">Demain</h4>
-                  <p className="text-gray-600 text-sm">{meteo.forecast.tomorrow}</p>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
-        
         {/* Spot Info */}
         <div className="bg-white rounded-lg shadow-lg p-8 space-y-6">
           <div>
