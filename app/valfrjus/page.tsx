@@ -9,6 +9,7 @@ interface MeteoData {
   neige: string;
   prevision: string;
   risque: string;
+  lastUpdate: string;
   chargement: boolean;
   erreur: string | null;
 }
@@ -20,6 +21,7 @@ export default function ValfrejusPage() {
     neige: '',
     prevision: '',
     risque: '',
+    lastUpdate: '',
     chargement: true,
     erreur: null,
   });
@@ -64,12 +66,17 @@ export default function ValfrejusPage() {
         const risqueMatch = html.match(/<div class="avalanche_score"><span class="bold">(\d)<\/span>\/5<\/div>[\s\S]*?<img class="avalanche_image" src="image\/avalanche_risk\/R(\d)\.svg"/);
         const risque = risqueMatch ? `${risqueMatch[1]}/5` : 'Non spécifié';
         
+        // Extract last update time
+        const lastUpdateMatch = html.match(/Mis à jour le (\d{2}\/\d{2}\/\d{4} à \d{2}:\d{2})/);
+        const lastUpdate = lastUpdateMatch ? lastUpdateMatch[1] : '';
+        
         setMeteo({
           vent,
           direction,
           neige,
           prevision,
           risque,
+          lastUpdate,
           chargement: false,
           erreur: null,
         });
@@ -81,6 +88,7 @@ export default function ValfrejusPage() {
           neige: '',
           prevision: '',
           risque: '',
+          lastUpdate: '',
           chargement: false,
           erreur: 'Impossible de charger la météo',
         });
@@ -94,6 +102,11 @@ export default function ValfrejusPage() {
         
         <h1 className="text-4xl font-bold text-gray-900 mb-8">
           🏔️ Punta Bagna - 2737m
+          {meteo.lastUpdate && (
+            <span className="text-lg font-normal text-gray-500 ml-2">
+              (maj {meteo.lastUpdate})
+            </span>
+          )}
         </h1>
         
         {/* Meteo Cards */}
