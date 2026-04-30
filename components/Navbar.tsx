@@ -26,11 +26,28 @@ export default function Navbar() {
         // Invalid data
       }
     }
+
+    // Listen for auth changes
+    const handleAuthChange = () => {
+      const newUserData = localStorage.getItem('user');
+      if (newUserData) {
+        try {
+          setUser(JSON.parse(newUserData));
+        } catch {
+          setUser(null);
+        }
+      } else {
+        setUser(null);
+      }
+    };
+
+    window.addEventListener('auth-change', handleAuthChange);
+    return () => window.removeEventListener('auth-change', handleAuthChange);
   }, []);
 
   const handleLogout = () => {
     localStorage.removeItem('user');
-    setUser(null);
+    window.dispatchEvent(new Event('auth-change'));
     router.push('/');
     setIsOpen(false);
   };

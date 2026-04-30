@@ -45,6 +45,7 @@ export default function ComptePage() {
 
   const handleLogout = () => {
     localStorage.removeItem('user');
+    window.dispatchEvent(new Event('auth-change'));
     router.push('/');
   };
 

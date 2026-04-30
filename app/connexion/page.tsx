@@ -35,6 +35,7 @@ function ConnexionForm() {
       }
 
       localStorage.setItem('user', JSON.stringify(data.user));
+      window.dispatchEvent(new Event('auth-change'));
       router.push('/membres');
     } catch {
       setError('Erreur de connexion');
