@@ -4,8 +4,43 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 
+interface User {
+  email: string;
+  name?: string;
+}
+
 export default function HomePage() {
   const [scrollY, setScrollY] = useState(0);
+  const [user, setUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrollY(window.scrollY);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const res = await fetch('/api/auth/user');
+        const data = await res.json();
+        if (res.ok && data.user) {
+          setUser(data.user);
+        }
+      } catch {
+        // Not logged in
+      }
+    };
+    checkAuth();
+
+    const handleAuthChange = () => {
+      checkAuth();
+    };
+    window.addEventListener('auth-change', handleAuthChange);
+    return () => window.removeEventListener('auth-change', handleAuthChange);
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -143,34 +178,61 @@ export default function HomePage() {
         {/* CTA Section */}
         <div className="text-center mt-16 mb-16">
           <div className="bg-white rounded-lg shadow-lg p-8 max-w-2xl mx-auto">
-            <h3 className="text-2xl font-bold text-gray-900 mb-4">
-              Rejoignez-nous !
-            </h3>
-            <p className="text-gray-600 mb-6">
-              Membre FFVL ? Inscrivez-vous pour accéder au calendrier de présence et organiser vos sessions.
-            </p>
-            <div className="flex flex-wrap gap-4 justify-center">
-              <Link 
-                href="/inscription" 
-                className="bg-indigo-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-indigo-700 transition-colors text-center flex-1 min-w-[140px] max-w-[200px]"
-              >
-                S'inscrire
-              </Link>
+            {user ? (
+              <>
+                <h3 className="text-2xl font-bold text-gray-900 mb-4">
+                  Bon retour, {user.name || 'membre'} !
+                </h3>
+                <p className="text-gray-600 mb-6">
+                  Gérez votre compte et consultez le calendrier des sessions.
+                </p>
+                <div className="flex flex-wrap gap-4 justify-center">
                   <Link 
                     href="/compte" 
-                    className="bg-gray-800 text-white px-6 py-3 rounded-lg font-semibold hover:bg-gray-900 transition-colors text-center flex-1 min-w-[140px] max-w-[200px]"
+                    className="bg-indigo-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-indigo-700 transition-colors text-center flex-1 min-w-[140px] max-w-[200px]"
                   >
                     Mon compte
                   </Link>
-              <a 
-                href="https://intranet.ffvl.fr/ffvl_licenceonline/pre_rempli/NEW/1431" 
-                target="_blank"
-                rel="noopener noreferrer"
-                className="bg-green-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors text-center w-full"
-              >
-                Prendre sa licence FFVL
-              </a>
-            </div>
+                  <Link 
+                    href="/evenements" 
+                    className="bg-gray-800 text-white px-6 py-3 rounded-lg font-semibold hover:bg-gray-900 transition-colors text-center flex-1 min-w-[140px] max-w-[200px]"
+                  >
+                    Calendrier
+                  </Link>
+                </div>
+              </>
+            ) : (
+              <>
+                <h3 className="text-2xl font-bold text-gray-900 mb-4">
+                  Rejoignez-nous !
+                </h3>
+                <p className="text-gray-600 mb-6">
+                  Membre FFVL ? Inscrivez-vous pour accéder au calendrier de présence et organiser vos sessions.
+                </p>
+                <div className="flex flex-wrap gap-4 justify-center">
+                  <Link 
+                    href="/inscription" 
+                    className="bg-indigo-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-indigo-700 transition-colors text-center flex-1 min-w-[140px] max-w-[200px]"
+                  >
+                    S'inscrire
+                  </Link>
+                  <Link 
+                    href="/connexion" 
+                    className="bg-gray-200 text-gray-900 px-6 py-3 rounded-lg font-semibold hover:bg-gray-300 transition-colors text-center flex-1 min-w-[140px] max-w-[200px]"
+                  >
+                    Se connecter
+                  </Link>
+                  <a 
+                    href="https://intranet.ffvl.fr/ffvl_licenceonline/pre_rempli/NEW/1431" 
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="bg-green-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors text-center w-full"
+                  >
+                    Prendre sa licence FFVL
+                  </a>
+                </div>
+              </>
+            )}
           </div>
         </div>
         </div>
