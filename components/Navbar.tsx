@@ -2,10 +2,38 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+
+interface User {
+  id: string;
+  email: string;
+  prenom: string;
+  nom: string;
+}
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
+  const [user, setUser] = useState<User | null>(null);
+  const router = useRouter();
+
+  useEffect(() => {
+    const userData = localStorage.getItem('user');
+    if (userData) {
+      try {
+        setUser(JSON.parse(userData));
+      } catch {
+        // Invalid data
+      }
+    }
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem('user');
+    setUser(null);
+    router.push('/');
+    setIsOpen(false);
+  };
   return (
     <>
       <nav className="bg-orange-500 shadow-lg fixed top-0 left-0 right-0 z-50">
@@ -43,18 +71,37 @@ export default function Navbar() {
                 Location
               </Link>
               <div className="flex items-center space-x-2 ml-4">
-                <Link 
-                  href="/inscription" 
-                  className="bg-white text-orange-600 px-4 py-2 rounded-lg font-semibold hover:bg-yellow-100 transition-colors"
-                >
-                  S'inscrire
-                </Link>
-                <Link 
-                  href="/connexion" 
-                  className="text-white hover:text-yellow-200 transition-colors font-medium"
-                >
-                  Se connecter
-                </Link>
+                {user ? (
+                  <>
+                    <Link 
+                      href="/compte" 
+                      className="text-white hover:text-yellow-200 transition-colors font-medium"
+                    >
+                      Mon compte
+                    </Link>
+                    <button 
+                      onClick={handleLogout}
+                      className="text-white hover:text-yellow-200 transition-colors font-medium"
+                    >
+                      Déconnexion
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <Link 
+                      href="/inscription" 
+                      className="bg-white text-orange-600 px-4 py-2 rounded-lg font-semibold hover:bg-yellow-100 transition-colors"
+                    >
+                      S'inscrire
+                    </Link>
+                    <Link 
+                      href="/connexion" 
+                      className="text-white hover:text-yellow-200 transition-colors font-medium"
+                    >
+                      Se connecter
+                    </Link>
+                  </>
+                )}
               </div>
             </div>
 
@@ -127,20 +174,40 @@ export default function Navbar() {
           >
             Location
           </Link>
-          <Link 
-            href="/inscription" 
-            className="block text-white hover:text-yellow-200 transition-colors font-medium py-3 border-b border-white/20"
-            onClick={() => setIsOpen(false)}
-          >
-            S'inscrire
-          </Link>
-          <Link 
-            href="/connexion" 
-            className="block text-white hover:text-yellow-200 transition-colors font-medium py-3"
-            onClick={() => setIsOpen(false)}
-          >
-            Se connecter
-          </Link>
+          {user ? (
+            <>
+              <Link 
+                href="/compte" 
+                className="block text-white hover:text-yellow-200 transition-colors font-medium py-3 border-b border-white/20"
+                onClick={() => setIsOpen(false)}
+              >
+                Mon compte
+              </Link>
+              <button 
+                onClick={handleLogout}
+                className="block text-white hover:text-yellow-200 transition-colors font-medium py-3"
+              >
+                Se déconnecter
+              </button>
+            </>
+          ) : (
+            <>
+              <Link 
+                href="/inscription" 
+                className="block text-white hover:text-yellow-200 transition-colors font-medium py-3 border-b border-white/20"
+                onClick={() => setIsOpen(false)}
+              >
+                S'inscrire
+              </Link>
+              <Link 
+                href="/connexion" 
+                className="block text-white hover:text-yellow-200 transition-colors font-medium py-3"
+                onClick={() => setIsOpen(false)}
+              >
+                Se connecter
+              </Link>
+            </>
+          )}
         </div>
       </div>
     </>
