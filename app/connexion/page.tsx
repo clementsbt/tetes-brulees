@@ -56,7 +56,7 @@ function ConnexionForm() {
       
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
-          <label className="block text-sm font-medium text-gray-300 mb-2">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
             Email
           </label>
           <input
@@ -64,13 +64,13 @@ function ConnexionForm() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            className="w-full px-4 py-3 border border-gray-600 bg-gray-800 text-white rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent placeholder-gray-500"
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
             placeholder="votre@email.com"
           />
         </div>
         
         <div>
-          <label className="block text-sm font-medium text-gray-300 mb-2">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
             Mot de passe
           </label>
           <input
@@ -78,13 +78,13 @@ function ConnexionForm() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
-            className="w-full px-4 py-3 border border-gray-600 bg-gray-800 text-white rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent placeholder-gray-500"
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
             placeholder="••••••••"
           />
         </div>
 
         {error && (
-          <p className="text-red-400 text-sm">{error}</p>
+          <p className="text-red-600 text-sm">{error}</p>
         )}
 
         <button
@@ -96,9 +96,9 @@ function ConnexionForm() {
         </button>
       </form>
 
-      <p className="text-center text-gray-400 text-sm mt-6">
+      <p className="text-center text-gray-600 text-sm mt-6">
         Pas encore de compte ?{' '}
-        <Link href="/inscription" className="text-indigo-400 hover:underline">
+        <Link href="/inscription" className="text-indigo-600 hover:underline">
           S'inscrire
         </Link>
       </p>
@@ -108,16 +108,16 @@ function ConnexionForm() {
 
 export default function ConnexionPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
       <div className="container mx-auto px-4 py-16">
         <BackButton />
         
         <div className="max-w-md mx-auto">
-          <h1 className="text-4xl font-bold text-white mb-8 text-center">
+          <h1 className="text-4xl font-bold text-gray-900 mb-8 text-center">
             Connexion
           </h1>
           
-          <div className="bg-gray-900 rounded-lg shadow-lg p-8 border border-gray-700">
+          <div className="bg-white rounded-lg shadow-lg p-8">
             <Suspense fallback={<p className="text-center">Chargement...</p>}>
               <ConnexionForm />
             </Suspense>
