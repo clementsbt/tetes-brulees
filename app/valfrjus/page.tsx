@@ -60,8 +60,8 @@ export default function ValfrejusPage() {
         const previsionMatch = puntaBagnaHtml.match(/<img[^>]*calendrier_neige\.svg[^>]*>[\s\S]*?<span class="text">(\d+[\s]*cm)<\/span>[\s\S]*?<span class="text_italic">/);
         const prevision = previsionMatch ? previsionMatch[1].trim() : 'Non spécifié';
         
-        // Extract avalanche risk
-        const risqueMatch = puntaBagnaHtml.match(/<div class="avalanche_score"><span class="bold">(\d)<\/span>\/5<\/div>/);
+        // Extract avalanche risk - look for the risk in Punta Bagna section
+        const risqueMatch = html.match(/<div class="avalanche_score"><span class="bold">(\d)<\/span>\/5<\/div>[\s\S]*?<img class="avalanche_image" src="image\/avalanche_risk\/R(\d)\.svg"/);
         const risque = risqueMatch ? `${risqueMatch[1]}/5` : 'Non spécifié';
         
         setMeteo({
