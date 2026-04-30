@@ -161,6 +161,19 @@ export default function HomePage() {
             </div>
           </Link>
 
+          {/* Calendrier */}
+          <Link href="/calendrier" className="group">
+            <div className="bg-white rounded-lg shadow-lg p-8 hover:shadow-2xl transition-all transform hover:-translate-y-1">
+              <div className="text-5xl mb-4">📆</div>
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                Calendrier
+              </h2>
+              <p className="text-gray-600">
+                Dis quand tu viens à Valfréjus
+              </p>
+            </div>
+          </Link>
+
           {/* Location */}
           <Link href="/location" className="group">
             <div className="bg-white rounded-lg shadow-lg p-8 hover:shadow-2xl transition-all transform hover:-translate-y-1">
@@ -194,7 +207,7 @@ export default function HomePage() {
                     Mon compte
                   </Link>
                   <Link 
-                    href="/evenements" 
+                    href="/calendrier" 
                     className="bg-gray-800 text-white px-6 py-3 rounded-lg font-semibold hover:bg-gray-900 transition-colors text-center flex-1 min-w-[140px] max-w-[200px]"
                   >
                     Calendrier
