@@ -23,19 +23,19 @@ export default function ValfrejusPage() {
   });
 
   useEffect(() => {
-    fetch('https://bulletinv3.lumiplan.pro/bulletin.php?station=valfrejus&lang=fr&isSoir=false')
-      .then((res) => res.text())
-      .then((html) => {
+    fetch('/api/meteo')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.error) {
+          throw new Error(data.error);
+        }
+        
+        const html = data.html;
         // Parse the HTML content
         const parser = new DOMParser();
         const doc = parser.parseFromString(html, 'text/html');
         
-        // Extract bulletin text
-        const jourEl = doc.querySelector('.jour, .bulletin-jour, h2, h3');
-        const texteEl = doc.querySelector('.texte, .bulletin-texte, p');
-        
-        const jour = jourEl?.textContent || '';
-        const texte = texteEl?.textContent || doc.body.textContent || '';
+        const texte = doc.body.textContent || '';
         
         // Clean up the text
         const cleanedTexte = texte
@@ -45,7 +45,7 @@ export default function ValfrejusPage() {
           .trim();
         
         setMeteo({
-          bulletin: { jour, texte: cleanedTexte },
+          bulletin: { jour: '', texte: cleanedTexte },
           chargement: false,
           erreur: null,
         });
