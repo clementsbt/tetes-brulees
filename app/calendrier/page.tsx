@@ -246,33 +246,6 @@ export default function CalendrierPage() {
             </div>
           </div>
         </div>
-
-        {/* List */}
-        <div className="bg-white rounded-lg shadow-lg p-6">
-          <h2 className="text-xl font-bold text-gray-900 mb-4">
-            Prochains jours avec des présences
-          </h2>
-          {presences.length === 0 ? (
-            <p className="text-gray-500">Aucune présence prévue</p>
-          ) : (
-            <div className="space-y-3">
-              {presences
-                .filter(p => new Date(p.date) >= new Date())
-                .sort((a, b) => a.date.localeCompare(b.date))
-                .slice(0, 7)
-                .map((p) => (
-                  <div key={p.date} className="flex justify-between items-center border-b border-gray-100 pb-2">
-                    <span className="font-medium">
-                      {new Date(p.date).toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })}
-                    </span>
-                    <span className="text-gray-600">
-                      {p.users.map(u => u.name).join(', ') || 'Personne'}
-                    </span>
-                  </div>
-                ))}
-            </div>
-          )}
-        </div>
       </div>
     </div>
   );
