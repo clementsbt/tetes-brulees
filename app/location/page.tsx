@@ -81,7 +81,7 @@ export default function LocationPage() {
                     <p className="text-2xl font-bold text-orange-600">
                       {annonce.prixNuit}
                     </p>
-                    <p className="text-gray-500">/ nuit</p>
+                    <p className="text-gray-600">/ nuit</p>
                   </div>
                 </div>
 
@@ -89,21 +89,21 @@ export default function LocationPage() {
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
                   <div className="bg-orange-50 rounded-lg p-3 text-center">
                     <p className="font-semibold text-gray-800 text-sm">{annonce.capacidade}</p>
-                    <p className="text-xs text-gray-500">Capacité</p>
+                    <p className="text-xs text-gray-600">Capacité</p>
                   </div>
                   {annonce.superficie && (
                     <div className="bg-orange-50 rounded-lg p-3 text-center">
                       <p className="font-semibold text-gray-800 text-sm">{annonce.superficie}</p>
-                      <p className="text-xs text-gray-500">Surface</p>
+                      <p className="text-xs text-gray-600">Surface</p>
                     </div>
                   )}
                   <div className="bg-orange-50 rounded-lg p-3 text-center">
                     <p className="font-semibold text-gray-800 text-sm">{annonce.chambres} chambres</p>
-                    <p className="text-xs text-gray-500">Chambres</p>
+                    <p className="text-xs text-gray-600">Chambres</p>
                   </div>
                   <div className="bg-orange-50 rounded-lg p-3 text-center">
                     <p className="font-semibold text-gray-800 text-sm">dès {annonce.prixSemaine}</p>
-                    <p className="text-xs text-gray-500">/ semaine</p>
+                    <p className="text-xs text-gray-600">/ semaine</p>
                   </div>
                 </div>
 
@@ -125,19 +125,19 @@ export default function LocationPage() {
                 <div className="bg-gray-50 rounded-lg p-3 mb-4">
                   <div className="grid grid-cols-4 gap-2 text-xs">
                     <div>
-                      <p className="text-gray-500">Arrivée</p>
+                      <p className="text-gray-600">Arrivée</p>
                       <p className="font-medium">{annonce.arrivee}</p>
                     </div>
                     <div>
-                      <p className="text-gray-500">Départ</p>
+                      <p className="text-gray-600">Départ</p>
                       <p className="font-medium">{annonce.depart}</p>
                     </div>
                     <div>
-                      <p className="text-gray-500">Animaux</p>
+                      <p className="text-gray-600">Animaux</p>
                       <p className="font-medium">{annonce.animaux}</p>
                     </div>
                     <div>
-                      <p className="text-gray-500">Fumeur</p>
+                      <p className="text-gray-600">Fumeur</p>
                       <p className="font-medium">{annonce.fumeur}</p>
                     </div>
                   </div>
