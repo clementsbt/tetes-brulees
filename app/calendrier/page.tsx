@@ -164,7 +164,7 @@ export default function CalendrierPage() {
           📅 Calendrier de présence
         </h1>
         <p className="text-gray-600 mb-6">
-          Clique sur un jour pour indiquer si tu seras à Valfréjus
+          Clique sur les jours où tu seras présent à Valfréjus pour indiquer ta présence
         </p>
 
         {/* Calendar */}
