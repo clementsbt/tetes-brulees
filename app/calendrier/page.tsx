@@ -22,7 +22,10 @@ export default function CalendrierPage() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [presences, setPresences] = useState<Presence[]>([]);
-  const [currentMonth, setCurrentMonth] = useState(new Date());
+  const [currentMonth, setCurrentMonth] = useState(new Date(2026, 11, 1)); // December 2026
+
+  const MIN_MONTH = new Date(2026, 11, 1); // December 2026
+  const MAX_MONTH = new Date(2027, 3, 1); // April 2027
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -108,11 +111,17 @@ export default function CalendrierPage() {
   const dayNames = ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'];
 
   const prevMonth = () => {
-    setCurrentMonth(new Date(year, month - 1, 1));
+    const newMonth = new Date(year, month - 1, 1);
+    if (newMonth >= MIN_MONTH) {
+      setCurrentMonth(newMonth);
+    }
   };
 
   const nextMonth = () => {
-    setCurrentMonth(new Date(year, month + 1, 1));
+    const newMonth = new Date(year, month + 1, 1);
+    if (newMonth < MAX_MONTH) {
+      setCurrentMonth(newMonth);
+    }
   };
 
   const formatDate = (d: Date) => d.toISOString().split('T')[0];
