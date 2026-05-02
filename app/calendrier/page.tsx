@@ -25,7 +25,7 @@ export default function CalendrierPage() {
   const [currentMonth, setCurrentMonth] = useState(new Date(2026, 11, 1)); // December 2026
 
   const MIN_MONTH = new Date(2026, 11, 1); // December 2026
-  const MAX_MONTH = new Date(2027, 3, 1); // April 2027
+  const MAX_MONTH = new Date(2027, 4, 1); // May 2027 (to allow showing April)
 
   useEffect(() => {
     const checkAuth = async () => {
