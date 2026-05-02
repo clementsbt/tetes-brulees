@@ -194,7 +194,7 @@ export default function EvenementsPage() {
           {/* Day headers */}
           <div className="grid grid-cols-7 gap-1 mb-2">
             {dayNames.map((day) => (
-              <div key={day} className="text-center font-medium text-gray-500 text-sm py-2">
+              <div key={day} className="text-center font-medium text-gray-700 text-sm py-2">
                 {day}
               </div>
             ))}
@@ -233,7 +233,7 @@ export default function EvenementsPage() {
                       ))}
                     </div>
                   ) : (
-                    <div className="text-gray-400 truncate mt-auto text-xs">-</div>
+                    <div className="text-gray-600 truncate mt-auto text-xs">-</div>
                   )}
                 </button>
               );
@@ -249,7 +249,7 @@ export default function EvenementsPage() {
                 <h2 className="text-xl font-bold">
                   {new Date(selectedDate).toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })}
                 </h2>
-                <button onClick={() => setShowModal(false)} className="text-gray-500 hover:text-gray-700 text-2xl">
+                <button onClick={() => setShowModal(false)} className="text-gray-700 hover:text-gray-700 text-2xl">
                   ×
                 </button>
               </div>
@@ -264,7 +264,7 @@ export default function EvenementsPage() {
                         <div className="flex justify-between items-center">
                           <div>
                             <p className="font-medium">{e.nom}</p>
-                            <p className="text-sm text-gray-500">Par {e.createurNom}</p>
+                            <p className="text-sm text-gray-700">Par {e.createurNom}</p>
                           </div>
                           {e.participants.some(p => p.email === user.email) ? (
                             <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-medium">
@@ -279,7 +279,7 @@ export default function EvenementsPage() {
                             </button>
                           )}
                         </div>
-                        <p className="text-xs text-gray-500 mt-1">
+                        <p className="text-xs text-gray-700 mt-1">
                           {e.participants.length} participant{e.participants.length > 1 ? 's' : ''}: {e.participants.map(p => p.name).join(', ')}
                         </p>
                       </div>
