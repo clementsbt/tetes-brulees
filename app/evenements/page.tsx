@@ -21,10 +21,12 @@ export default function EvenementsPage() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [evenements, setEvenements] = useState<Evenement[]>([]);
-  const [showForm, setShowForm] = useState(false);
-  const [newNom, setNewNom] = useState('');
-  const [newDate, setNewDate] = useState('');
   const [currentMonth, setCurrentMonth] = useState(new Date());
+  
+  // Modal state
+  const [showModal, setShowModal] = useState(false);
+  const [selectedDate, setSelectedDate] = useState<string>('');
+  const [newNom, setNewNom] = useState('');
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -54,25 +56,31 @@ export default function EvenementsPage() {
     fetchEvenements();
   }, []);
 
-  const createEvenement = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newNom || !newDate) return;
+  const refreshEvenements = async () => {
+    const res = await fetch('/api/evenements');
+    const data = await res.json();
+    setEvenements(data);
+  };
+
+  const handleDayClick = (dateKey: string) => {
+    setSelectedDate(dateKey);
+    setNewNom('');
+    setShowModal(true);
+  };
+
+  const createEvenement = async () => {
+    if (!newNom || !selectedDate) return;
 
     try {
       const res = await fetch('/api/evenements', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ nom: newNom, date: newDate }),
+        body: JSON.stringify({ nom: newNom, date: selectedDate }),
       });
 
       if (res.ok) {
-        setNewNom('');
-        setNewDate('');
-        setShowForm(false);
-        // Refresh events
-        const res2 = await fetch('/api/evenements');
-        const data2 = await res2.json();
-        setEvenements(data2);
+        setShowModal(false);
+        refreshEvenements();
       }
     } catch {
       // Ignore
@@ -90,17 +98,14 @@ export default function EvenementsPage() {
       });
 
       if (res.ok) {
-        // Refresh events
-        const res2 = await fetch('/api/evenements');
-        const data2 = await res2.json();
-        setEvenements(data2);
+        refreshEvenements();
       }
     } catch {
       // Ignore
     }
   };
 
-  // Generate calendar days for current month
+  // Generate calendar days
   const year = currentMonth.getFullYear();
   const month = currentMonth.getMonth();
   const firstDay = new Date(year, month, 1);
@@ -123,13 +128,8 @@ export default function EvenementsPage() {
 
   const dayNames = ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'];
 
-  const prevMonth = () => {
-    setCurrentMonth(new Date(year, month - 1, 1));
-  };
-
-  const nextMonth = () => {
-    setCurrentMonth(new Date(year, month + 1, 1));
-  };
+  const prevMonth = () => setCurrentMonth(new Date(year, month - 1, 1));
+  const nextMonth = () => setCurrentMonth(new Date(year, month + 1, 1));
 
   const formatDate = (d: Date) => d.toISOString().split('T')[0];
 
@@ -154,10 +154,7 @@ export default function EvenementsPage() {
             <p className="text-gray-600 mb-4">
               Connecte-toi pour voir et créer des événements !
             </p>
-            <a 
-              href="/connexion" 
-              className="inline-block bg-indigo-600 text-white px-6 py-3 rounded-lg font-semibold"
-            >
+            <a href="/connexion" className="inline-block bg-indigo-600 text-white px-6 py-3 rounded-lg font-semibold">
               Se connecter
             </a>
           </div>
@@ -165,6 +162,8 @@ export default function EvenementsPage() {
       </div>
     );
   }
+
+  const dayEvenements = selectedDate ? getEvenementsForDate(selectedDate) : [];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
@@ -175,74 +174,19 @@ export default function EvenementsPage() {
           🎉 Événements
         </h1>
         <p className="text-gray-600 mb-6">
-          Crée un événement ou rejoins ceux de ce mois
+          Clique sur un jour pour créer ou rejoindre un événement
         </p>
 
-        {/* Create Event Button */}
-        <button
-          onClick={() => setShowForm(!showForm)}
-          className="bg-indigo-600 text-white px-6 py-3 rounded-lg font-semibold mb-6 hover:bg-indigo-700 transition-all"
-        >
-          {showForm ? '✕ Annuler' : '+ Créer un événement'}
-        </button>
-
-        {/* Create Event Form */}
-        {showForm && (
-          <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
-            <h2 className="text-xl font-bold mb-4">Nouvel événement</h2>
-            <form onSubmit={createEvenement} className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Nom de l'événement
-                </label>
-                <input
-                  type="text"
-                  value={newNom}
-                  onChange={(e) => setNewNom(e.target.value)}
-                  placeholder="ex: Session skate, barbecue..."
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Date
-                </label>
-                <input
-                  type="date"
-                  value={newDate}
-                  onChange={(e) => setNewDate(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                  required
-                />
-              </div>
-              <button
-                type="submit"
-                className="bg-green-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-green-700 transition-all"
-              >
-                Créer
-              </button>
-            </form>
-          </div>
-        )}
-
-        {/* Calendar */}
         <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
           {/* Month Navigation */}
           <div className="flex justify-between items-center mb-4">
-            <button 
-              onClick={prevMonth}
-              className="text-gray-600 hover:text-gray-900"
-            >
+            <button onClick={prevMonth} className="text-gray-600 hover:text-gray-900">
               ← Précédent
             </button>
             <h2 className="text-xl font-bold">
               {monthNames[month]} {year}
             </h2>
-            <button 
-              onClick={nextMonth}
-              className="text-gray-600 hover:text-gray-900"
-            >
+            <button onClick={nextMonth} className="text-gray-600 hover:text-gray-900">
               Suivant →
             </button>
           </div>
@@ -259,83 +203,112 @@ export default function EvenementsPage() {
           {/* Calendar grid */}
           <div className="grid grid-cols-7 gap-1">
             {days.map((day, idx) => {
-              if (!day) {
-                return <div key={`empty-${idx}`} className="h-24"></div>;
-              }
+              if (!day) return <div key={`empty-${idx}`} className="h-24"></div>;
 
               const dateKey = formatDate(day);
-              const dayEvenements = getEvenementsForDate(dateKey);
+              const dayEvts = getEvenementsForDate(dateKey);
               const isToday = day.toDateString() === new Date().toDateString();
               const isPast = day < new Date() && !isToday;
 
               return (
-                <div
+                <button
                   key={dateKey}
+                  onClick={() => !isPast && handleDayClick(dateKey)}
+                  disabled={isPast}
                   className={`
                     h-28 p-2 rounded text-left flex flex-col text-xs overflow-hidden
-                    ${isPast ? 'opacity-40 bg-gray-50' : 'bg-white border border-gray-200'}
+                    ${isPast ? 'opacity-40 bg-gray-50 cursor-not-allowed' : 'bg-white border border-gray-200 hover:bg-indigo-50 cursor-pointer'}
                     ${isToday ? 'ring-2 ring-indigo-500' : ''}
                   `}
                 >
                   <div className={`font-medium ${isToday ? 'text-indigo-600' : 'text-gray-900'}`}>
                     {day.getDate()}
                   </div>
-                  {dayEvenements.length > 0 ? (
+                  {dayEvts.length > 0 ? (
                     <div className="mt-auto space-y-1">
-                      {dayEvenements.map((e) => (
+                      {dayEvts.map((e) => (
                         <div key={e.id} className="bg-indigo-100 text-indigo-700 p-1 rounded truncate text-xs">
                           {e.nom}
                         </div>
                       ))}
                     </div>
                   ) : (
-                    <div className="text-gray-400 truncate mt-auto text-xs">
-                      -
-                    </div>
+                    <div className="text-gray-400 truncate mt-auto text-xs">-</div>
                   )}
-                </div>
+                </button>
               );
             })}
           </div>
         </div>
 
-        {/* Events List */}
-        <div className="bg-white rounded-lg shadow-lg p-6">
-          <h2 className="text-xl font-bold mb-4">Événements du mois</h2>
-          {evenements.length === 0 ? (
-            <p className="text-gray-500">Aucun événement ce mois-ci</p>
-          ) : (
-            <div className="space-y-4">
-              {evenements.map((e) => (
-                <div key={e.id} className="border border-gray-200 rounded-lg p-4">
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <h3 className="font-bold text-lg">{e.nom}</h3>
-                      <p className="text-gray-600">{new Date(e.date).toLocaleDateString('fr-FR')}</p>
-                      <p className="text-sm text-gray-500">Par {e.createurNom}</p>
-                    </div>
-                    {e.participants.some(p => p.email === user.email) ? (
-                      <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-medium">
-                        ✓ Inscrit
-                      </span>
-                    ) : (
-                      <button
-                        onClick={() => joinEvenement(e.id)}
-                        className="bg-indigo-600 text-white px-4 py-1 rounded-full text-sm font-medium hover:bg-indigo-700"
-                      >
-                        Rejoindre
-                      </button>
-                    )}
-                  </div>
-                  <div className="mt-2 text-sm text-gray-600">
-                    {e.participants.length} participant{e.participants.length > 1 ? 's' : ''}: {' '}
-                    {e.participants.map(p => p.name).join(', ')}
+        {/* Modal */}
+        {showModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white rounded-lg shadow-xl p-6 max-w-md w-full mx-4">
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-xl font-bold">
+                  {new Date(selectedDate).toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })}
+                </h2>
+                <button onClick={() => setShowModal(false)} className="text-gray-500 hover:text-gray-700 text-2xl">
+                  ×
+                </button>
+              </div>
+
+              {/* Existing events */}
+              {dayEvenements.length > 0 && (
+                <div className="mb-4">
+                  <h3 className="font-semibold text-gray-700 mb-2">Événements existants</h3>
+                  <div className="space-y-2">
+                    {dayEvenements.map((e) => (
+                      <div key={e.id} className="border border-gray-200 rounded-lg p-3">
+                        <div className="flex justify-between items-center">
+                          <div>
+                            <p className="font-medium">{e.nom}</p>
+                            <p className="text-sm text-gray-500">Par {e.createurNom}</p>
+                          </div>
+                          {e.participants.some(p => p.email === user.email) ? (
+                            <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-medium">
+                              ✓ Inscrit
+                            </span>
+                          ) : (
+                            <button
+                              onClick={() => joinEvenement(e.id)}
+                              className="bg-indigo-600 text-white px-4 py-1 rounded-full text-sm font-medium hover:bg-indigo-700"
+                            >
+                              Rejoindre
+                            </button>
+                          )}
+                        </div>
+                        <p className="text-xs text-gray-500 mt-1">
+                          {e.participants.length} participant{e.participants.length > 1 ? 's' : ''}: {e.participants.map(p => p.name).join(', ')}
+                        </p>
+                      </div>
+                    ))}
                   </div>
                 </div>
-              ))}
+              )}
+
+              {/* Create new event */}
+              <div>
+                <h3 className="font-semibold text-gray-700 mb-2">Créer un nouvel événement</h3>
+                <input
+                  type="text"
+                  value={newNom}
+                  onChange={(e) => setNewNom(e.target.value)}
+                  placeholder="Nom de l'événement (ex: Session skate)"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 mb-2"
+                />
+                <button
+                  onClick={createEvenement}
+                  disabled={!newNom}
+                  className="w-full bg-green-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Créer l'événement
+                </button>
+              </div>
             </div>
-          )}
-        </div>
+          </div>
+        )}
       </div>
     </div>
   );
