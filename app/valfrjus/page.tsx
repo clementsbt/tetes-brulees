@@ -174,6 +174,26 @@ export default function ValfrejusPage() {
           Source: Lumiplan
         </p>
         
+        {/* Webcam */}
+        <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
+          <h2 className="text-xl font-bold text-gray-900 mb-4">📹 Webcam Punta Bagna</h2>
+          <iframe
+            src="https://www.skaping.com/valfrejus/puntabagna"
+            className="w-full h-[400px] rounded-lg"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+          />
+          <p className="text-xs text-gray-500 mt-2">
+            <a 
+              href="https://www.skaping.com/valfrejus/puntabagna" 
+              target="_blank"
+              className="text-indigo-600 hover:underline"
+            >
+              Voir en direct sur Skaping
+            </a>
+          </p>
+        </div>
+        
         {/* Spot Info */}
         <div className="bg-white rounded-lg shadow-lg p-8 space-y-6">
           <div>
