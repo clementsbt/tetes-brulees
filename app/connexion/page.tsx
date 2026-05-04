@@ -36,7 +36,7 @@ function ConnexionForm() {
 
       // User is stored in httpOnly cookie now
       window.dispatchEvent(new Event('auth-change'));
-      router.push('/membres');
+      router.push('/compte');
     } catch {
       setError('Erreur de connexion');
     } finally {
