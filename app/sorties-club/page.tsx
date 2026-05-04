@@ -171,7 +171,7 @@ export default function EvenementsPage() {
         <BackButton />
         
         <h1 className="text-4xl font-bold text-gray-900 mb-2">
-          🎉 Sorties Club
+          🪂 Sorties Club
         </h1>
         <p className="text-gray-600 mb-6">
           Clique sur un jour pour créer ou rejoindre un événement

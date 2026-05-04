@@ -151,7 +151,7 @@ export default function HomePage() {
           {/* Sorties Club */}
           <Link href="/sorties-club" className="group">
             <div className="bg-white/70 rounded-lg shadow-lg p-8 hover:shadow-2xl transition-all transform hover:-translate-y-1">
-              <div className="text-5xl mb-4">📅</div>
+              <div className="text-5xl mb-4">🪂</div>
               <h2 className="text-2xl font-bold text-gray-900 mb-2">
                 Sorties Club
               </h2>
