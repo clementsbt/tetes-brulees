@@ -207,10 +207,79 @@ export default function ValfrejusPage() {
               Idéal pour le speedriding avec de nombreuses pistes adaptées et des décollages variés.
             </p>
           </div>
-          
-          <p className="text-gray-500 text-sm mt-8">
-            Plus d'informations détaillées à venir !
-          </p>
+
+          {/* Description détaillée */}
+          <div className="border-t border-gray-200 pt-6 mt-6">
+            <h3 className="text-xl font-semibold text-gray-900 mb-4">Description détaillée</h3>
+            
+            <div className="space-y-4 text-gray-600">
+              <div>
+                <h4 className="font-semibold text-gray-800">Assurances :</h4>
+                <ul className="list-disc list-inside ml-4">
+                  <li>RCA obligatoire</li>
+                  <li>Assurance individuelle obligatoire</li>
+                </ul>
+              </div>
+              
+              <div>
+                <h4 className="font-semibold text-gray-800">Port du casque obligatoire.</h4>
+              </div>
+              
+              <div>
+                <h4 className="font-semibold text-gray-800">Niveau de pratique :</h4>
+                <ul className="list-disc list-inside ml-4">
+                  <li>Les pilotes débutants (moins de 100 vols, brevet initial) doivent être encadrés par un moniteur.</li>
+                  <li>Entre 100 et 500 vols (niveau brevet confirmé), la pratique peut être autonome mais sous le contrôle d'un moniteur directeur des vols.</li>
+                </ul>
+              </div>
+              
+              <div>
+                <h4 className="font-semibold text-gray-800">Zone de pratique :</h4>
+                <ul className="list-disc list-inside ml-4">
+                  <li>La pratique du speed riding est tolérée uniquement sur le domaine hors piste.</li>
+                  <li>L'aire de décollage officielle est la piste aménagée sous le sommet du Punta Bagna. Il est possible de se positionner sur toute la longueur afin d'accéder aux différents plans de vol.</li>
+                  <li>Tout autre lieu de décollage doit faire l'objet d'une autorisation spécifique à solliciter auprès de la direction des vols.</li>
+                  <li>Toute pratique (décollage, ski sous voile, atterrissage ou gonflage...) doit se faire impérativement en dehors des pistes balisées.</li>
+                  <li>Survol des pistes à 50 m : le pilote doit pouvoir à tout moment se poser hors piste.</li>
+                </ul>
+              </div>
+              
+              <div>
+                <h4 className="font-semibold text-gray-800">Obstacles :</h4>
+                <ul className="list-disc list-inside ml-4">
+                  <li>En vol, distance minimum de 50m horizontal et 50m vertical.</li>
+                  <li>A ski sous voile, distance minimum de 20m. Passage sous obstacle interdit.</li>
+                </ul>
+              </div>
+              
+              <div>
+                <h4 className="font-semibold text-gray-800">Utilisation des remontées mécaniques :</h4>
+                <ul className="list-disc list-inside ml-4">
+                  <li>Seuls les élèves en stage accompagnés d'un moniteur sont autorisés à emprunter les couloirs réservés aux écoles de ski.</li>
+                  <li>La voile doit être soigneusement rangée afin d'éviter tout désagrément dans la queue et pour l'embarquement dans les cabines (sac de contention demandé).</li>
+                  <li>Il est vivement conseillé de se regrouper (4 personnes minimum) pour remplir une cabine.</li>
+                </ul>
+              </div>
+              
+              <div>
+                <h4 className="font-semibold text-gray-800">Règles de vol à vue :</h4>
+                <ul className="list-disc list-inside ml-4">
+                  <li>Décollage interdit après l'heure légale du coucher du soleil.</li>
+                  <li>Visibilité minimale de 1,5km. Rester hors des nuages.</li>
+                </ul>
+              </div>
+              
+              <div>
+                <h4 className="font-semibold text-gray-800">Règles de priorité :</h4>
+                <ul className="list-disc list-inside ml-4">
+                  <li>skieurs</li>
+                  <li>pilote aval</li>
+                  <li>à droite.</li>
+                  <li>Dépassement par la droite. Le pilote dépassé a la priorité.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
