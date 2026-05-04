@@ -8,6 +8,7 @@ import BackButton from '@/components/BackButton';
 interface User {
   email: string;
   name?: string;
+  ffvlLicense?: string | null;
 }
 
 export default function ComptePage() {
