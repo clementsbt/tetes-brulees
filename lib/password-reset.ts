@@ -5,6 +5,8 @@ import { hashPassword } from './auth';
 
 const RESET_TOKEN_EXPIRY = 60 * 60 * 1000; // 1 hour
 
+console.log('[DEBUG] requestPasswordReset started', process.env.RESEND_API_KEY?.slice(0, 10), process.env.FROM_EMAIL);
+
 export async function requestPasswordReset(email: string, baseUrl: string) {
   const db = await prisma();
   
