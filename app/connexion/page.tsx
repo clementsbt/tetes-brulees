@@ -96,6 +96,12 @@ function ConnexionForm() {
         </button>
       </form>
 
+      <div className="text-center mt-4">
+        <Link href="/mot-de-passe-oublie" className="text-sm text-indigo-600 hover:underline">
+          Mot de passe oublié ?
+        </Link>
+      </div>
+
       <p className="text-center text-gray-600 text-sm mt-6">
         Pas encore de compte ?{' '}
         <Link href="/inscription" className="text-indigo-600 hover:underline">

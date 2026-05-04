@@ -35,12 +35,16 @@ model Session {
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
-model VerificationToken {
-  identifier String
-  token      String   @unique
+model PasswordResetToken {
+  id        String   @id @default(cuid())
+  userId    String
+  token     String   @unique
   expires    DateTime
+  used      Boolean  @default(false)
+  createdAt DateTime  @default(now())
 
-  @@unique([identifier, token])
+  @@index([token])
+  @@map("password_reset_tokens")
 }
 
 // ============ App Models ============
