@@ -96,6 +96,12 @@ export default function ComptePage() {
                 <span className="text-gray-600">Email</span>
                 <span className="text-gray-900 font-medium">{user.email}</span>
               </div>
+              {user.ffvlLicense && (
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Licence FFVL</span>
+                  <span className="text-gray-900 font-medium">{user.ffvlLicense}</span>
+                </div>
+              )}
             </div>
           </div>
 
