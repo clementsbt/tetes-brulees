@@ -148,12 +148,12 @@ export default function HomePage() {
             </div>
           </Link>
 
-          {/* Événements */}
-          <Link href="/evenements" className="group">
+          {/* Sorties Club */}
+          <Link href="/sorties-club" className="group">
             <div className="bg-white/70 rounded-lg shadow-lg p-8 hover:shadow-2xl transition-all transform hover:-translate-y-1">
               <div className="text-5xl mb-4">📅</div>
               <h2 className="text-2xl font-bold text-gray-900 mb-2">
-                Événements
+                Sorties Club
               </h2>
               <p className="text-gray-600">
                 Sessions et sorties du club
