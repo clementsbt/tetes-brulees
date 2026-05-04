@@ -89,12 +89,6 @@ export default function ComptePage() {
                   </p>
                 </div>
               </div>
-              <Link 
-                href="/membres" 
-                className="text-indigo-600 hover:underline text-sm"
-              >
-                Voir le profil public →
-              </Link>
             </div>
 
             <div className="border-t border-gray-200 pt-6 space-y-4">
