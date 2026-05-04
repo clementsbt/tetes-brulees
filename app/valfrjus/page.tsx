@@ -19,6 +19,7 @@ interface MeteoData {
 }
 
 export default function ValfrejusPage() {
+  const [user, setUser] = useState<{ email: string } | null>(null);
   const [meteo, setMeteo] = useState<MeteoData>({
     vent: '',
     direction: '',
@@ -32,6 +33,15 @@ export default function ValfrejusPage() {
   });
 
   useEffect(() => {
+    // Check auth
+    fetch('/api/auth/user')
+      .then(res => res.json())
+      .then(data => {
+        if (data.user) setUser(data.user);
+      })
+      .catch(() => {});
+  
+    // Fetch meteo
     fetch('/api/meteo')
       .then((res) => res.json())
       .then((data) => {
@@ -123,51 +133,65 @@ export default function ValfrejusPage() {
           )}
         </h1>
         
-        {/* Meteo Cards */}
-        <div className="grid md:grid-cols-3 gap-4 mb-6">
-          {/* Vent */}
-          <div className="bg-white rounded-lg shadow-lg p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">
-              💨 Vent
-            </h3>
-            {meteo.chargement ? (
-              <p className="text-gray-500">Chargement...</p>
-            ) : (
-              <p className="text-gray-700">
-                {meteo.vent} {meteo.direction && `(${meteo.direction})`}
-              </p>
-            )}
+        {/* Meteo Cards - Only for connected users */}
+        {user ? (
+          <div className="grid md:grid-cols-3 gap-4 mb-6">
+            {/* Vent */}
+            <div className="bg-white rounded-lg shadow-lg p-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                💨 Vent
+              </h3>
+              {meteo.chargement ? (
+                <p className="text-gray-500">Chargement...</p>
+              ) : (
+                <p className="text-gray-700">
+                  {meteo.vent} {meteo.direction && `(${meteo.direction})`}
+                </p>
+              )}
+            </div>
+            
+            {/* Neige */}
+            <div className="bg-white rounded-lg shadow-lg p-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                ❄️ Neige
+              </h3>
+              {meteo.chargement ? (
+                <p className="text-gray-500">Chargement...</p>
+              ) : (
+                <p className="text-gray-700">{meteo.neige}</p>
+              )}
+            </div>
+            
+            {/* Risque avalanche */}
+            <div className="bg-white rounded-lg shadow-lg p-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                ⚠️ Risque Avalanche
+              </h3>
+              {meteo.chargement ? (
+                <p className="text-gray-500">Chargement...</p>
+              ) : (
+                <p className={`text-2xl font-bold ${
+                  parseInt(meteo.risque) >= 4 ? 'text-red-600' :
+                  parseInt(meteo.risque) >= 2 ? 'text-orange-500' : 'text-green-500'
+                }`}>
+                  {meteo.risque}
+                </p>
+              )}
+            </div>
           </div>
-          
-          {/* Neige */}
-          <div className="bg-white rounded-lg shadow-lg p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">
-              ❄️ Neige
-            </h3>
-            {meteo.chargement ? (
-              <p className="text-gray-500">Chargement...</p>
-            ) : (
-              <p className="text-gray-700">{meteo.neige}</p>
-            )}
+        ) : (
+          <div className="bg-white rounded-lg shadow-lg p-6 mb-6 text-center">
+            <p className="text-gray-600 mb-4">
+              Connecte-toi pour voir les données météo !
+            </p>
+            <Link 
+              href="/connexion" 
+              className="inline-block bg-indigo-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-indigo-700"
+            >
+              Se connecter
+            </Link>
           </div>
-          
-          {/* Risque avalanche */}
-          <div className="bg-white rounded-lg shadow-lg p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">
-              ⚠️ Risque Avalanche
-            </h3>
-            {meteo.chargement ? (
-              <p className="text-gray-500">Chargement...</p>
-            ) : (
-              <p className={`text-2xl font-bold ${
-                parseInt(meteo.risque) >= 4 ? 'text-red-600' :
-                parseInt(meteo.risque) >= 2 ? 'text-orange-500' : 'text-green-500'
-              }`}>
-                {meteo.risque}
-              </p>
-            )}
-          </div>
-        </div>
+        )}
         
         {/* Source */}
         <p className="text-xs text-gray-400 mb-6">
