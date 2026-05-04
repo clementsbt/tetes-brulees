@@ -4,7 +4,9 @@ const resend = process.env.RESEND_API_KEY
   ? new Resend(process.env.RESEND_API_KEY)
   : null;
 
-const FROM_EMAIL = process.env.FROM_EMAIL || 'noreply@tetes-brulees.fr';
+const FROM_EMAIL = process.env.FROM_EMAIL || 'onboarding@resend.dev';
+
+console.log('[EMAIL] INIT:', { hasResend: !!resend, from: FROM_EMAIL, hasKey: !!process.env.RESEND_API_KEY });
 
 export async function sendPasswordResetEmail(email: string, resetUrl: string) {
   if (!resend) {
