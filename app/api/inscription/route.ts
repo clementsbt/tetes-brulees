@@ -1,35 +1,43 @@
 import { NextResponse } from 'next/server';
 import { isLicenseValid } from '@/lib/licenses';
-import { createUser } from '@/lib/users';
+import { registerUser } from '@/lib/auth';
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { email, licenseNumber, password } = body;
+    const { email, licenseNumber, password, name } = body;
 
-    if (!email || !licenseNumber || !password) {
+    if (!email || !password) {
       return NextResponse.json(
-        { error: 'Email, numéro de licence et mot de passe requis' },
+        { error: 'Email et mot de passe requis' },
         { status: 400 }
       );
     }
 
-    if (!isLicenseValid(licenseNumber)) {
+    // License validation (optional but recommended)
+    if (licenseNumber && !isLicenseValid(licenseNumber)) {
       return NextResponse.json(
         { error: 'Numéro de licence invalide' },
         { status: 400 }
       );
     }
 
-    // Store with both plain and hashed for demo
-    createUser(email, password, licenseNumber);
-    
-    return NextResponse.json({ success: true, message: 'Compte créé' });
-  } catch (error) {
-    console.error('Inscription error:', error);
+    const user = await registerUser(
+      email.toLowerCase(),
+      password,
+      name || email.split('@')[0],
+      licenseNumber
+    );
+
+    return NextResponse.json({
+      success: true,
+      user: { id: user.id, email: user.email, name: user.name }
+    });
+  } catch (error: any) {
+    console.error('Registration error:', error);
     return NextResponse.json(
-      { error: 'Erreur lors de l\'inscription' },
-      { status: 500 }
+      { error: error.message || 'Erreur lors de l\'inscription' },
+      { status: 400 }
     );
   }
 }

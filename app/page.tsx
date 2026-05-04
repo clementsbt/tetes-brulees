@@ -124,7 +124,7 @@ export default function HomePage() {
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl mx-auto">
           {/* Membres */}
           <Link href="/membres" className="group">
-            <div className="bg-white rounded-lg shadow-lg p-8 hover:shadow-2xl transition-all transform hover:-translate-y-1">
+            <div className="bg-white/70 rounded-lg shadow-lg p-8 hover:shadow-2xl transition-all transform hover:-translate-y-1">
               <div className="text-5xl mb-4">👥</div>
               <h2 className="text-2xl font-bold text-gray-900 mb-2">
                 Nos Membres
@@ -137,7 +137,7 @@ export default function HomePage() {
 
           {/* Valfréjus */}
           <Link href="/valfrjus" className="group">
-            <div className="bg-white rounded-lg shadow-lg p-8 hover:shadow-2xl transition-all transform hover:-translate-y-1">
+            <div className="bg-white/70 rounded-lg shadow-lg p-8 hover:shadow-2xl transition-all transform hover:-translate-y-1">
               <div className="text-5xl mb-4">🏔️</div>
               <h2 className="text-2xl font-bold text-gray-900 mb-2">
                 Valfréjus
@@ -150,7 +150,7 @@ export default function HomePage() {
 
           {/* Événements */}
           <Link href="/evenements" className="group">
-            <div className="bg-white rounded-lg shadow-lg p-8 hover:shadow-2xl transition-all transform hover:-translate-y-1">
+            <div className="bg-white/70 rounded-lg shadow-lg p-8 hover:shadow-2xl transition-all transform hover:-translate-y-1">
               <div className="text-5xl mb-4">📅</div>
               <h2 className="text-2xl font-bold text-gray-900 mb-2">
                 Événements
@@ -163,7 +163,7 @@ export default function HomePage() {
 
           {/* Calendrier */}
           <Link href="/calendrier" className="group">
-            <div className="bg-white rounded-lg shadow-lg p-8 hover:shadow-2xl transition-all transform hover:-translate-y-1">
+            <div className="bg-white/70 rounded-lg shadow-lg p-8 hover:shadow-2xl transition-all transform hover:-translate-y-1">
               <div className="text-5xl mb-4">📆</div>
               <h2 className="text-2xl font-bold text-gray-900 mb-2">
                 Calendrier
@@ -176,7 +176,7 @@ export default function HomePage() {
 
           {/* Location */}
           <Link href="/location" className="group">
-            <div className="bg-white rounded-lg shadow-lg p-8 hover:shadow-2xl transition-all transform hover:-translate-y-1">
+            <div className="bg-white/70 rounded-lg shadow-lg p-8 hover:shadow-2xl transition-all transform hover:-translate-y-1">
               <div className="text-5xl mb-4">🏠</div>
               <h2 className="text-2xl font-bold text-gray-900 mb-2">
                 Location
@@ -190,7 +190,7 @@ export default function HomePage() {
 
         {/* CTA Section */}
         <div className="text-center mt-16 mb-16">
-          <div className="bg-white rounded-lg shadow-lg p-8 max-w-2xl mx-auto">
+          <div className="bg-white/70 rounded-lg shadow-lg p-8 max-w-2xl mx-auto">
             {user ? (
               <>
                 <h3 className="text-2xl font-bold text-gray-900 mb-4">

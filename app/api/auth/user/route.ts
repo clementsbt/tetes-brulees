@@ -1,10 +1,6 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
-import { jwtVerify } from 'jose';
-
-const JWT_SECRET = new TextEncoder().encode(
-  process.env.JWT_SECRET || 'tetes-brulees-secret-key-change-in-prod'
-);
+import { getUserFromToken } from '@/lib/auth';
 
 export async function GET() {
   const cookieStore = await cookies();
@@ -14,15 +10,11 @@ export async function GET() {
     return NextResponse.json({ user: null });
   }
 
-  try {
-    const { payload } = await jwtVerify(token, JWT_SECRET);
-    return NextResponse.json({
-      user: {
-        email: payload.email,
-        name: payload.name,
-      }
-    });
-  } catch {
+  const user = await getUserFromToken(token);
+
+  if (!user) {
     return NextResponse.json({ user: null });
   }
+
+  return NextResponse.json({ user });
 }
