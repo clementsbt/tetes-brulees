@@ -15,11 +15,14 @@ export async function POST(request: Request) {
     }
 
     // License validation (optional but recommended)
-    if (licenseNumber && !isLicenseValid(licenseNumber)) {
-      return NextResponse.json(
-        { error: 'Numéro de licence invalide' },
-        { status: 400 }
-      );
+    if (licenseNumber) {
+      const valid = await isLicenseValid(licenseNumber);
+      if (!valid) {
+        return NextResponse.json(
+          { error: 'Numéro de licence invalide' },
+          { status: 400 }
+        );
+      }
     }
 
     const user = await registerUser(

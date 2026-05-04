@@ -1,6 +1,13 @@
-// Hardcoded valid licenses for the Têtes Brûlées club
-const VALID_LICENSES = ['1234567A', '1234567B', '1234567C'];
+import { prisma } from './prisma';
 
-export function isLicenseValid(licenseNumber: string): boolean {
-  return VALID_LICENSES.includes(licenseNumber);
+export async function isLicenseValid(licenseNumber: string): Promise<boolean> {
+  if (!licenseNumber) return false;
+  
+  const db = await prisma();
+  const license = await db.usedLicense.findUnique({
+    where: { licenseNumber },
+  });
+  
+  // Valide si le code existe et n'est pas encore utilisé
+  return !!license && !license.usedById;
 }
