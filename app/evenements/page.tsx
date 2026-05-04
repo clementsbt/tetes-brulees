@@ -171,7 +171,7 @@ export default function EvenementsPage() {
         <BackButton />
         
         <h1 className="text-4xl font-bold text-gray-900 mb-2">
-          🎉 Événements
+          🎉 Sorties Club
         </h1>
         <p className="text-gray-600 mb-6">
           Clique sur un jour pour créer ou rejoindre un événement
@@ -257,7 +257,7 @@ export default function EvenementsPage() {
               {/* Existing events */}
               {dayEvenements.length > 0 && (
                 <div className="mb-4">
-                  <h3 className="font-semibold text-gray-700 mb-2">Événements existants</h3>
+                  <h3 className="font-semibold text-gray-700 mb-2">Sorties Club existants</h3>
                   <div className="space-y-2">
                     {dayEvenements.map((e) => (
                       <div key={e.id} className="border border-gray-200 rounded-lg p-3">
