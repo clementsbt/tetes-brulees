@@ -39,12 +39,15 @@ export default function EvenementsPage() {
         const data = await res.json();
         if (res.ok && data.user) {
           setUser(data.user);
-          // Fetch notify preference from cookie-based endpoint
+          // Fetch notify preference - try API first, fallback to localStorage
+          let notifyPref = localStorage.getItem('notifyOnNewEvent');
           const prefRes = await fetch('/api/auth/preferences');
           if (prefRes.ok) {
             const prefData = await prefRes.json();
-            setNotifyOnNewEvent(prefData.notifyOnNewEvent ?? false);
+            notifyPref = prefData.notifyOnNewEvent;
+            localStorage.setItem('notifyOnNewEvent', String(notifyPref));
           }
+          setNotifyOnNewEvent(notifyPref === 'true');
         }
       } catch {
         // Not logged in
@@ -206,6 +209,7 @@ export default function EvenementsPage() {
               onChange={async (e) => {
                 const checked = e.target.checked;
                 setNotifyOnNewEvent(checked);
+                localStorage.setItem('notifyOnNewEvent', String(checked));
                 setSavingNotify(true);
                 try {
                   const token = localStorage.getItem('authToken');
