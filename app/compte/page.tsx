@@ -9,15 +9,12 @@ interface User {
   email: string;
   name?: string;
   ffvlLicense?: string | null;
-  notifyOnNewEvent?: boolean;
 }
 
 export default function ComptePage() {
   const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  const [notifyOnNewEvent, setNotifyOnNewEvent] = useState(false);
-  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -31,7 +28,6 @@ export default function ComptePage() {
         }
         
         setUser(data.user);
-        setNotifyOnNewEvent(data.user.notifyOnNewEvent ?? false);
       } catch {
         router.push('/connexion');
       } finally {
@@ -108,40 +104,6 @@ export default function ComptePage() {
                 </div>
               )}
             </div>
-          </div>
-
-          {/* Notifications */}
-          <div className="bg-white rounded-lg shadow-lg p-8 mb-6">
-            <h3 className="text-xl font-bold text-gray-900 mb-4">Notifications</h3>
-            <label className="flex items-center space-x-3 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={notifyOnNewEvent}
-                onChange={async (e) => {
-                  const checked = e.target.checked;
-                  setNotifyOnNewEvent(checked);
-                  setSaving(true);
-                  try {
-                    const token = localStorage.getItem('authToken');
-                    await fetch('/api/auth/preferences', {
-                      method: 'PUT',
-                      headers: {
-                        'Content-Type': 'application/json',
-                        Authorization: `Bearer ${token}`,
-                      },
-                      body: JSON.stringify({ notifyOnNewEvent: checked }),
-                    });
-                  } finally {
-                    setSaving(false);
-                  }
-                }}
-                className="w-5 h-5 text-orange-600 rounded focus:ring-orange-500"
-              />
-              <span className="text-gray-700">
-                M'avertir par email lors d'une nouvelle sortie club
-              </span>
-            </label>
-            {saving && <span className="text-sm text-gray-500 ml-8">Sauvegarde en cours...</span>}
           </div>
 
           {/* Logout Button */}
