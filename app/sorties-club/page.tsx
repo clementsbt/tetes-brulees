@@ -39,10 +39,8 @@ export default function EvenementsPage() {
         const data = await res.json();
         if (res.ok && data.user) {
           setUser(data.user);
-          // Fetch notify preference
-          const prefRes = await fetch('/api/auth/preferences', {
-            headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}` },
-          });
+          // Fetch notify preference from cookie-based endpoint
+          const prefRes = await fetch('/api/auth/preferences');
           if (prefRes.ok) {
             const prefData = await prefRes.json();
             setNotifyOnNewEvent(prefData.notifyOnNewEvent ?? false);

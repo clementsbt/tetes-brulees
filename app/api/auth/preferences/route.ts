@@ -1,19 +1,21 @@
 import { NextResponse } from 'next/server';
+import { cookies } from 'next/headers';
 import { verifyToken } from '@/lib/auth';
 import { db } from '@/lib/db';
 
 export async function GET(request: Request) {
   try {
-    const authHeader = request.headers.get('authorization');
-    const token = authHeader?.replace('Bearer ', '');
+    // Read from cookie like other auth endpoints
+    const cookieStore = await cookies();
+    const token = cookieStore.get('auth-token')?.value;
 
     if (!token) {
-      return NextResponse.json({ error: 'Non autorisé' }, { status: 401 });
+      return NextResponse.json({ notifyOnNewEvent: false });
     }
 
     const payload = await verifyToken(token);
     if (!payload) {
-      return NextResponse.json({ error: 'Token invalide' }, { status: 401 });
+      return NextResponse.json({ notifyOnNewEvent: false });
     }
 
     const user = await db.user.findUnique({
@@ -24,7 +26,7 @@ export async function GET(request: Request) {
     return NextResponse.json({ notifyOnNewEvent: user?.notifyOnNewEvent ?? false });
   } catch (error) {
     console.error('Preferences GET error:', error);
-    return NextResponse.json({ error: 'Erreur serveur' }, { status: 500 });
+    return NextResponse.json({ notifyOnNewEvent: false });
   }
 }
 
