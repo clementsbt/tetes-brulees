@@ -98,7 +98,7 @@ export async function POST(request: Request) {
         id: updatedEvent.id,
         nom: updatedEvent.title,
         date: updatedEvent.startDate.toISOString(),
-        participants: updatedEvent.participations.map(p => ({
+        participants: updatedEvent.participations.map((p: any) => ({
           email: p.user.email,
           name: p.user.name,
         })),

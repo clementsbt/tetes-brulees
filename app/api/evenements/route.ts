@@ -40,13 +40,13 @@ export async function GET(request: Request) {
     });
 
     // Format for frontend
-    const formatted = events.map(e => ({
+    const formatted = events.map((e: any) => ({
       id: e.id,
       nom: e.title,
       date: e.startDate.toISOString(),
       createurEmail: e.createdBy.email,
       createurNom: e.createdBy.name,
-      participants: e.participations.map(p => ({
+      participants: e.participations.map((p: any) => ({
         email: p.user.email,
         name: p.user.name,
       })),
