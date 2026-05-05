@@ -39,15 +39,10 @@ export default function EvenementsPage() {
         const data = await res.json();
         if (res.ok && data.user) {
           setUser(data.user);
-          // Fetch notify preference - try API first, fallback to localStorage
-          let notifyPref = localStorage.getItem('notifyOnNewEvent');
-          const prefRes = await fetch('/api/auth/preferences');
-          if (prefRes.ok) {
-            const prefData = await prefRes.json();
-            notifyPref = prefData.notifyOnNewEvent;
-            localStorage.setItem('notifyOnNewEvent', String(notifyPref));
-          }
-          setNotifyOnNewEvent(notifyPref === 'true');
+          // Get notify preference from user object (includes notifyOnNewEvent)
+          const notifyPref = data.user.notifyOnNewEvent ?? false;
+          localStorage.setItem('notifyOnNewEvent', String(notifyPref));
+          setNotifyOnNewEvent(notifyPref);
         }
       } catch {
         // Not logged in
