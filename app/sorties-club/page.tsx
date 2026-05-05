@@ -136,18 +136,19 @@ export default function EvenementsPage() {
   const prevMonth = () => setCurrentMonth(new Date(year, month - 1, 1));
   const nextMonth = () => setCurrentMonth(new Date(year, month + 1, 1));
 
-  const formatDate = (d: Date) => d.toISOString().split('T')[0];
+  const formatDate = (d: Date) => {
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
 
   const getEvenementsForDate = (dateKey: string) => {
-    // Convert dateKey to date object and compare
-    const targetDate = new Date(dateKey);
+    // dateKey is in YYYY-MM-DD format
     return evenements.filter(e => {
-      const eventDate = new Date(e.date);
-      return (
-        eventDate.getDate() === targetDate.getDate() &&
-        eventDate.getMonth() === targetDate.getMonth() &&
-        eventDate.getFullYear() === targetDate.getFullYear()
-      );
+      // Extract YYYY-MM-DD from ISO string
+      const eventDateKey = e.date.split('T')[0];
+      return eventDateKey === dateKey;
     });
   };
 
