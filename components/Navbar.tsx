@@ -73,8 +73,8 @@ export default function Navbar() {
               <Link href="/" className="text-white hover:text-yellow-200 transition-colors font-medium">
                 Accueil
               </Link>
-              <Link href="/evenements" className="text-white hover:text-yellow-200 transition-colors font-medium">
-                Événements
+              <Link href="/sorties-club" className="text-white hover:text-yellow-200 transition-colors font-medium">
+                Sorties club
               </Link>
               <Link href="/membres" className="text-white hover:text-yellow-200 transition-colors font-medium">
                 Membres
@@ -162,11 +162,11 @@ export default function Navbar() {
             Accueil
           </Link>
           <Link 
-            href="/evenements" 
+            href="/sorties-club" 
             className="block text-white hover:text-yellow-200 transition-colors font-medium py-3 border-b border-white/20"
             onClick={() => setIsOpen(false)}
           >
-            Événements
+            Sorties club
           </Link>
           <Link 
             href="/membres" 
