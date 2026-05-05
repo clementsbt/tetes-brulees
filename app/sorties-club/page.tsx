@@ -137,7 +137,16 @@ export default function EvenementsPage() {
   const formatDate = (d: Date) => d.toISOString().split('T')[0];
 
   const getEvenementsForDate = (dateKey: string) => {
-    return evenements.filter(e => e.date === dateKey);
+    // Convert dateKey to date object and compare
+    const targetDate = new Date(dateKey);
+    return evenements.filter(e => {
+      const eventDate = new Date(e.date);
+      return (
+        eventDate.getDate() === targetDate.getDate() &&
+        eventDate.getMonth() === targetDate.getMonth() &&
+        eventDate.getFullYear() === targetDate.getFullYear()
+      );
+    });
   };
 
   if (loading) {
