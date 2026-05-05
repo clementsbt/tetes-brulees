@@ -1,24 +1,62 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
-import { jwtVerify } from 'jose';
-import { evenements } from './store';
+import { verifyToken, getUserFromToken } from '@/lib/auth';
+import { db } from '@/lib/db';
+import { notifyNewEvent } from '@/lib/notifications';
 
-const JWT_SECRET = new TextEncoder().encode(
-  process.env.JWT_SECRET || 'tetes-brulees-secret-key-change-in-prod'
-);
+export async function GET(request: Request) {
+  try {
+    const { searchParams } = new URL(request.url);
+    const month = searchParams.get('month');
+    const year = searchParams.get('year');
 
-export async function GET() {
-  // Filter events from current month
-  const now = new Date();
-  const currentMonth = now.getMonth();
-  const currentYear = now.getFullYear();
+    const where: any = {};
+    
+    // Filter by month/year if provided
+    if (month && year) {
+      const startDate = new Date(parseInt(year), parseInt(month) - 1, 1);
+      const endDate = new Date(parseInt(year), parseInt(month), 1);
+      where.startDate = {
+        gte: startDate,
+        lt: endDate,
+      };
+    }
 
-  const filtered = evenements.filter(e => {
-    const eventDate = new Date(e.date);
-    return eventDate.getMonth() === currentMonth && eventDate.getFullYear() === currentYear;
-  });
+    const events = await db.event.findMany({
+      where,
+      include: {
+        createdBy: {
+          select: { name: true, email: true },
+        },
+        participations: {
+          include: {
+            user: {
+              select: { name: true, email: true },
+            },
+          },
+        },
+      },
+      orderBy: { startDate: 'asc' },
+    });
 
-  return NextResponse.json(filtered);
+    // Format for frontend
+    const formatted = events.map(e => ({
+      id: e.id,
+      nom: e.title,
+      date: e.startDate.toISOString(),
+      createurEmail: e.createdBy.email,
+      createurNom: e.createdBy.name,
+      participants: e.participations.map(p => ({
+        email: p.user.email,
+        name: p.user.name,
+      })),
+    }));
+
+    return NextResponse.json(formatted);
+  } catch (error) {
+    console.error('Events GET error:', error);
+    return NextResponse.json({ error: 'Erreur serveur' }, { status: 500 });
+  }
 }
 
 export async function POST(request: Request) {
@@ -30,30 +68,59 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Non connecté' }, { status: 401 });
     }
 
-    const { payload } = await jwtVerify(token, JWT_SECRET);
-    const { email, name } = payload as { email: string; name: string };
+    const user = await getUserFromToken(token);
+    if (!user) {
+      return NextResponse.json({ error: 'Non connecté' }, { status: 401 });
+    }
 
     const body = await request.json();
-    const { nom, date } = body;
+    const { nom, date, location = 'Valfréjus' } = body;
 
     if (!nom || !date) {
       return NextResponse.json({ error: 'Nom et date requis' }, { status: 400 });
     }
 
-    const evenement = {
-      id: Date.now().toString(),
-      nom,
-      date,
-      createurEmail: email,
-      createurNom: name,
-      participants: [{ email, name }],
-    };
+    // Create event with creator as first participant
+    const event = await db.event.create({
+      data: {
+        title: nom,
+        location,
+        startDate: new Date(date),
+        endDate: new Date(date),
+        createdById: user.id,
+        participations: {
+          create: {
+            userId: user.id,
+          },
+        },
+      },
+      include: {
+        createdBy: {
+          select: { name: true, email: true },
+        },
+      },
+    });
 
-    evenements.push(evenement);
+    // Notifier les membres qui ont coché la case
+    await notifyNewEvent(
+      event.title,
+      event.startDate.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }),
+      event.location
+    );
 
-    return NextResponse.json({ success: true, evenement });
+    return NextResponse.json({
+      success: true,
+      evenement: {
+        id: event.id,
+        nom: event.title,
+        date: event.startDate.toISOString(),
+        createurEmail: event.createdBy.email,
+        createurNom: event.createdBy.name,
+        participants: [{ email: event.createdBy.email, name: event.createdBy.name }],
+      },
+    });
   } catch (error) {
-    console.error('Evenement error:', error);
-    return NextResponse.json({ error: 'Erreur' }, { status: 500 });
+    console.error('Event POST error:', error);
+    return NextResponse.json({ error: 'Erreur serveur' }, { status: 500 });
   }
 }

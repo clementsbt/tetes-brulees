@@ -1,4 +1,4 @@
-// Prisma client using require
+// Prisma client singleton
 /* eslint-disable @typescript-eslint/no-var-requires */
 let prismaClient: any;
 
