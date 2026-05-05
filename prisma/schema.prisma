@@ -61,7 +61,7 @@ model User {
   ffvlLicense      String?        @unique @map("ffvl_license")
   role             Role           @default(MEMBER)
   validated        Boolean        @default(false)
-  image            String?
+  notifyOnNewEvent  Boolean        @default(false) @map("notify_on_new_event")
   location         String?        // Ville d'origine pour covoiturage
   createdAt        DateTime       @default(now())
   updatedAt        DateTime       @updatedAt

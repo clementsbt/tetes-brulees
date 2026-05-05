@@ -94,6 +94,7 @@ export async function getUserFromToken(token: string) {
       ffvlLicense: true,
       role: true,
       validated: true,
+      notifyOnNewEvent: true,
     },
   });
 
