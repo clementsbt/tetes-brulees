@@ -46,6 +46,7 @@ export async function GET(request: Request) {
       date: e.startDate.toISOString(),
       createurEmail: e.createdBy.email,
       createurNom: e.createdBy.name,
+      createurId: e.createdById,
       participants: e.participations.map((p: any) => ({
         email: p.user.email,
         name: p.user.name,

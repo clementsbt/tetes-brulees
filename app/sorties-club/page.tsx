@@ -5,6 +5,7 @@ import BackButton from '@/components/BackButton';
 
 interface User {
   email: string;
+  id: string;
   name?: string;
 }
 
@@ -14,6 +15,7 @@ interface Evenement {
   date: string;
   createurEmail: string;
   createurNom: string;
+  createurId: string;
   participants: { email: string; name: string }[];
 }
 
@@ -311,18 +313,39 @@ export default function EvenementsPage() {
                             <p className="font-medium">{e.nom}</p>
                             <p className="text-sm text-gray-700">Par {e.createurNom}</p>
                           </div>
-                          {e.participants.some(p => p.email === user.email) ? (
-                            <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-medium">
-                              ✓ Inscrit
-                            </span>
-                          ) : (
-                            <button
-                              onClick={() => joinEvenement(e.id)}
-                              className="bg-indigo-600 text-white px-4 py-1 rounded-full text-sm font-medium hover:bg-indigo-700"
-                            >
-                              Rejoindre
-                            </button>
-                          )}
+                          <div className="flex items-center gap-2">
+                            {e.createurId === user.id ? (
+                              <button
+                                onClick={async () => {
+                                  if (!confirm('Supprimer cette sortie ?')) return;
+                                  try {
+                                    const token = localStorage.getItem('authToken');
+                                    await fetch(`/api/evenements/${e.id}`, {
+                                      method: 'DELETE',
+                                      headers: { Authorization: `Bearer ${token}` },
+                                    });
+                                    refreshEvenements();
+                                  } catch (err) {
+                                    console.error(err);
+                                  }
+                                }}
+                                className="bg-red-100 text-red-600 px-3 py-1 rounded-full text-sm font-medium hover:bg-red-200"
+                              >
+                                Supprimer
+                              </button>
+                            ) : e.participants.some(p => p.email === user.email) ? (
+                              <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-medium">
+                                ✓ Inscrit
+                              </span>
+                            ) : (
+                              <button
+                                onClick={() => joinEvenement(e.id)}
+                                className="bg-indigo-600 text-white px-4 py-1 rounded-full text-sm font-medium hover:bg-indigo-700"
+                              >
+                                Rejoindre
+                              </button>
+                            )}
+                          </div>
                         </div>
                         <p className="text-xs text-gray-700 mt-1">
                           {e.participants.length} participant{e.participants.length > 1 ? 's' : ''}: {e.participants.map(p => p.name).join(', ')}
