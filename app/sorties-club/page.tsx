@@ -27,6 +27,8 @@ export default function EvenementsPage() {
   const [showModal, setShowModal] = useState(false);
   const [selectedDate, setSelectedDate] = useState<string>('');
   const [newNom, setNewNom] = useState('');
+  const [notifyOnNewEvent, setNotifyOnNewEvent] = useState(false);
+  const [savingNotify, setSavingNotify] = useState(false);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -35,6 +37,7 @@ export default function EvenementsPage() {
         const data = await res.json();
         if (res.ok && data.user) {
           setUser(data.user);
+          setNotifyOnNewEvent(data.user.notifyOnNewEvent ?? false);
         }
       } catch {
         // Not logged in
@@ -176,6 +179,39 @@ export default function EvenementsPage() {
         <p className="text-gray-600 mb-6">
           Clique sur un jour pour créer ou rejoindre un événement
         </p>
+
+        {/* Notification checkbox */}
+        <div className="bg-white rounded-lg shadow p-4 mb-6">
+          <label className="flex items-center space-x-3 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={notifyOnNewEvent}
+              onChange={async (e) => {
+                const checked = e.target.checked;
+                setNotifyOnNewEvent(checked);
+                setSavingNotify(true);
+                try {
+                  const token = localStorage.getItem('authToken');
+                  await fetch('/api/auth/preferences', {
+                    method: 'PUT',
+                    headers: {
+                      'Content-Type': 'application/json',
+                      Authorization: `Bearer ${token}`,
+                    },
+                    body: JSON.stringify({ notifyOnNewEvent: checked }),
+                  });
+                } finally {
+                  setSavingNotify(false);
+                }
+              }}
+              className="w-5 h-5 text-indigo-600 rounded focus:ring-indigo-500"
+            />
+            <span className="text-gray-700">
+              M'avertir par email lors d'une nouvelle sortie club
+            </span>
+          </label>
+          {savingNotify && <span className="text-sm text-gray-500 ml-8">Sauvegarde...</span>}
+        </div>
 
         <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
           {/* Month Navigation */}
