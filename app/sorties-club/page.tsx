@@ -207,13 +207,12 @@ export default function EvenementsPage() {
                 localStorage.setItem('notifyOnNewEvent', String(checked));
                 setSavingNotify(true);
                 try {
-                  const token = localStorage.getItem('authToken');
                   await fetch('/api/auth/preferences', {
                     method: 'PUT',
                     headers: {
                       'Content-Type': 'application/json',
-                      Authorization: `Bearer ${token}`,
                     },
+                    credentials: 'include',
                     body: JSON.stringify({ notifyOnNewEvent: checked }),
                   });
                 } finally {
@@ -324,10 +323,9 @@ export default function EvenementsPage() {
                                 onClick={async () => {
                                   if (!confirm('Supprimer cette sortie ?')) return;
                                   try {
-                                    const token = localStorage.getItem('authToken');
                                     await fetch(`/api/evenements/${e.id}`, {
                                       method: 'DELETE',
-                                      headers: { Authorization: `Bearer ${token}` },
+                                      credentials: 'include',
                                     });
                                     refreshEvenements();
                                   } catch (err) {
