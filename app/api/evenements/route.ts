@@ -44,6 +44,8 @@ export async function GET(request: Request) {
       id: e.id,
       nom: e.title,
       date: e.startDate.toISOString(),
+      time: e.startDate.toTimeString().slice(0,5),
+      location: e.location,
       createurEmail: e.createdBy.email,
       createurNom: e.createdBy.name,
       createurPhone: e.createdBy.phone,
@@ -77,19 +79,24 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json();
-    const { nom, date, location = 'Valfréjus' } = body;
+    const { nom, date, time, location = 'Valfréjus' } = body;
 
     if (!nom || !date) {
       return NextResponse.json({ error: 'Nom et date requis' }, { status: 400 });
     }
 
     // Create event with creator as first participant
+    let startDate = new Date(date);
+    if (time) {
+      const [hours, minutes] = time.split(':');
+      startDate.setHours(parseInt(hours), parseInt(minutes), 0, 0);
+    }
     const event = await db.event.create({
       data: {
         title: nom,
         location,
-        startDate: new Date(date),
-        endDate: new Date(date),
+        startDate,
+        endDate: startDate,
         createdById: user.id,
         participations: {
           create: {

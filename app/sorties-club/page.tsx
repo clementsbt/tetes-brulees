@@ -13,6 +13,8 @@ interface Evenement {
   id: string;
   nom: string;
   date: string;
+  time?: string;
+  location: string;
   createurEmail: string;
   createurNom: string;
   createurPhone?: string;
@@ -29,6 +31,8 @@ export default function EvenementsPage() {
   // Modal state
   const [showModal, setShowModal] = useState(false);
   const [selectedEventForDetails, setSelectedEventForDetails] = useState<any>(null);
+  const [newTime, setNewTime] = useState('');
+  const [newLocation, setNewLocation] = useState('Valfréjus');
   const [selectedDate, setSelectedDate] = useState<string>('');
   const [newNom, setNewNom] = useState('');
   const [notifyOnNewEvent, setNotifyOnNewEvent] = useState(false);
@@ -87,7 +91,7 @@ export default function EvenementsPage() {
       const res = await fetch('/api/evenements', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ nom: newNom, date: selectedDate }),
+        body: JSON.stringify({ nom: newNom, date: selectedDate, time: newTime, location: newLocation }),
       });
 
       if (res.ok) {
@@ -380,6 +384,27 @@ export default function EvenementsPage() {
                   placeholder="Nom de l'événement (ex: Session skate)"
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 mb-2 text-gray-900 placeholder:text-gray-900"
                 />
+                <div className="grid grid-cols-2 gap-2 mb-2">
+                  <div>
+                    <label className="block text-xs text-gray-600 mb-1">Heure</label>
+                    <input
+                      type="time"
+                      value={newTime}
+                      onChange={(e) => setNewTime(e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-gray-900"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs text-gray-600 mb-1">Lieu</label>
+                    <input
+                      type="text"
+                      value={newLocation}
+                      onChange={(e) => setNewLocation(e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-gray-900"
+                      placeholder="Valfréjus"
+                    />
+                  </div>
+                </div>
                 <button
                   onClick={createEvenement}
                   disabled={!newNom || creating}
@@ -414,6 +439,17 @@ export default function EvenementsPage() {
                   {selectedEventForDetails.createurPhone && (
                     <p className="text-gray-600 text-sm">{selectedEventForDetails.createurPhone}</p>
                   )}
+                </div>
+
+                <div className="bg-gray-50 rounded-lg p-4">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-600">Heure:</span>
+                    <span className="text-gray-900 font-medium">{selectedEventForDetails.time || 'Non définie'}</span>
+                  </div>
+                  <div className="flex justify-between text-sm mt-1">
+                    <span className="text-gray-600">Lieu:</span>
+                    <span className="text-gray-900 font-medium">{selectedEventForDetails.location}</span>
+                  </div>
                 </div>
 
                 <div className="bg-gray-50 rounded-lg p-4">
