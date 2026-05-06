@@ -32,8 +32,8 @@ export async function GET(request: Request) {
 
 export async function PUT(request: Request) {
   try {
-    const authHeader = request.headers.get('authorization');
-    const token = authHeader?.replace('Bearer ', '');
+    const cookieStore = await cookies();
+    const token = cookieStore.get('auth-token')?.value;
 
     if (!token) {
       return NextResponse.json({ error: 'Non autorisé' }, { status: 401 });
