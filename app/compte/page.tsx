@@ -9,6 +9,7 @@ interface User {
   email: string;
   name?: string;
   ffvlLicense?: string | null;
+  phone?: string | null;
 }
 
 export default function ComptePage() {
@@ -97,6 +98,12 @@ export default function ComptePage() {
                 <span className="text-gray-600">Email</span>
                 <span className="text-gray-900 font-medium">{user.email}</span>
               </div>
+              {user.phone && (
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Téléphone</span>
+                  <span className="text-gray-900 font-medium">{user.phone}</span>
+                </div>
+              )}
               {user.ffvlLicense && (
                 <div className="flex justify-between">
                   <span className="text-gray-600">Licence FFVL</span>
