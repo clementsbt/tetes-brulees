@@ -308,14 +308,14 @@ export default function EvenementsPage() {
               {/* Existing events */}
               {dayEvenements.length > 0 && (
                 <div className="mb-4">
-                  <h3 className="font-semibold text-gray-700 mb-2">Sorties Club existants</h3>
+                  <h3 className="font-semibold text-gray-900 mb-2">Sorties Club existants</h3>
                   <div className="space-y-2">
                     {dayEvenements.map((e) => (
                       <div key={e.id} className="border border-gray-200 rounded-lg p-3">
                         <div className="flex justify-between items-center">
                           <div>
                             <p className="font-medium">{e.nom}</p>
-                            <p className="text-sm text-gray-700">Par {e.createurNom}</p>
+                            <p className="text-sm text-gray-900">Par {e.createurNom}</p>
                           </div>
                           <div className="flex items-center gap-2">
                             {e.createurId === user.id ? (
