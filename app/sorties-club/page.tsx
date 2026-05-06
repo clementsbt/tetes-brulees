@@ -371,7 +371,7 @@ export default function EvenementsPage() {
                   value={newNom}
                   onChange={(e) => setNewNom(e.target.value)}
                   placeholder="Nom de l'événement (ex: Session skate)"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 mb-2 placeholder:text-gray-900"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 mb-2 text-gray-900 placeholder:text-gray-900"
                 />
                 <button
                   onClick={createEvenement}
