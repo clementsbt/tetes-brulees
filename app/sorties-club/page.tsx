@@ -32,7 +32,7 @@ export default function EvenementsPage() {
   const [showModal, setShowModal] = useState(false);
   const [selectedEventForDetails, setSelectedEventForDetails] = useState<any>(null);
   const [newTime, setNewTime] = useState('');
-  const [newLocation, setNewLocation] = useState('Valfréjus');
+  const [newLocation, setNewLocation] = useState('');
   const [selectedDate, setSelectedDate] = useState<string>('');
   const [newNom, setNewNom] = useState('');
   const [notifyOnNewEvent, setNotifyOnNewEvent] = useState(false);
@@ -384,26 +384,24 @@ export default function EvenementsPage() {
                   placeholder="Nom de l'événement (ex: Session skate)"
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 mb-2 text-gray-900 placeholder:text-gray-900"
                 />
-                <div className="grid grid-cols-2 gap-2 mb-2">
-                  <div>
-                    <label className="block text-xs text-gray-600 mb-1">Heure</label>
-                    <input
-                      type="time"
-                      value={newTime}
-                      onChange={(e) => setNewTime(e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-gray-900"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs text-gray-600 mb-1">Lieu</label>
-                    <input
-                      type="text"
-                      value={newLocation}
-                      onChange={(e) => setNewLocation(e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-gray-900"
-                      placeholder="Valfréjus"
-                    />
-                  </div>
+                <div className="mb-2">
+                  <label className="block text-xs text-gray-600 mb-1">Heure</label>
+                  <input
+                    type="time"
+                    value={newTime}
+                    onChange={(e) => setNewTime(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-gray-900"
+                  />
+                </div>
+                <div className="mb-2">
+                  <label className="block text-xs text-gray-600 mb-1">Lieu</label>
+                  <input
+                    type="text"
+                    value={newLocation}
+                    onChange={(e) => setNewLocation(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-gray-900"
+                    placeholder="Lieu (ex: Valfréjus)"
+                  />
                 </div>
                 <button
                   onClick={createEvenement}

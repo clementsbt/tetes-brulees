@@ -79,10 +79,14 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json();
-    const { nom, date, time, location = 'Valfréjus' } = body;
+    const { nom, date, time, location } = body;
 
     if (!nom || !date) {
       return NextResponse.json({ error: 'Nom et date requis' }, { status: 400 });
+    }
+
+    if (!location) {
+      return NextResponse.json({ error: 'Lieu requis' }, { status: 400 });
     }
 
     // Create event with creator as first participant
