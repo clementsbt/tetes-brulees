@@ -26,12 +26,12 @@ export async function GET(request: Request) {
       where,
       include: {
         createdBy: {
-          select: { name: true, email: true },
+          select: { name: true, email: true, phone: true },
         },
         participations: {
           include: {
             user: {
-              select: { name: true, email: true },
+              select: { name: true, email: true, phone: true },
             },
           },
         },
@@ -46,10 +46,12 @@ export async function GET(request: Request) {
       date: e.startDate.toISOString(),
       createurEmail: e.createdBy.email,
       createurNom: e.createdBy.name,
+      createurPhone: e.createdBy.phone,
       createurId: e.createdById,
       participants: e.participations.map((p: any) => ({
         email: p.user.email,
         name: p.user.name,
+        phone: p.user.phone,
       })),
     }));
 

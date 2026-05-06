@@ -15,8 +15,9 @@ interface Evenement {
   date: string;
   createurEmail: string;
   createurNom: string;
+  createurPhone?: string;
   createurId: string;
-  participants: { email: string; name: string }[];
+  participants: { email: string; name: string; phone?: string }[];
 }
 
 export default function EvenementsPage() {
@@ -27,6 +28,7 @@ export default function EvenementsPage() {
   
   // Modal state
   const [showModal, setShowModal] = useState(false);
+  const [selectedEventForDetails, setSelectedEventForDetails] = useState<any>(null);
   const [selectedDate, setSelectedDate] = useState<string>('');
   const [newNom, setNewNom] = useState('');
   const [notifyOnNewEvent, setNotifyOnNewEvent] = useState(false);
@@ -318,7 +320,12 @@ export default function EvenementsPage() {
                       <div key={e.id} className="border border-gray-200 rounded-lg p-3">
                         <div className="flex justify-between items-center">
                           <div>
-                            <p className="font-medium">{e.nom}</p>
+                            <button
+                              onClick={() => setSelectedEventForDetails(e)}
+                              className="font-medium text-indigo-600 hover:underline text-left"
+                            >
+                              {e.nom}
+                            </button>
                             <p className="text-sm text-gray-900">Par {e.createurNom}</p>
                           </div>
                           <div className="flex items-center gap-2">
@@ -380,6 +387,50 @@ export default function EvenementsPage() {
                 >
                   {creating ? 'Création...' : 'Créer l\'événement'}
                 </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Event Details Modal */}
+        {selectedEventForDetails && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white rounded-lg shadow-xl p-6 max-w-md w-full mx-4">
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-xl font-bold text-gray-900">
+                  {selectedEventForDetails.nom}
+                </h2>
+                <button onClick={() => setSelectedEventForDetails(null)} className="text-gray-700 hover:text-gray-700 text-2xl">
+                  ×
+                </button>
+              </div>
+
+              <div className="space-y-4">
+                <div className="bg-gray-50 rounded-lg p-4">
+                  <h3 className="font-semibold text-gray-900 mb-2">Organisateur</h3>
+                  <p className="text-gray-900">
+                    {selectedEventForDetails.createurNom?.split(' ')[0]} {selectedEventForDetails.createurNom?.split(' ')[1]}
+                  </p>
+                  {selectedEventForDetails.createurPhone && (
+                    <p className="text-gray-600 text-sm">{selectedEventForDetails.createurPhone}</p>
+                  )}
+                </div>
+
+                <div className="bg-gray-50 rounded-lg p-4">
+                  <h3 className="font-semibold text-gray-900 mb-2">
+                    Participants ({selectedEventForDetails.participants?.length || 0})
+                  </h3>
+                  <div className="space-y-2">
+                    {selectedEventForDetails.participants?.map((p: any, idx: number) => (
+                      <div key={idx} className="flex justify-between items-center">
+                        <div>
+                          <p className="text-gray-900">{p.name}</p>
+                          {p.phone && <p className="text-gray-600 text-sm">{p.phone}</p>}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
               </div>
             </div>
           </div>
