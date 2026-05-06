@@ -31,6 +31,7 @@ export default function EvenementsPage() {
   const [newNom, setNewNom] = useState('');
   const [notifyOnNewEvent, setNotifyOnNewEvent] = useState(false);
   const [savingNotify, setSavingNotify] = useState(false);
+  const [creating, setCreating] = useState(false);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -77,8 +78,9 @@ export default function EvenementsPage() {
   };
 
   const createEvenement = async () => {
-    if (!newNom || !selectedDate) return;
+    if (!newNom || !selectedDate || creating) return;
 
+    setCreating(true);
     try {
       const res = await fetch('/api/evenements', {
         method: 'POST',
@@ -92,6 +94,8 @@ export default function EvenementsPage() {
       }
     } catch {
       // Ignore
+    } finally {
+      setCreating(false);
     }
   };
 
@@ -371,10 +375,10 @@ export default function EvenementsPage() {
                 />
                 <button
                   onClick={createEvenement}
-                  disabled={!newNom}
+                  disabled={!newNom || creating}
                   className="w-full bg-green-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Créer l'événement
+                  {creating ? 'Création...' : 'Créer l\'événement'}
                 </button>
               </div>
             </div>
