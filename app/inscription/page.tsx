@@ -12,6 +12,8 @@ export default function InscriptionPage() {
   const [email, setEmail] = useState('');
   const [licenseNumber, setLicenseNumber] = useState('');
   const [phone, setPhone] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
@@ -65,7 +67,7 @@ export default function InscriptionPage() {
       const res = await fetch('/api/inscription', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, licenseNumber, password, phone }),
+        body: JSON.stringify({ email, licenseNumber, password, phone, firstName, lastName }),
       });
 
       const data = await res.json();
@@ -143,6 +145,35 @@ export default function InscriptionPage() {
                   <p className="text-green-800 text-sm">
                     ✓ Licence validée : {licenseNumber}
                   </p>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Prénom
+                    </label>
+                    <input
+                      type="text"
+                      value={firstName}
+                      onChange={(e) => setFirstName(e.target.value)}
+                      required
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-black"
+                      placeholder="Votre prénom"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Nom
+                    </label>
+                    <input
+                      type="text"
+                      value={lastName}
+                      onChange={(e) => setLastName(e.target.value)}
+                      required
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-black"
+                      placeholder="Votre nom"
+                    />
+                  </div>
                 </div>
 
                 <div>

@@ -5,7 +5,7 @@ import { registerUser } from '@/lib/auth';
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { email, licenseNumber, password, name, phone } = body;
+    const { email, licenseNumber, password, name, phone, firstName, lastName } = body;
 
     if (!email || !password) {
       return NextResponse.json(
@@ -18,6 +18,15 @@ export async function POST(request: Request) {
     if (!phone) {
       return NextResponse.json(
         { error: 'Téléphone requis' },
+        { status: 400 }
+      );
+    }
+
+    // Name required
+    const fullName = firstName && lastName ? `${firstName} ${lastName}` : (name || email.split('@')[0]);
+    if (!fullName || (firstName && !lastName) || (!firstName && lastName)) {
+      return NextResponse.json(
+        { error: 'Prénom et nom requis' },
         { status: 400 }
       );
     }
@@ -36,7 +45,7 @@ export async function POST(request: Request) {
     const user = await registerUser(
       email.toLowerCase(),
       password,
-      name || email.split('@')[0],
+      fullName,
       licenseNumber,
       phone
     );

@@ -95,6 +95,10 @@ export default function ComptePage() {
 
             <div className="border-t border-gray-200 pt-6 space-y-4">
               <div className="flex justify-between">
+                <span className="text-gray-600">Nom</span>
+                <span className="text-gray-900 font-medium">{user.name}</span>
+              </div>
+              <div className="flex justify-between">
                 <span className="text-gray-600">Email</span>
                 <span className="text-gray-900 font-medium">{user.email}</span>
               </div>
