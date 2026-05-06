@@ -30,7 +30,7 @@ export async function verifyToken(token: string): Promise<{ userId: string; emai
 
 // ============ Auth Actions ============
 
-export async function registerUser(email: string, password: string, name: string, ffvlLicense?: string) {
+export async function registerUser(email: string, password: string, name: string, ffvlLicense?: string, phone?: string) {
   const db = await prisma();
   
   const existing = await db.user.findUnique({ where: { email } });
@@ -46,6 +46,7 @@ export async function registerUser(email: string, password: string, name: string
       password: hashedPassword,
       name,
       ffvlLicense,
+      phone,
       validated: !!ffvlLicense,
     },
   });

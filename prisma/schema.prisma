@@ -58,6 +58,7 @@ model User {
   email            String         @unique
   name             String?
   password         String?
+  phone            String?
   ffvlLicense      String?        @unique @map("ffvl_license")
   role             Role           @default(MEMBER)
   validated        Boolean        @default(false)

@@ -11,6 +11,7 @@ export default function InscriptionPage() {
   const [step, setStep] = useState<Step>('license');
   const [email, setEmail] = useState('');
   const [licenseNumber, setLicenseNumber] = useState('');
+  const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
@@ -64,7 +65,7 @@ export default function InscriptionPage() {
       const res = await fetch('/api/inscription', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, licenseNumber, password }),
+        body: JSON.stringify({ email, licenseNumber, password, phone }),
       });
 
       const data = await res.json();
@@ -156,6 +157,20 @@ export default function InscriptionPage() {
                     minLength={6}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-black"
                     placeholder="Minimum 6 caractères"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Téléphone
+                  </label>
+                  <input
+                    type="tel"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    required
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-black"
+                    placeholder="06 12 34 56 78"
                   />
                 </div>
 

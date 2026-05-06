@@ -5,11 +5,19 @@ import { registerUser } from '@/lib/auth';
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { email, licenseNumber, password, name } = body;
+    const { email, licenseNumber, password, name, phone } = body;
 
     if (!email || !password) {
       return NextResponse.json(
         { error: 'Email et mot de passe requis' },
+        { status: 400 }
+      );
+    }
+
+    // Phone required
+    if (!phone) {
+      return NextResponse.json(
+        { error: 'Téléphone requis' },
         { status: 400 }
       );
     }
@@ -29,7 +37,8 @@ export async function POST(request: Request) {
       email.toLowerCase(),
       password,
       name || email.split('@')[0],
-      licenseNumber
+      licenseNumber,
+      phone
     );
 
     return NextResponse.json({
