@@ -44,12 +44,9 @@ export async function POST(
       return NextResponse.json({ error: 'Vous n\'êtes pas inscrit à cet événement' }, { status: 400 });
     }
 
-    // Get participation record to delete
+    // Delete participation
     await db.participation.deleteMany({
-      where: {
-        userId: user.id,
-        eventId: event.id,
-      },
+      where: { eventId: eventId },
     });
 
     console.log('Deleted participation for user:', user.id, 'event:', event.id);
@@ -57,6 +54,7 @@ export async function POST(
     return NextResponse.json({ success: true, deleted: true });
   } catch (error) {
     console.error('Error leaving evenement:', error);
-    return NextResponse.json({ error: 'Erreur serveur' }, { status: 500 });
+    const message = error instanceof Error ? error.message : 'Inconnue';
+    return NextResponse.json({ error: 'Erreur serveur: ' + message }, { status: 500 });
   }
 }
