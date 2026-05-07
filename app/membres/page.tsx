@@ -9,6 +9,12 @@ const teamMembers = [
     description: 'Pilote de speedriding, speedflying et parapente depuis 2022. Secrétaire des têtes brûlées',
     image: '/clement-subtil.jpg',
   },
+  {
+    name: 'Frank Coupat',
+    role: 'Moniteur de l\'école Ataka',
+    description: 'Co-créateur du Speedriding et moniteur/Directeur de l\'école Ataka depuis 2006',
+    image: '/frank-coupat.jpg',
+  },
 ];
 
 export default function MembresPage() {
