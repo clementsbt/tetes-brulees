@@ -127,17 +127,18 @@ export default function EvenementsPage() {
     if (!user) return;
 
     try {
+      console.log('Leaving event:', evenementId);
       const res = await fetch(`/api/evenements/${evenementId}/leave`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ evenementId }),
       });
 
+      console.log('Response:', res.status, await res.text());
       if (res.ok) {
         refreshEvenements();
       }
-    } catch {
-      // Ignore
+    } catch (err) {
+      console.error('Error leaving event:', err);
     }
   };
 
