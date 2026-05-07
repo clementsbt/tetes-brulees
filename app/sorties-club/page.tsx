@@ -145,7 +145,6 @@ export default function EvenementsPage() {
       setLoadingEventId(null);
     }
   };
-  };
 
   // Generate calendar days
   const year = currentMonth.getFullYear();
@@ -379,7 +378,7 @@ export default function EvenementsPage() {
                               <button
                                 onClick={() => leaveEvenement(e.id)}
                                 disabled={loadingEventId === e.id}
-                                className="bg-red-100 text-red-600 px-3 py-1 rounded-full text-sm font-medium hover:bg-red-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="bg-red-100 text-red-600 px-3 py-1 rounded-full text-sm font-medium hover:bg-red-200 disabled:opacity-50"
                               >
                                 {loadingEventId === e.id ? '...' : 'Se désinscrire'}
                               </button>
@@ -387,11 +386,11 @@ export default function EvenementsPage() {
                               <button
                                 onClick={() => joinEvenement(e.id)}
                                 disabled={loadingEventId === e.id}
-                                className="bg-indigo-600 text-white px-4 py-1 rounded-full text-sm font-medium hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="bg-indigo-600 text-white px-4 py-1 rounded-full text-sm font-medium hover:bg-indigo-700 disabled:opacity-50"
                               >
                                 {loadingEventId === e.id ? '...' : 'Rejoindre'}
                               </button>
-                            )}}
+                            )}
                           </div>
                         </div>
                         <p className="text-xs text-gray-700 mt-1">
