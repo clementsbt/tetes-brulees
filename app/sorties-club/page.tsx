@@ -37,6 +37,7 @@ export default function EvenementsPage() {
   const [newNom, setNewNom] = useState('');
   const [notifyOnNewEvent, setNotifyOnNewEvent] = useState(false);
   const [savingNotify, setSavingNotify] = useState(false);
+  const [loadingEventId, setLoadingEventId] = useState<string | null>(null);
   const [creating, setCreating] = useState(false);
 
   useEffect(() => {
@@ -108,6 +109,7 @@ export default function EvenementsPage() {
   const joinEvenement = async (evenementId: string) => {
     if (!user) return;
 
+    setLoadingEventId(evenementId);
     try {
       const res = await fetch('/api/evenements/join', {
         method: 'POST',
@@ -120,12 +122,15 @@ export default function EvenementsPage() {
       }
     } catch {
       // Ignore
+    } finally {
+      setLoadingEventId(null);
     }
   };
 
   const leaveEvenement = async (evenementId: string) => {
     if (!user) return;
 
+    setLoadingEventId(evenementId);
     try {
       const res = await fetch(`/api/evenements/${evenementId}/leave`, {
         method: 'POST',
@@ -136,7 +141,10 @@ export default function EvenementsPage() {
       }
     } catch (err) {
       console.error('Error leaving event:', err);
+    } finally {
+      setLoadingEventId(null);
     }
+  };
   };
 
   // Generate calendar days
@@ -370,18 +378,20 @@ export default function EvenementsPage() {
                             ) : e.participants.some(p => p.email === user.email) ? (
                               <button
                                 onClick={() => leaveEvenement(e.id)}
-                                className="bg-red-100 text-red-600 px-3 py-1 rounded-full text-sm font-medium hover:bg-red-200"
+                                disabled={loadingEventId === e.id}
+                                className="bg-red-100 text-red-600 px-3 py-1 rounded-full text-sm font-medium hover:bg-red-200 disabled:opacity-50 disabled:cursor-not-allowed"
                               >
-                                Se désinscrire
+                                {loadingEventId === e.id ? '...' : 'Se désinscrire'}
                               </button>
                             ) : (
                               <button
                                 onClick={() => joinEvenement(e.id)}
-                                className="bg-indigo-600 text-white px-4 py-1 rounded-full text-sm font-medium hover:bg-indigo-700"
+                                disabled={loadingEventId === e.id}
+                                className="bg-indigo-600 text-white px-4 py-1 rounded-full text-sm font-medium hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed"
                               >
-                                Rejoindre
+                                {loadingEventId === e.id ? '...' : 'Rejoindre'}
                               </button>
-                            )}
+                            )}}
                           </div>
                         </div>
                         <p className="text-xs text-gray-700 mt-1">
