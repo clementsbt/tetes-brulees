@@ -1,4 +1,15 @@
+'use client';
+
 import BackButton from '@/components/BackButton';
+
+const teamMembers = [
+  {
+    name: 'Clément Subtil',
+    role: 'Secrétaire',
+    description: 'Pilote de speedriding, speedflying et parapente depuis 2022. Secrétaire des têtes brûlées',
+    image: '/clement-subtil.jpg',
+  },
+];
 
 export default function MembresPage() {
   return (
@@ -7,16 +18,32 @@ export default function MembresPage() {
         <BackButton />
         
         <h1 className="text-4xl font-bold text-gray-900 mb-8">
-          👥 Nos Membres
+          👥 Notre Équipe
         </h1>
         
-        <div className="bg-white rounded-lg shadow-lg p-8">
-          <p className="text-gray-600 mb-4">
-            La galerie des membres sera bientôt disponible !
-          </p>
-          <p className="text-gray-500 text-sm">
-            Nous ajouterons ici les photos et profils de tous les membres du club.
-          </p>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {teamMembers.map((member) => (
+            <div key={member.name} className="bg-white rounded-lg shadow-lg overflow-hidden">
+              <div className="aspect-square relative">
+                <img 
+                  src={member.image} 
+                  alt={member.name}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div className="p-4">
+                <h2 className="text-xl font-bold text-gray-900">
+                  {member.name}
+                </h2>
+                <p className="text-indigo-600 font-medium text-sm mb-2">
+                  {member.role}
+                </p>
+                <p className="text-gray-600 text-sm">
+                  {member.description}
+                </p>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </div>
