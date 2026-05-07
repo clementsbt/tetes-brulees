@@ -42,6 +42,7 @@ export default function MembresPage() {
   const overlayOpacity = 0.25 + (0.35 * scrollProgress);
   const blurAmount = 2 * (1 - scrollProgress);
   const zoomScale = 1 + (scrollProgress * 0.15);
+  const heroOpacity = 1 - scrollProgress;
 
   return (
     <div className="min-h-screen">
@@ -69,14 +70,24 @@ export default function MembresPage() {
         />
       </div>
 
-      {/* Contenu principal */}
-      <div className="relative z-10 min-h-screen">
-        <div className="container mx-auto px-4 py-16">
-          <BackButton />
-          
-          <h1 className="text-4xl font-bold text-white mb-8 drop-shadow-lg">
+      {/* Hero Section */}
+      <div className="relative z-10 h-screen flex items-center justify-center">
+        <div 
+          className="text-center px-4 transition-opacity duration-300"
+          style={{ opacity: heroOpacity }}
+        >
+          <h1 className="text-6xl md:text-7xl font-bold text-white mb-6 drop-shadow-2xl">
             Nos Membres du club
           </h1>
+        </div>
+      </div>
+
+      {/* Contenu principal */}
+      <div className="relative z-10">
+        <div className="container mx-auto px-4 py-16">
+          <div className="mt-8">
+            <BackButton />
+          </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {teamMembers.map((member) => (
