@@ -127,18 +127,22 @@ export default function EvenementsPage() {
     if (!user) return;
 
     try {
-      console.log('Leaving event:', evenementId);
       const res = await fetch(`/api/evenements/${evenementId}/leave`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
       });
 
-      console.log('Response:', res.status, await res.text());
+      const data = await res.json();
+      console.log('Response:', res.status, data);
+      
       if (res.ok) {
+        alert('Désinscription réussie !');
         refreshEvenements();
+      } else {
+        alert('Erreur: ' + (data.error || 'Inconnue'));
       }
     } catch (err) {
       console.error('Error leaving event:', err);
+      alert('Erreur de connexion');
     }
   };
 
