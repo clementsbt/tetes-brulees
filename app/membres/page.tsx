@@ -75,7 +75,16 @@ export default function MembresPage() {
           className="text-center px-4 transition-opacity duration-300"
           style={{ opacity: heroOpacity }}
         >
-          <h1 className="text-6xl md:text-7xl font-bold text-white mb-6 drop-shadow-2xl">
+          <div className="flex justify-center mb-6">
+            <Image
+              src="/logo.png"
+              alt="Logo Têtes Brûlées"
+              width={120}
+              height={120}
+              className="drop-shadow-2xl"
+            />
+          </div>
+          <h1 className="text-6xl md:text-7xl font-bold text-white drop-shadow-2xl">
             Nos Membres du club
           </h1>
         </div>
