@@ -23,11 +23,11 @@ export async function POST(
 
     const userEmail = user.email;
 
-    // Remove user from participants
+    // Get event with participations
     const event = await db.event.findUnique({
       where: { id: eventId },
       include: {
-        participants: true,
+        participations: true,
       },
     });
 
@@ -49,9 +49,7 @@ export async function POST(
       where: { eventId: eventId },
     });
 
-    console.log('Deleted participation for user:', user.id, 'event:', event.id);
-
-    return NextResponse.json({ success: true, deleted: true });
+    return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Error leaving evenement:', error);
     const message = error instanceof Error ? error.message : 'Inconnue';
