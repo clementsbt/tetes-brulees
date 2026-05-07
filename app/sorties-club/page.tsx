@@ -244,7 +244,7 @@ export default function EvenementsPage() {
             <button onClick={prevMonth} className="text-gray-600 hover:text-gray-900">
               ← Précédent
             </button>
-            <h2 className="text-xl font-bold">
+            <h2 className="text-xl font-bold text-black">
               {monthNames[month]} {year}
             </h2>
             <button onClick={nextMonth} className="text-gray-600 hover:text-gray-900">
@@ -381,8 +381,8 @@ export default function EvenementsPage() {
                   type="text"
                   value={newNom}
                   onChange={(e) => setNewNom(e.target.value)}
-                  placeholder="Nom de l'événement (ex: Session skate)"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 mb-2 text-gray-900 placeholder:text-gray-900"
+                  placeholder="Session speed fly"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 mb-2 text-gray-500 placeholder:text-gray-400"
                 />
                 <div className="mb-2">
                   <label className="block text-xs text-gray-600 mb-1">Heure</label>
@@ -399,9 +399,8 @@ export default function EvenementsPage() {
                     type="text"
                     value={newLocation}
                     onChange={(e) => setNewLocation(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-gray-900"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-gray-500 placeholder:text-gray-400"
                     placeholder="Lieu (ex: Valfréjus)"
-                  />
                 </div>
                 <button
                   onClick={createEvenement}
