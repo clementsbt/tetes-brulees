@@ -27,7 +27,13 @@ export async function POST(
     const event = await db.event.findUnique({
       where: { id: eventId },
       include: {
-        participations: true,
+        participations: {
+          include: {
+            user: {
+              select: { email: true },
+            },
+          },
+        },
       },
     });
 
@@ -37,7 +43,7 @@ export async function POST(
 
     // Check if user is participant
     const isParticipant = event.participations.some(
-      (p: any) => p.user.email === userEmail
+      (p: any) => p.user && p.user.email === userEmail
     );
 
     if (!isParticipant) {
