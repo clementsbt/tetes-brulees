@@ -380,7 +380,7 @@ export default function EvenementsPage() {
                                 disabled={loadingEventId === e.id}
                                 className="bg-red-100 text-red-600 px-3 py-1 rounded-full text-sm font-medium hover:bg-red-200 disabled:opacity-50"
                               >
-                                {loadingEventId === e.id ? '...' : 'Se désinscrire'}
+                                Se désinscrire
                               </button>
                             ) : (
                               <button
@@ -388,7 +388,7 @@ export default function EvenementsPage() {
                                 disabled={loadingEventId === e.id}
                                 className="bg-indigo-600 text-white px-4 py-1 rounded-full text-sm font-medium hover:bg-indigo-700 disabled:opacity-50"
                               >
-                                {loadingEventId === e.id ? '...' : 'Rejoindre'}
+                                Rejoindre
                               </button>
                             )}
                           </div>
