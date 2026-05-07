@@ -131,18 +131,11 @@ export default function EvenementsPage() {
         method: 'POST',
       });
 
-      const data = await res.json();
-      console.log('Response:', res.status, data);
-      
       if (res.ok) {
-        alert('Désinscription réussie !');
         refreshEvenements();
-      } else {
-        alert('Erreur: ' + (data.error || 'Inconnue'));
       }
     } catch (err) {
       console.error('Error leaving event:', err);
-      alert('Erreur de connexion');
     }
   };
 
