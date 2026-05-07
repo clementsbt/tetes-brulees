@@ -45,25 +45,16 @@ export async function POST(
     }
 
     // Get participation record to delete
-    const participation = await db.participation.findUnique({
+    await db.participation.deleteMany({
       where: {
-        userId_eventId: {
-          userId: user.id,
-          eventId: event.id,
-        },
+        userId: user.id,
+        eventId: event.id,
       },
     });
 
-    if (participation) {
-      await db.participation.deleteMany({
-        where: {
-          userId: user.id,
-          eventId: event.id,
-        },
-      });
-    }
+    console.log('Deleted participation for user:', user.id, 'event:', event.id);
 
-    return NextResponse.json({ success: true });
+    return NextResponse.json({ success: true, deleted: true });
   } catch (error) {
     console.error('Error leaving evenement:', error);
     return NextResponse.json({ error: 'Erreur serveur' }, { status: 500 });
