@@ -92,8 +92,7 @@ export default function MembresPage() {
 
       {/* Contenu principal */}
       <div className="relative z-10">
-        <div className="container mx-auto px-4 py-16">
-          <div className="mt-8">
+        <div className="container mx-auto px-4 py-16 mt-8">
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {teamMembers.map((member) => (
