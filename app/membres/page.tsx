@@ -15,6 +15,12 @@ const teamMembers = [
     description: 'Co-créateur du Speedriding et moniteur/Directeur de l\'école Ataka depuis 2006',
     image: '/frank-coupat.jpg',
   },
+  {
+    name: 'Léa Lou Simon',
+    role: 'Présidente des Têtes Brûlées',
+    description: 'Présidente des têtes brûlées',
+    image: '/lea-lou-simon.jpg',
+  },
 ];
 
 export default function MembresPage() {
