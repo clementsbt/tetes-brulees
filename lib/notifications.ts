@@ -99,3 +99,67 @@ export async function notifyNewParticipantToEvent(
     }
   }
 }
+
+/**
+ * Notifie le créateur et les autres participants qu'un membre s'est désinscrit
+ */
+export async function notifyParticipantLeft(
+  eventId: string,
+  eventTitle: string,
+  eventDate: string,
+  participantName: string
+) {
+  // Récupérer l'événement avec ses participants
+  const event = await db.event.findUnique({
+    where: { id: eventId },
+    include: {
+      createdBy: {
+        select: { email: true, name: true },
+      },
+      participations: {
+        include: {
+          user: {
+            select: { email: true, name: true },
+          },
+        },
+      },
+    },
+  });
+
+  if (!event) {
+    console.error(`[NOTIF] Événement non trouvé: ${eventId}`);
+    return;
+  }
+
+  // Collecter tous les emails uniques (créateur + participants restants)
+  const recipients = new Map<string, { name: string }>();
+
+  // Ajouter le créateur
+  if (event.createdBy?.email) {
+    recipients.set(event.createdBy.email, { name: event.createdBy.name || 'Créateur' });
+  }
+
+  // Ajouter les participants restants
+  for (const p of event.participations) {
+    if (p.user?.email) {
+      recipients.set(p.user.email, { name: p.user.name || 'Participant' });
+    }
+  }
+
+  console.log(`[NOTIF] Participant parti de "${eventTitle}": ${recipients.size} destinataires`);
+
+  // Envoyer les notifications
+  for (const [email, data] of recipients) {
+    try {
+      await sendNewParticipantNotification(
+        email,
+        data.name,
+        participantName + ' (désinscription)',
+        eventTitle,
+        eventDate
+      );
+    } catch (err) {
+      console.error(`[NOTIF] Erreur pour ${email}:`, err);
+    }
+  }
+}

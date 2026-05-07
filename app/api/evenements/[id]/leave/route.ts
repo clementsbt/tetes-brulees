@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { getUserFromToken } from '@/lib/auth';
 import { db } from '@/lib/db';
+import { notifyParticipantLeft } from '@/lib/notifications';
 
 export async function POST(
   request: NextRequest,
@@ -27,10 +28,13 @@ export async function POST(
     const event = await db.event.findUnique({
       where: { id: eventId },
       include: {
+        createdBy: {
+          select: { email: true, name: true },
+        },
         participations: {
           include: {
             user: {
-              select: { email: true },
+              select: { email: true, name: true },
             },
           },
         },
@@ -54,6 +58,15 @@ export async function POST(
     await db.participation.deleteMany({
       where: { eventId: eventId },
     });
+
+    // Notifier le créateur et les autres participants
+    const participantName = user.name || 'Un membre';
+    await notifyParticipantLeft(
+      eventId,
+      event.title,
+      event.startDate.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' }),
+      participantName
+    );
 
     return NextResponse.json({ success: true });
   } catch (error) {
