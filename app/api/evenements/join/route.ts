@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { getUserFromToken } from '@/lib/auth';
 import { db } from '@/lib/db';
-import { notifyNewParticipant } from '@/lib/notifications';
+import { notifyNewParticipantToEvent } from '@/lib/notifications';
 
 export async function POST(request: Request) {
   try {
@@ -67,14 +67,14 @@ export async function POST(request: Request) {
       isNewParticipant = true;
     }
 
-    // Notifier les autres si nouveau participant
+    // Notifier le créateur et tous les participants
     if (isNewParticipant) {
       const participantName = user.name || 'Un membre';
-      await notifyNewParticipant(
+      await notifyNewParticipantToEvent(
+        evenementId,
         event.title,
         event.startDate.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' }),
-        participantName,
-        user.email
+        participantName
       );
     }
 

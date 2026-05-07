@@ -16,7 +16,7 @@ export async function notifyNewEvent(eventTitle: string, eventDate: string, even
     select: { email: true, name: true },
   });
 
-  console.log(`[NOTIF] Nouvelle sortie: ${usersToNotify.length} destinitaires`);
+  console.log(`[NOTIF] Nouvelle sortie: ${usersToNotify.length} destinataires`);
 
   for (const user of usersToNotify) {
     if (!user.email) continue;
@@ -36,41 +36,66 @@ export async function notifyNewEvent(eventTitle: string, eventDate: string, even
 }
 
 /**
- * Notifie les utilisateurs qui suivent une sortie qu'un nouveau participant a rejoint
+ * Notifie le créateur et tous les participants d'un événement
+ * qu'un nouveau membre s'est inscrit
  */
-export async function notifyNewParticipant(
+export async function notifyNewParticipantToEvent(
+  eventId: string,
   eventTitle: string,
   eventDate: string,
-  participantName: string,
-  participantEmail: string
+  participantName: string
 ) {
-  // Trouver lesusers participants à cet event + ceux qui ont coché la notif
-  // Pour l'instant on notifie tous ceux qui ont notifyOnNewEvent = true
-  // (c'est une simplification - peut etre affiné plus tard)
-  const usersToNotify = await db.user.findMany({
-    where: {
-      notifyOnNewEvent: true,
-      validated: true,
-      // Exclure celui qui vient de rejoindre
-      email: { not: participantEmail },
+  // Récupérer l'événement avec ses participants
+  const event = await db.event.findUnique({
+    where: { id: eventId },
+    include: {
+      createdBy: {
+        select: { email: true, name: true },
+      },
+      participations: {
+        include: {
+          user: {
+            select: { email: true, name: true },
+          },
+        },
+      },
     },
-    select: { email: true, name: true },
   });
 
-  console.log(`[NOTIF] Nouveau participant: ${usersToNotify.length} destinitaires`);
+  if (!event) {
+    console.error(`[NOTIF] Événement non trouvé: ${eventId}`);
+    return;
+  }
 
-  for (const user of usersToNotify) {
-    if (!user.email) continue;
+  // Collecter tous les emails uniques (créateur + participants)
+  const recipients = new Map<string, { name: string }>();
+
+  // Ajouter le créateur
+  if (event.createdBy?.email) {
+    recipients.set(event.createdBy.email, { name: event.createdBy.name || 'Créateur' });
+  }
+
+  // Ajouter les participants
+  for (const p of event.participations) {
+    if (p.user?.email) {
+      recipients.set(p.user.email, { name: p.user.name || 'Participant' });
+    }
+  }
+
+  console.log(`[NOTIF] Nouveau participant pour "${eventTitle}": ${recipients.size} destinataires`);
+
+  // Envoyer les notifications
+  for (const [email, data] of recipients) {
     try {
       await sendNewParticipantNotification(
-        user.email,
-        user.name || 'Membre',
+        email,
+        data.name,
         participantName,
         eventTitle,
         eventDate
       );
     } catch (err) {
-      console.error(`[NOTIF] Erreur pour ${user.email}:`, err);
+      console.error(`[NOTIF] Erreur pour ${email}:`, err);
     }
   }
 }
