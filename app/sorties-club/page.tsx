@@ -123,6 +123,24 @@ export default function EvenementsPage() {
     }
   };
 
+  const leaveEvenement = async (evenementId: string) => {
+    if (!user) return;
+
+    try {
+      const res = await fetch(`/api/evenements/${evenementId}/leave`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ evenementId }),
+      });
+
+      if (res.ok) {
+        refreshEvenements();
+      }
+    } catch {
+      // Ignore
+    }
+  };
+
   // Generate calendar days
   const year = currentMonth.getFullYear();
   const month = currentMonth.getMonth();
@@ -352,9 +370,12 @@ export default function EvenementsPage() {
                                 Supprimer
                               </button>
                             ) : e.participants.some(p => p.email === user.email) ? (
-                              <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-medium">
-                                ✓ Inscrit
-                              </span>
+                              <button
+                                onClick={() => leaveEvenement(e.id)}
+                                className="bg-red-100 text-red-600 px-3 py-1 rounded-full text-sm font-medium hover:bg-red-200"
+                              >
+                                Se désinscrire
+                              </button>
                             ) : (
                               <button
                                 onClick={() => joinEvenement(e.id)}

@@ -1,0 +1,71 @@
+import { NextRequest, NextResponse } from 'next/server';
+import { cookies } from 'next/headers';
+import { getUserFromToken } from '@/lib/auth';
+import { db } from '@/lib/db';
+
+export async function POST(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const { id: eventId } = await params;
+  
+  try {
+    const cookieStore = await cookies();
+    const token = cookieStore.get('token')?.value;
+    if (!token) {
+      return NextResponse.json({ error: 'Non connecté' }, { status: 401 });
+    }
+
+    const user = await getUserFromToken(token);
+    if (!user) {
+      return NextResponse.json({ error: 'Non autorisé' }, { status: 401 });
+    }
+
+    const userEmail = user.email;
+
+    // Remove user from participants
+    const event = await db.event.findUnique({
+      where: { id: eventId },
+      include: {
+        participants: true,
+      },
+    });
+
+    if (!event) {
+      return NextResponse.json({ error: 'Événement non trouvé' }, { status: 404 });
+    }
+
+    // Check if user is participant
+    const isParticipant = event.participations.some(
+      (p: any) => p.user.email === userEmail
+    );
+
+    if (!isParticipant) {
+      return NextResponse.json({ error: 'Vous n\'êtes pas inscrit à cet événement' }, { status: 400 });
+    }
+
+    // Get participation record to delete
+    const participation = await db.participation.findUnique({
+      where: {
+        userId_eventId: {
+          userId: user.id,
+          eventId: event.id,
+        },
+      },
+    });
+
+    if (participation) {
+      await db.participation.deleteMany({
+        where: {
+          userId: user.id,
+          eventId: event.id,
+        },
+      });
+    }
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error('Error leaving evenement:', error);
+    return NextResponse.json({ error: 'Erreur serveur' }, { status: 500 });
+  }
+}
