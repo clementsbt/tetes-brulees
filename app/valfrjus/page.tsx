@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import BackButton from '@/components/BackButton';
 
 
@@ -122,8 +123,25 @@ export default function ValfrejusPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-      <div className="container mx-auto px-4 py-16">
+    <div className="min-h-screen">
+      {/* Image de fond fixe pour toute la page */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden">
+        <div className="w-full h-full">
+          <Image
+            src="/hero-mountain.jpg"
+            alt="Montagne enneigée - Têtes Brûlées club de parapente"
+            fill
+            className="object-cover"
+            priority
+          />
+        </div>
+        <div 
+          className="absolute inset-0 bg-black"
+          style={{ opacity: 0.5 }}
+        />
+      </div>
+
+      <div className="relative container mx-auto px-4 py-16">
         <BackButton />
         
         <h1 className="text-4xl font-bold text-gray-900 mb-8">
