@@ -144,10 +144,10 @@ export default function ValfrejusPage() {
       <div className="relative container mx-auto px-4 py-16">
         <BackButton />
         
-        <h1 className="text-4xl font-bold text-gray-900 mb-8">
+        <h1 className="text-4xl font-bold text-white mb-8">
           🏔️ Punta Bagna - 2737m
           {meteo.lastUpdate && (
-            <span className="text-lg font-normal text-gray-500 ml-2">
+            <span className="text-lg font-normal text-gray-300 ml-2">
               (maj {meteo.lastUpdate})
             </span>
           )}
@@ -157,7 +157,7 @@ export default function ValfrejusPage() {
         {user ? (
           <div className="grid md:grid-cols-3 gap-4 mb-6">
             {/* Vent */}
-            <div className="bg-white rounded-lg shadow-lg p-6">
+            <div className="bg-white/80 rounded-lg shadow-lg p-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-2">
                 💨 Vent
               </h3>
@@ -171,7 +171,7 @@ export default function ValfrejusPage() {
             </div>
             
             {/* Neige */}
-            <div className="bg-white rounded-lg shadow-lg p-6">
+            <div className="bg-white/80 rounded-lg shadow-lg p-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-2">
                 ❄️ Neige
               </h3>
@@ -183,7 +183,7 @@ export default function ValfrejusPage() {
             </div>
             
             {/* Risque avalanche */}
-            <div className="bg-white rounded-lg shadow-lg p-6">
+            <div className="bg-white/80 rounded-lg shadow-lg p-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-2">
                 ⚠️ Risque Avalanche
               </h3>
@@ -200,7 +200,7 @@ export default function ValfrejusPage() {
             </div>
           </div>
         ) : (
-          <div className="bg-white rounded-lg shadow-lg p-6 mb-6 text-center">
+          <div className="bg-white/80 rounded-lg shadow-lg p-6 mb-6 text-center">
             <p className="text-gray-600 mb-4">
               Connecte-toi pour voir les données météo !
             </p>
@@ -219,7 +219,7 @@ export default function ValfrejusPage() {
         </p>
         
         {/* Webcam */}
-        <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
+        <div className="bg-white/80 rounded-lg shadow-lg p-6 mb-6">
           <h2 className="text-xl font-bold text-gray-900 mb-4">📹 Webcam Punta Bagna</h2>
           <iframe
             src="https://www.skaping.com/valfrejus/puntabagna"
@@ -230,7 +230,7 @@ export default function ValfrejusPage() {
         </div>
         
         {/* Spot Info */}
-        <div className="bg-white rounded-lg shadow-lg p-8 space-y-6">
+        <div className="bg-white/80 rounded-lg shadow-lg p-8 space-y-6">
           <div>
             <h3 className="text-xl font-semibold text-gray-900 mb-4">Description détaillée</h3>
             
