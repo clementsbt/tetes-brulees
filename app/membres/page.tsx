@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 
+
 const teamMembers = [
   {
     name: 'Clément Subtil',

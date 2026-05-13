@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import BackButton from '@/components/BackButton';
 
+
 type Step = 'license' | 'password';
 
 export default function InscriptionPage() {

@@ -1,11 +1,14 @@
 'use client';
 
+
 import { useEffect, useState } from 'react';
 import BackButton from '@/components/BackButton';
+
 
 interface PresenceUser {
   email: string;
   name: string;
+  phone?: string;
 }
 
 interface Presence {
@@ -23,6 +26,7 @@ export default function CalendrierPage() {
   const [loading, setLoading] = useState(true);
   const [presences, setPresences] = useState<Presence[]>([]);
   const [currentMonth, setCurrentMonth] = useState(new Date(2026, 11, 1)); // December 2026
+  const [selectedDate, setSelectedDate] = useState<string | null>(null);
 
   const MIN_MONTH = new Date(2026, 11, 1); // December 2026
   const MAX_MONTH = new Date(2027, 4, 1); // May 2027 (to allow showing April)
@@ -125,6 +129,13 @@ export default function CalendrierPage() {
   };
 
   const formatDate = (d: Date) => d.toISOString().split('T')[0];
+  
+  const isDatePast = (dateKey: string) => {
+    const date = new Date(dateKey);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return date < today;
+  };
 
   if (loading) {
     return (
@@ -173,16 +184,16 @@ export default function CalendrierPage() {
           <div className="flex justify-between items-center mb-4">
             <button 
               onClick={prevMonth}
-              className="text-gray-600 hover:text-gray-900"
+              className="text-black hover:text-gray-900"
             >
               ← Précédent
             </button>
-            <h2 className="text-xl font-bold">
+            <h2 className="text-xl font-bold text-black">
               {monthNames[month]} {year}
             </h2>
             <button 
               onClick={nextMonth}
-              className="text-gray-600 hover:text-gray-900"
+              className="text-black hover:text-gray-900"
             >
               Suivant →
             </button>
@@ -191,7 +202,7 @@ export default function CalendrierPage() {
           {/* Day headers */}
           <div className="grid grid-cols-7 gap-1 mb-2">
             {dayNames.map((day) => (
-              <div key={day} className="text-center font-medium text-gray-500 text-sm py-2">
+              <div key={day} className="text-center font-medium text-black text-sm py-2">
                 {day}
               </div>
             ))}
@@ -214,7 +225,7 @@ export default function CalendrierPage() {
               return (
                 <button
                   key={dateKey}
-                  onClick={() => !isPast && togglePresence(dateKey)}
+                  onClick={() => !isPast && setSelectedDate(dateKey)}
                   disabled={isPast}
                   className={`
                     h-28 p-2 rounded text-left transition-all flex flex-col text-xs
@@ -227,7 +238,7 @@ export default function CalendrierPage() {
                     {day.getDate()}
                   </div>
                   {dayUsers.length > 0 ? (
-                    <div className="text-green-600 truncate mt-auto">
+                    <div className="text-green-600 truncate mt-auto font-semibold text-xs">
                       {dayUsers.slice(0, 2).map(u => u.name?.split(' ')[0]).join(', ')}
                       {dayUsers.length > 2 && ` +${dayUsers.length - 2}`}
                     </div>
@@ -255,6 +266,94 @@ export default function CalendrierPage() {
             </div>
           </div>
         </div>
+
+        {/* Modal des membres */}
+        {selectedDate && (
+          <div 
+            className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+            onClick={() => setSelectedDate(null)}
+          >
+            <div 
+              className="bg-white rounded-lg shadow-xl p-6 max-w-md w-full mx-4 max-h-[80vh] overflow-y-auto"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-xl font-bold text-gray-900">
+                  {selectedDate}
+                </h3>
+                <button 
+                  onClick={() => setSelectedDate(null)}
+                  className="text-gray-500 hover:text-gray-700 text-2xl"
+                >
+                  &times;
+                </button>
+              </div>
+              
+              {(() => {
+                const dayUsers = getUsersForDate(selectedDate);
+                const isUserPresent = user && dayUsers.some(u => u.email === user.email);
+                
+                const handleToggle = async () => {
+                  if (!user) return;
+                  try {
+                    await fetch('/api/presence', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({ date: selectedDate, present: !isUserPresent }),
+                    });
+                    window.location.reload();
+                  } catch {
+                    // Ignore
+                  }
+                };
+                
+                return (
+                  <>
+                    {/* Bouton inscription */}
+                    {!isDatePast(selectedDate) && (
+                      <button
+                        onClick={handleToggle}
+                        className={`w-full py-3 rounded-lg font-semibold mb-4 ${
+                          isUserPresent 
+                            ? 'bg-red-100 text-red-700 hover:bg-red-200 border-2 border-red-300'
+                            : 'bg-green-100 text-green-700 hover:bg-green-200 border-2 border-green-300'
+                        }`}
+                      >
+                        {isUserPresent ? '🚫 Se désinscrire' : '✅ S\'inscrire'}
+                      </button>
+                    )}
+                    
+                    {/* Liste des participants */}
+                    {dayUsers.length > 0 ? (
+                      <div className="space-y-3">
+                        <p className="font-medium text-gray-700 mb-2">
+                          Participant{dayUsers.length > 1 ? 's' : ''} ({dayUsers.length})
+                        </p>
+                        {dayUsers.map((u, idx) => (
+                          <div key={idx} className="border border-gray-200 rounded-lg p-3">
+                            <p className="font-semibold text-gray-900">{u.name}</p>
+                            {u.phone && (
+                              <a 
+                                href={`tel:${u.phone}`}
+                                className="text-indigo-600 hover:underline text-sm"
+                              >
+                                📞 {u.phone}
+                              </a>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-gray-600 text-center py-4">
+                        {isDatePast(selectedDate) ? 'Personne n\'était inscrit ce jour' : 'Aucun participant pour le moment'}
+                      </p>
+                    )}
+                  </>
+                );
+              })()}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

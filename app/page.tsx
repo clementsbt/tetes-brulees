@@ -42,21 +42,13 @@ export default function HomePage() {
     return () => window.removeEventListener('auth-change', handleAuthChange);
   }, []);
 
-  useEffect(() => {
-    const handleScroll = () => {
-      setScrollY(window.scrollY);
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
   // Calcul de l'opacité, blur et zoom en fonction du scroll
-  const maxScroll = 400; // Distance de scroll avant effet complet
+  const maxScroll = 400;
   const scrollProgress = Math.min(scrollY / maxScroll, 1);
-  const overlayOpacity = 0.25 + (0.35 * scrollProgress); // De 0.25 à 0.6 (plus sombre pour les cartes)
-  const blurAmount = 2 * (1 - scrollProgress); // De 2px à 0px
-  const zoomScale = 1 + (scrollProgress * 0.15); // De 1 à 1.15 (zoom de 15%)
-  const heroOpacity = 1 - scrollProgress; // De 1 à 0 (disparition du hero)
+  const overlayOpacity = 0.25 + (0.35 * scrollProgress);
+  const blurAmount = 2 * (1 - scrollProgress);
+  const zoomScale = 1 + (scrollProgress * 0.15);
+  const heroOpacity = 1 - scrollProgress;
 
   return (
     <div className="min-h-screen">
@@ -68,13 +60,12 @@ export default function HomePage() {
         >
           <Image
             src="/hero-mountain.jpg"
-            alt="Montagne enneigée"
+            alt="Montagne enneigée - Têtes Brûlées club de parapente"
             fill
             className="object-cover"
             priority
           />
         </div>
-        {/* Overlay dynamique qui diminue avec le scroll */}
         <div 
           className="absolute inset-0 bg-black transition-opacity duration-300"
           style={{
@@ -87,13 +78,10 @@ export default function HomePage() {
 
       {/* Hero Section */}
       <div className="relative h-screen flex items-center justify-center">
-        
-        {/* Contenu du hero centré */}
         <div 
           className="relative z-10 text-center px-4 transition-opacity duration-300"
           style={{ opacity: heroOpacity }}
         >
-          {/* Logo */}
           <div className="flex justify-center mb-8">
             <Image
               src="/logo.png"
@@ -120,9 +108,7 @@ export default function HomePage() {
       <div className="relative z-20">
         <div className="container mx-auto px-4 py-16">
 
-        {/* Navigation Cards */}
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl mx-auto">
-          {/* Membres */}
           <Link href="/membres" className="group">
             <div className="bg-white/70 rounded-lg shadow-lg p-8 hover:shadow-2xl transition-all transform hover:-translate-y-1">
               <div className="text-5xl mb-4">👥</div>
@@ -135,7 +121,6 @@ export default function HomePage() {
             </div>
           </Link>
 
-          {/* Valfréjus */}
           <Link href="/valfrjus" className="group">
             <div className="bg-white/70 rounded-lg shadow-lg p-8 hover:shadow-2xl transition-all transform hover:-translate-y-1">
               <div className="text-5xl mb-4">🏔️</div>
@@ -148,7 +133,6 @@ export default function HomePage() {
             </div>
           </Link>
 
-          {/* Sorties Club */}
           <Link href="/sorties-club" className="group">
             <div className="bg-white/70 rounded-lg shadow-lg p-8 hover:shadow-2xl transition-all transform hover:-translate-y-1">
               <div className="text-5xl mb-4">🪂</div>
@@ -161,7 +145,6 @@ export default function HomePage() {
             </div>
           </Link>
 
-          {/* Calendrier */}
           <Link href="/calendrier" className="group">
             <div className="bg-white/70 rounded-lg shadow-lg p-8 hover:shadow-2xl transition-all transform hover:-translate-y-1">
               <div className="text-5xl mb-4">📆</div>
@@ -174,7 +157,6 @@ export default function HomePage() {
             </div>
           </Link>
 
-          {/* Location */}
           <Link href="/location" className="group">
             <div className="bg-white/70 rounded-lg shadow-lg p-8 hover:shadow-2xl transition-all transform hover:-translate-y-1">
               <div className="text-5xl mb-4">🏠</div>
@@ -202,13 +184,13 @@ export default function HomePage() {
                 <div className="flex flex-wrap gap-4 justify-center">
                   <Link 
                     href="/compte" 
-                    className="bg-indigo-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-indigo-700 transition-colors text-center flex-1 min-w-[140px] max-w-[200px]"
+                    className="bg-indigo-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-indigo-700 transition-colors"
                   >
                     Mon compte
                   </Link>
                   <Link 
                     href="/calendrier" 
-                    className="bg-gray-800 text-white px-6 py-3 rounded-lg font-semibold hover:bg-gray-900 transition-colors text-center flex-1 min-w-[140px] max-w-[200px]"
+                    className="bg-gray-800 text-white px-6 py-3 rounded-lg font-semibold hover:bg-gray-900 transition-colors"
                   >
                     Calendrier
                   </Link>
@@ -220,18 +202,18 @@ export default function HomePage() {
                   Rejoignez-nous !
                 </h3>
                 <p className="text-gray-600 mb-6">
-                  Membre FFVL ? Inscrivez-vous pour accéder au calendrier de présence et organiser vos sessions.
+                  Membre FFVL ? Inscrivez-vous pour accéder au calendrier de présence.
                 </p>
                 <div className="flex flex-wrap gap-4 justify-center">
                   <Link 
                     href="/inscription" 
-                    className="bg-indigo-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-indigo-700 transition-colors text-center flex-1 min-w-[140px] max-w-[200px]"
+                    className="bg-indigo-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-indigo-700 transition-colors"
                   >
                     S'inscrire
                   </Link>
                   <Link 
                     href="/connexion" 
-                    className="bg-gray-200 text-gray-900 px-6 py-3 rounded-lg font-semibold hover:bg-gray-300 transition-colors text-center flex-1 min-w-[140px] max-w-[200px]"
+                    className="bg-gray-200 text-gray-900 px-6 py-3 rounded-lg font-semibold hover:bg-gray-300 transition-colors"
                   >
                     Se connecter
                   </Link>
@@ -239,7 +221,7 @@ export default function HomePage() {
                     href="https://intranet.ffvl.fr/ffvl_licenceonline/pre_rempli/NEW/1431" 
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="bg-green-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors text-center w-full"
+                    className="bg-green-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors"
                   >
                     Prendre sa licence FFVL
                   </a>

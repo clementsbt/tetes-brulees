@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import BackButton from '@/components/BackButton';
 
+
 interface MeteoData {
   vent: string;
   direction: string;
@@ -213,28 +214,6 @@ export default function ValfrejusPage() {
         {/* Spot Info */}
         <div className="bg-white rounded-lg shadow-lg p-8 space-y-6">
           <div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-3">Notre Terrain de Jeu</h2>
-            <p className="text-gray-600">
-              Valfréjus est le spot favorite des Têtes Brûlées pour le speedriding.
-            </p>
-          </div>
-          
-          <div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">Accès</h3>
-            <p className="text-gray-600">
-              Station de ski familiale située en Savoie, accessible facilement depuis Lyon (2h30) et Chambéry (1h15).
-            </p>
-          </div>
-          
-          <div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">Conditions</h3>
-            <p className="text-gray-600">
-              Idéal pour le speedriding avec de nombreuses pistes adaptées et des décollages variés.
-            </p>
-          </div>
-
-          {/* Description détaillée */}
-          <div className="border-t border-gray-200 pt-6 mt-6">
             <h3 className="text-xl font-semibold text-gray-900 mb-4">Description détaillée</h3>
             
             <div className="space-y-4 text-gray-600">

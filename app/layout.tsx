@@ -14,8 +14,61 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Têtes Brûlées",
-  description: "Club de parapente et sports extrêmes",
+  metadataBase: new URL("https://tetes-brulees.vercel.app"),
+  title: {
+    default: "Têtes Brûlées - Club de Parapente & Speedriding",
+    template: "%s | Têtes Brûlées",
+  },
+  description: "Club de parapente et speedriding basé à Valfréjus en Savoie. Sorties régulières, covoiturage, location matériel et rencontre entre pilotes passionnés.",
+  keywords: ["parapente", "speedriding", "Valfréjus", "Savoie", "club parapente", "vol自由", "speedfly"],
+  authors: [{ name: "Têtes Brûlées" }],
+  creator: "Têtes Brûlées",
+  publisher: "Têtes Brûlées",
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: true,
+  },
+ alternates: {
+    canonical: "https://tetes-brulees.vercel.app",
+    languages: {
+      fr: "https://tetes-bulees.vercel.app",
+    },
+  },
+  openGraph: {
+    type: "website",
+    locale: "fr_FR",
+    url: "https://tetes-brulees.vercel.app",
+    siteName: "Têtes Brûlées",
+    title: "Têtes Brûlées - Club de Parapente & Speedriding",
+    description: "Club de parapente et speedriding basé à Valfréjus en Savoie. Sorties régulières, covoiturage, location matériel et rencontre entre pilotes passionnés.",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Têtes Brûlées - Club de Parapente & Speedriding",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Têtes Brûlées - Club de Parapente & Speedriding",
+    description: "Club de parapente et speedriding basé à Valfréjus en Savoie.",
+    images: ["/og-image.png"],
+    creator: "@tetesbrulees",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
 };
 
 export default function RootLayout({
@@ -25,9 +78,14 @@ export default function RootLayout({
 }>) {
   return (
     <html
-      lang="en"
+      lang="fr"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
+      <head>
+        <link rel="icon" href="/favicon.ico" />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+        <meta name="theme-color" content="#ea580c" />
+      </head>
       <body className="min-h-full flex flex-col">
         <Navbar />
         {children}
