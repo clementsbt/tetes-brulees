@@ -153,6 +153,31 @@ export default function ValfrejusPage() {
           )}
         </h1>
         
+        {/* Ataka Speedriding */}
+        <div className="bg-white/80 rounded-lg shadow-lg p-6 mb-6">
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">🪂 Apprendre le Speedriding</h2>
+          <p className="text-gray-700 mb-4">
+            Nichée au cœur du domaine de Valfréjus, l'<strong>école Ataka</strong> est reconnue comme l'une des meilleures écoles de Speedriding de France.
+            Spécialisée dans l'enseignement de ce sport hybride entre parapente et ski, l'école vous accompagne depuis les premières glisses jusqu'aux vols-les plus acrobatiques.
+          </p>
+          <p className="text-gray-700 mb-4">
+            <strong>Pourquoi choose Ataka ?</strong>
+            <ul className="list-disc list-inside mt-2 space-y-1">
+              <li>Instructeurs expérimentés et certifiés</li>
+              <li>Terrain de jeu idéal : Punta Bagna à 2737m</li>
+              <li>Encadrement personnalisé et sécurité avant tout</li>
+            </ul>
+          </p>
+          <Link 
+            href="https://www.ecole-speedriding.com" 
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-block bg-indigo-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-indigo-700 transition-colors"
+          >
+            En savoir plus sur Ataka →
+          </Link>
+        </div>
+        
         {/* Meteo Cards - Only for connected users */}
         {user ? (
           <div className="grid md:grid-cols-3 gap-4 mb-6">
