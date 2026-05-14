@@ -1,7 +1,5 @@
 'use client';
 
-import Script from 'next/script';
-
 export default function JsonLd() {
   const schema = {
     '@context': 'https://schema.org',
@@ -37,10 +35,9 @@ export default function JsonLd() {
   };
 
   return (
-    <Script
-      id="schema-org"
+    <script
       type="application/ld+json"
-      dangerouslySetInnerHTML={{/__html: JSON.stringify(schema)/}}
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
     />
   );
 }
