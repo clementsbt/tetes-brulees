@@ -59,7 +59,7 @@ export default function HomePage() {
           style={{ transform: `scale(${zoomScale})` }}
         >
           <Image
-            src="/hero-mountain.jpg"
+            src="/hero-mountain.webp"
             alt="Montagne enneigée - Têtes Brûlées club de parapente"
             fill
             className="object-cover"

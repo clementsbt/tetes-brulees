@@ -128,7 +128,7 @@ export default function ValfrejusPage() {
       <div className="fixed inset-0 pointer-events-none overflow-hidden">
         <div className="w-full h-full">
           <Image
-            src="/hero-mountain.jpg"
+            src="/hero-mountain.webp"
             alt="Montagne enneigée - Têtes Brûlées club de parapente"
             fill
             className="object-cover"

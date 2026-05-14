@@ -53,7 +53,7 @@ export default function MembresPage() {
           style={{ transform: `scale(${zoomScale})` }}
         >
           <Image
-            src="/hero-mountain-membres.jpg"
+            src="/hero-mountain-membres.webp"
             alt="Montagne enneigée"
             fill
             className="object-cover"
