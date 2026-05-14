@@ -265,13 +265,13 @@ export default function EvenementsPage() {
         <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
           {/* Month Navigation */}
           <div className="flex justify-between items-center mb-4">
-            <button onClick={prevMonth} className="text-gray-600 hover:text-gray-900">
+            <button onClick={prevMonth} aria-label="Mois précédent" className="text-gray-600 hover:text-gray-900">
               ← Précédent
             </button>
             <h2 className="text-xl font-bold text-black">
               {monthNames[month]} {year}
             </h2>
-            <button onClick={nextMonth} className="text-gray-600 hover:text-gray-900">
+            <button onClick={nextMonth} aria-label="Mois suivant" className="text-gray-600 hover:text-gray-900">
               Suivant →
             </button>
           </div>
@@ -334,7 +334,7 @@ export default function EvenementsPage() {
                 <h2 className="text-xl font-bold text-gray-900">
                   {new Date(selectedDate).toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })}
                 </h2>
-                <button onClick={() => setShowModal(false)} className="text-gray-700 hover:text-gray-700 text-2xl">
+                <button onClick={() => setShowModal(false)} aria-label="Fermer" className="text-gray-700 hover:text-gray-700 text-2xl">
                   ×
                 </button>
               </div>

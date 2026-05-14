@@ -184,6 +184,7 @@ export default function CalendrierPage() {
           <div className="flex justify-between items-center mb-4">
             <button 
               onClick={prevMonth}
+              aria-label="Mois précédent"
               className="text-black hover:text-gray-900"
             >
               ← Précédent
@@ -193,6 +194,7 @@ export default function CalendrierPage() {
             </h2>
             <button 
               onClick={nextMonth}
+              aria-label="Mois suivant"
               className="text-black hover:text-gray-900"
             >
               Suivant →
