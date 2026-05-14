@@ -21,7 +21,7 @@ export const metadata: Metadata = {
     template: "%s | Têtes Brûlées",
   },
   description: "Club de parapente et speedriding basé à Valfréjus en Savoie. Sorties régulières, covoiturage, location matériel et rencontre entre pilotes passionnés.",
-  keywords: ["parapente", "speedriding", "Valfréjus", "Savoie", "club parapente", "vol自由", "speedfly"],
+  keywords: ["parapente", "speedriding", "Valfréjus", "Savoie", "club parapente", "club speedriding", "vol libre", "speedfly", "apprendre le speedriding"],
   authors: [{ name: "Têtes Brûlées" }],
   creator: "Têtes Brûlées",
   publisher: "Têtes Brûlées",
