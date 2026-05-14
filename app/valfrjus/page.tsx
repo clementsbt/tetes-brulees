@@ -305,7 +305,7 @@ export default function ValfrejusPage() {
         </div>
         
         {/* Ataka Speedriding */}
-        <div className="bg-white/80 rounded-lg shadow-lg p-6 mb-6">
+        <div className="bg-white/80 rounded-lg shadow-lg p-6 mb-6 mt-8">
           <h2 className="text-2xl font-bold text-gray-900 mb-4">🪂 Apprendre le Speedriding</h2>
           <p className="text-gray-700 mb-4">
             Nichée au cœur du domaine de Valfréjus, l'<strong>école Ataka</strong> est reconnue comme l'une des meilleures écoles de Speedriding de France.
