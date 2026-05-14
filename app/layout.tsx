@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Navbar from "../components/Navbar";
+import JsonLd from "../components/JsonLd";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -32,7 +33,7 @@ export const metadata: Metadata = {
  alternates: {
     canonical: "https://tetes-brulees.vercel.app",
     languages: {
-      fr: "https://tetes-bulees.vercel.app",
+      fr: "https://tetes-brulees.vercel.app",
     },
   },
   openGraph: {
@@ -87,6 +88,7 @@ export default function RootLayout({
         <meta name="theme-color" content="#ea580c" />
       </head>
       <body className="min-h-full flex flex-col">
+        <JsonLd />
         <Navbar />
         {children}
       </body>
