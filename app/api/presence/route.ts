@@ -26,7 +26,9 @@ export async function GET() {
     const presencesByDate: { [date: string]: { email: string; name: string; phone?: string }[] } = {};
     
     for (const p of dbPresences) {
-      const dateKey = p.date.toISOString().split('T')[0];
+      // Format date in local timezone to match frontend formatDate
+      const dateObj = new Date(p.date);
+      const dateKey = `${dateObj.getFullYear()}-${String(dateObj.getMonth() + 1).padStart(2, '0')}-${String(dateObj.getDate()).padStart(2, '0')}`;
       if (!presencesByDate[dateKey]) {
         presencesByDate[dateKey] = [];
       }
@@ -78,7 +80,9 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Date requise' }, { status: 400 });
     }
 
-    const dateObj = new Date(date);
+    // Parse date as local (yyyy-mm-dd from frontend means local date)
+    const [year, month, day] = date.split('-').map(Number);
+    const dateObj = new Date(year, month - 1, day);
 
     if (present) {
       // Add or update presence
