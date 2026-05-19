@@ -94,7 +94,9 @@ export default function CalendrierPage() {
   };
 
   const getUsersForDate = (dateKey: string) => {
-    return presences.find(p => p.date === dateKey)?.users || [];
+    const users = presences.find(p => p.date === dateKey)?.users || [];
+    console.log('[DEBUG] getUsersForDate:', dateKey, 'found:', users.length, 'all dates:', presences.map(p => p.date));
+    return users;
   };
 
   // Generate calendar days
