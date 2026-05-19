@@ -38,6 +38,7 @@ export default function CalendrierPage() {
         const data = await res.json();
         if (res.ok && data.user) {
           setUser(data.user);
+          console.log('[DEBUG] User logged in:', data.user.email);
         }
       } catch {
         // Not logged in
@@ -49,15 +50,20 @@ export default function CalendrierPage() {
       try {
         const res = await fetch('/api/presence');
         const data = await res.json();
-        console.log('[DEBUG] API response:', data);
+        console.log('[DEBUG] API response:', JSON.stringify(data));
         
         const presenceList: Presence[] = Object.entries(data).map(([date, users]) => ({
           date,
           users: (users as PresenceUser[]) || [],
         }));
         
-        console.log('[DEBUG] Parsed presences:', presenceList);
+        console.log('[DEBUG] Parsed presences:', presenceList.length, 'dates:', presenceList.map(p => p.date).join(', '));
         setPresences(presenceList);
+        
+        // Debug: show alert if we have data
+        if (presenceList.length > 0) {
+          alert('Préndences chargées: ' + presenceList.map(p => p.date + '(' + p.users.length + ')').join(', '));
+        }
       } catch (e) {
         console.error('[DEBUG] Error fetching presences:', e);
       }
