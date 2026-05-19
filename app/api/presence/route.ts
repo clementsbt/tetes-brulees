@@ -61,12 +61,23 @@ export async function POST(request: Request) {
     const cookieStore = await cookies();
     const token = cookieStore.get('auth-token')?.value;
 
+    console.log('[DEBUG POST] token exists:', !!token);
+
     if (!token) {
       return NextResponse.json({ error: 'Non connecté' }, { status: 401 });
     }
 
-    const { payload } = await jwtVerify(token, JWT_SECRET);
+    let payload;
+    try {
+      const result = await jwtVerify(token, JWT_SECRET);
+      payload = result.payload;
+    } catch (e) {
+      console.error('[DEBUG POST] jwtVerify error:', e);
+      return NextResponse.json({ error: 'Token invalide' }, { status: 401 });
+    }
+    
     const { email } = payload as { email: string; name: string };
+    console.log('[DEBUG POST] email:', email);
 
     // Get user from database
     const dbUser = await prisma.user.findUnique({
