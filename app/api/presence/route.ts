@@ -5,7 +5,7 @@ import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 const JWT_SECRET = new TextEncoder().encode(
-  process.env.JWT_SECRET || 'tetes-brulees-secret-key-change-in-prod'
+  process.env.JWT_SECRET || 'change-me-in-production'
 );
 
 export async function GET() {
