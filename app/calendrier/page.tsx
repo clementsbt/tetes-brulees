@@ -67,14 +67,10 @@ export default function CalendrierPage() {
 
   const togglePresence = async (date: string) => {
     if (!user) return;
-
-    console.log('[DEBUG] togglePresence called with date:', date);
     
     const currentPresence = presences.find(p => p.date === date);
     const isPresent = currentPresence?.users?.some(u => u.email === user.email) || false;
     const newPresent = !isPresent;
-
-    console.log('[DEBUG] currentPresence:', currentPresence, 'isPresent:', isPresent, 'newPresent:', newPresent);
 
     try {
       const res = await fetch('/api/presence', {
@@ -82,12 +78,13 @@ export default function CalendrierPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ date, present: newPresent }),
       });
+      const json = await res.json();
       
-      console.log('[DEBUG] POST response:', res.status, await res.json());
+      alert('POST date=' + date + ' present=' + newPresent + ' -> ' + JSON.stringify(json));
 
       window.location.reload();
     } catch (e) {
-      console.error('[DEBUG] Error toggling presence:', e);
+      alert('Erreur: ' + e);
     }
   };
 
@@ -314,11 +311,13 @@ const formatDate = (d: Date) => {
                 const handleToggle = async () => {
                   if (!user) return;
                   try {
-                    await fetch('/api/presence', {
+                    const res = await fetch('/api/presence', {
                       method: 'POST',
                       headers: { 'Content-Type': 'application/json' },
                       body: JSON.stringify({ date: selectedDate, present: !isUserPresent }),
                     });
+                    const json = await res.json();
+                    alert('POST date=' + selectedDate + ' present=' + (!isUserPresent) + ' -> ' + JSON.stringify(json));
                     window.location.reload();
                   } catch {
                     // Ignore
