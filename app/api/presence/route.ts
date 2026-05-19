@@ -92,20 +92,27 @@ export async function POST(request: Request) {
 
     if (present) {
       // Add or update presence
-      await prisma.presence.upsert({
-        where: {
-          userId_date: {
+      console.log('[DEBUG POST] userId:', dbUser.id, 'date:', dateObj, 'dateISO:', dateObj.toISOString());
+      
+      try {
+        await prisma.presence.upsert({
+          where: {
+            userId_date: {
+              userId: dbUser.id,
+              date: dateObj
+            }
+          },
+          update: { location: 'Valfréjus' },
+          create: {
             userId: dbUser.id,
-            date: dateObj
+            date: dateObj,
+            location: 'Valfréjus'
           }
-        },
-        update: { location: 'Valfréjus' },
-        create: {
-          userId: dbUser.id,
-          date: dateObj,
-          location: 'Valfréjus'
-        }
-      });
+        });
+      } catch (err) {
+        console.error('[DEBUG POST] UPSERT ERROR:', err);
+        throw err;
+      }
     } else {
       // Remove presence
       await prisma.presence.deleteMany({
