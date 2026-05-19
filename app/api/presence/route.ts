@@ -22,9 +22,6 @@ export async function GET() {
       }
     });
 
-    console.log('[DEBUG API] Found presences:', dbPresences.length);
-    console.log('[DEBUG API] Raw dates:', dbPresences.map(p => p.date.toISOString()));
-
     // Group by date
     const presencesByDate: { [date: string]: { email: string; name: string; phone?: string }[] } = {};
     
@@ -32,7 +29,6 @@ export async function GET() {
       // Format date in local timezone to match frontend formatDate
       const dateObj = new Date(p.date);
       const dateKey = `${dateObj.getFullYear()}-${String(dateObj.getMonth() + 1).padStart(2, '0')}-${String(dateObj.getDate()).padStart(2, '0')}`;
-      console.log('[DEBUG API] Date mapping:', p.date.toISOString(), '->', dateKey);
       
       if (!presencesByDate[dateKey]) {
         presencesByDate[dateKey] = [];
@@ -46,7 +42,6 @@ export async function GET() {
       }
     }
 
-    console.log('[DEBUG API] Returning:', JSON.stringify(presencesByDate));
     return NextResponse.json(presencesByDate);
   } catch (error) {
     console.error('Presence GET error:', error);
@@ -61,23 +56,12 @@ export async function POST(request: Request) {
     const cookieStore = await cookies();
     const token = cookieStore.get('auth-token')?.value;
 
-    console.log('[DEBUG POST] token exists:', !!token);
-
     if (!token) {
       return NextResponse.json({ error: 'Non connecté' }, { status: 401 });
     }
 
-    let payload;
-    try {
-      const result = await jwtVerify(token, JWT_SECRET);
-      payload = result.payload;
-    } catch (e) {
-      console.error('[DEBUG POST] jwtVerify error:', e);
-      return NextResponse.json({ error: 'Token invalide' }, { status: 401 });
-    }
-    
+    const { payload } = await jwtVerify(token, JWT_SECRET);
     const { email } = payload as { email: string; name: string };
-    console.log('[DEBUG POST] email:', email);
 
     // Get user from database
     const dbUser = await prisma.user.findUnique({
@@ -103,27 +87,20 @@ export async function POST(request: Request) {
 
     if (present) {
       // Add or update presence
-      console.log('[DEBUG POST] userId:', dbUser.id, 'date:', dateObj, 'dateISO:', dateObj.toISOString());
-      
-      try {
-        await prisma.presence.upsert({
-          where: {
-            userId_date: {
-              userId: dbUser.id,
-              date: dateObj
-            }
-          },
-          update: { location: 'Valfréjus' },
-          create: {
+      await prisma.presence.upsert({
+        where: {
+          userId_date: {
             userId: dbUser.id,
-            date: dateObj,
-            location: 'Valfréjus'
+            date: dateObj
           }
-        });
-      } catch (err) {
-        console.error('[DEBUG POST] UPSERT ERROR:', err);
-        throw err;
-      }
+        },
+        update: { location: 'Valfréjus' },
+        create: {
+          userId: dbUser.id,
+          date: dateObj,
+          location: 'Valfréjus'
+        }
+      });
     } else {
       // Remove presence
       await prisma.presence.deleteMany({

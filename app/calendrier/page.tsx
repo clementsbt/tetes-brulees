@@ -73,18 +73,15 @@ export default function CalendrierPage() {
     const newPresent = !isPresent;
 
     try {
-      const res = await fetch('/api/presence', {
+      await fetch('/api/presence', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ date, present: newPresent }),
       });
-      const json = await res.json();
-      
-      alert('POST date=' + date + ' present=' + newPresent + ' -> ' + JSON.stringify(json));
 
       window.location.reload();
     } catch (e) {
-      alert('Erreur: ' + e);
+      // Ignore
     }
   };
 
@@ -185,11 +182,7 @@ const formatDate = (d: Date) => {
         </h1>
         <p className="text-gray-600 mb-6">
           Clique sur les jours où tu seras présent à Valfréjus pour indiquer ta présence
-          </p>
-          {/* DEBUG: Show loaded dates */}
-          <div className="bg-yellow-100 p-2 mb-4 text-xs">
-            DEBUG: {presences.length} dates chargées: {presences.map(p => p.date + '(' + p.users.length + ')').join(', ') || 'AUCUNE'}
-          </div>
+        </p>
 
         {/* Calendar */}
         <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
@@ -311,13 +304,11 @@ const formatDate = (d: Date) => {
                 const handleToggle = async () => {
                   if (!user) return;
                   try {
-                    const res = await fetch('/api/presence', {
+                    await fetch('/api/presence', {
                       method: 'POST',
                       headers: { 'Content-Type': 'application/json' },
                       body: JSON.stringify({ date: selectedDate, present: !isUserPresent }),
                     });
-                    const json = await res.json();
-                    alert('POST date=' + selectedDate + ' present=' + (!isUserPresent) + ' -> ' + JSON.stringify(json));
                     window.location.reload();
                   } catch {
                     // Ignore
