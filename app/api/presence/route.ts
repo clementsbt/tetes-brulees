@@ -22,6 +22,9 @@ export async function GET() {
       }
     });
 
+    console.log('[DEBUG API] Found presences:', dbPresences.length);
+    console.log('[DEBUG API] Raw dates:', dbPresences.map(p => p.date.toISOString()));
+
     // Group by date
     const presencesByDate: { [date: string]: { email: string; name: string; phone?: string }[] } = {};
     
@@ -29,6 +32,8 @@ export async function GET() {
       // Format date in local timezone to match frontend formatDate
       const dateObj = new Date(p.date);
       const dateKey = `${dateObj.getFullYear()}-${String(dateObj.getMonth() + 1).padStart(2, '0')}-${String(dateObj.getDate()).padStart(2, '0')}`;
+      console.log('[DEBUG API] Date mapping:', p.date.toISOString(), '->', dateKey);
+      
       if (!presencesByDate[dateKey]) {
         presencesByDate[dateKey] = [];
       }
@@ -41,6 +46,7 @@ export async function GET() {
       }
     }
 
+    console.log('[DEBUG API] Returning:', JSON.stringify(presencesByDate));
     return NextResponse.json(presencesByDate);
   } catch (error) {
     console.error('Presence GET error:', error);

@@ -38,7 +38,6 @@ export default function CalendrierPage() {
         const data = await res.json();
         if (res.ok && data.user) {
           setUser(data.user);
-          console.log('[DEBUG] User logged in:', data.user.email);
         }
       } catch {
         // Not logged in
@@ -50,20 +49,13 @@ export default function CalendrierPage() {
       try {
         const res = await fetch('/api/presence');
         const data = await res.json();
-        console.log('[DEBUG] API response:', JSON.stringify(data));
         
         const presenceList: Presence[] = Object.entries(data).map(([date, users]) => ({
           date,
           users: (users as PresenceUser[]) || [],
         }));
         
-        console.log('[DEBUG] Parsed presences:', presenceList.length, 'dates:', presenceList.map(p => p.date).join(', '));
         setPresences(presenceList);
-        
-        // Debug: show alert if we have data
-        if (presenceList.length > 0) {
-          alert('Préndences chargées: ' + presenceList.map(p => p.date + '(' + p.users.length + ')').join(', '));
-        }
       } catch (e) {
         console.error('[DEBUG] Error fetching presences:', e);
       }
@@ -100,9 +92,7 @@ export default function CalendrierPage() {
   };
 
   const getUsersForDate = (dateKey: string) => {
-    const users = presences.find(p => p.date === dateKey)?.users || [];
-    console.log('[DEBUG] getUsersForDate:', dateKey, 'found:', users.length, 'all dates:', presences.map(p => p.date));
-    return users;
+    return presences.find(p => p.date === dateKey)?.users || [];
   };
 
   // Generate calendar days
@@ -198,7 +188,11 @@ const formatDate = (d: Date) => {
         </h1>
         <p className="text-gray-600 mb-6">
           Clique sur les jours où tu seras présent à Valfréjus pour indiquer ta présence
-        </p>
+          </p>
+          {/* DEBUG: Show loaded dates */}
+          <div className="bg-yellow-100 p-2 mb-4 text-xs">
+            DEBUG: {presences.length} dates chargées: {presences.map(p => p.date + '(' + p.users.length + ')').join(', ') || 'AUCUNE'}
+          </div>
 
         {/* Calendar */}
         <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
