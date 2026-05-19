@@ -49,15 +49,17 @@ export default function CalendrierPage() {
       try {
         const res = await fetch('/api/presence');
         const data = await res.json();
+        console.log('[DEBUG] API response:', data);
         
         const presenceList: Presence[] = Object.entries(data).map(([date, users]) => ({
           date,
           users: (users as PresenceUser[]) || [],
         }));
         
+        console.log('[DEBUG] Parsed presences:', presenceList);
         setPresences(presenceList);
-      } catch {
-        // Ignore
+      } catch (e) {
+        console.error('[DEBUG] Error fetching presences:', e);
       }
     };
 
@@ -68,20 +70,26 @@ export default function CalendrierPage() {
   const togglePresence = async (date: string) => {
     if (!user) return;
 
+    console.log('[DEBUG] togglePresence called with date:', date);
+    
     const currentPresence = presences.find(p => p.date === date);
     const isPresent = currentPresence?.users?.some(u => u.email === user.email) || false;
     const newPresent = !isPresent;
 
+    console.log('[DEBUG] currentPresence:', currentPresence, 'isPresent:', isPresent, 'newPresent:', newPresent);
+
     try {
-      await fetch('/api/presence', {
+      const res = await fetch('/api/presence', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ date, present: newPresent }),
       });
+      
+      console.log('[DEBUG] POST response:', res.status, await res.json());
 
       window.location.reload();
-    } catch {
-      // Ignore
+    } catch (e) {
+      console.error('[DEBUG] Error toggling presence:', e);
     }
   };
 
