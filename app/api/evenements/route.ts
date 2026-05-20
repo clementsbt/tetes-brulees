@@ -90,7 +90,7 @@ export async function POST(request: Request) {
     }
 
     // Create event with creator as first participant
-    let startDate = new Date(date);
+    const startDate = new Date(date);
     if (time) {
       const [hours, minutes] = time.split(':');
       startDate.setHours(parseInt(hours), parseInt(minutes), 0, 0);

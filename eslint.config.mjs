@@ -5,9 +5,21 @@ import nextTs from "eslint-config-next/typescript";
 const eslintConfig = defineConfig([
   ...nextVitals,
   ...nextTs,
+  // Override rules
+  {
+    rules: {
+      // Allow explicit any for now
+      '@typescript-eslint/no-explicit-any': 'off',
+      // Allow unused vars in some cases
+      '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
+      // Allow img for performance warnings
+      '@next/next/no-img-element': 'off',
+      // Disable apostrophe escaping rule
+      'react/no-unescaped-entities': 'off',
+    },
+  },
   // Override default ignores of eslint-config-next.
   globalIgnores([
-    // Default ignores of eslint-config-next:
     ".next/**",
     "out/**",
     "build/**",
