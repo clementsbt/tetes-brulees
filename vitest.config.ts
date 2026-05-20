@@ -1,6 +1,9 @@
 import { defineConfig } from 'vitest/config'
 import react from '@vitejs/plugin-react'
 import path from 'path'
+import { fileURLToPath } from 'url'
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 export default defineConfig({
   plugins: [react()],
@@ -9,11 +12,17 @@ export default defineConfig({
       '@': path.resolve(__dirname, './'),
     },
   },
-  test: {
+test: {
     environment: 'jsdom',
     globals: true,
     setupFiles: ['./src/test/setup.ts'],
     include: ['**/*.test.{ts,tsx}'],
     exclude: ['src/e2e/**', 'e2e/**', 'node_modules'],
+    pool: 'forks',
+    poolOptions: {
+      forks: {
+        singleFork: true,
+      },
+    },
   },
 })
