@@ -12,17 +12,11 @@ export default defineConfig({
       '@': path.resolve(__dirname, './'),
     },
   },
-test: {
+  test: {
     environment: 'jsdom',
     globals: true,
     setupFiles: ['./src/test/setup.ts'],
     include: ['**/*.test.{ts,tsx}'],
     exclude: ['src/e2e/**', 'e2e/**', 'node_modules'],
-    pool: 'forks',
-    poolOptions: {
-      forks: {
-        singleFork: true,
-      },
-    },
   },
 })
