@@ -69,7 +69,7 @@ test.describe('Authentication pages', () => {
   test('inscription page loads', async ({ page }) => {
     await page.goto('/inscription')
     await expect(page.getByLabel(/email/i)).toBeVisible()
-    await expect(page.getByLabel(/licence/i)).toBeVisible()
+    await expect(page.getByLabel(/numéro de licence/i)).toBeVisible()
   })
 
   test('connexion page loads', async ({ page }) => {

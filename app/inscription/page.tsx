@@ -116,10 +116,11 @@ export default function InscriptionPage() {
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="licenseNumber" className="block text-sm font-medium text-gray-700 mb-2">
                     Numéro de licence FFVL
                   </label>
                   <input
+                    id="licenseNumber"
                     type="text"
                     value={licenseNumber}
                     onChange={(e) => setLicenseNumber(e.target.value)}
