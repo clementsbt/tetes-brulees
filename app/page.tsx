@@ -108,62 +108,62 @@ export default function HomePage() {
       <div className="relative z-20">
         <div className="container mx-auto px-4 py-16">
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl mx-auto">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl mx-auto auto-rows-fr">
           <Link href="/membres" className="group">
-            <div className="bg-white/70 rounded-lg shadow-lg p-8 hover:shadow-2xl transition-all transform hover:-translate-y-1 lg:h-48 lg:flex lg:flex-col">
+            <div className="bg-white/70 rounded-lg shadow-lg p-8 hover:shadow-2xl transition-all transform hover:-translate-y-1 h-full flex flex-col">
               <div className="text-5xl mb-4">👥</div>
               <h2 className="text-2xl font-bold text-gray-900 mb-2">
                 Nos Membres
               </h2>
-              <p className="text-gray-600 lg:flex-grow">
+              <p className="text-gray-600 mt-auto">
                 Découvrez la communauté des Têtes Brûlées
               </p>
             </div>
           </Link>
 
           <Link href="/valfrjus" className="group">
-            <div className="bg-white/70 rounded-lg shadow-lg p-8 hover:shadow-2xl transition-all transform hover:-translate-y-1 lg:h-48 lg:flex lg:flex-col">
+            <div className="bg-white/70 rounded-lg shadow-lg p-8 hover:shadow-2xl transition-all transform hover:-translate-y-1 h-full flex flex-col">
               <div className="text-5xl mb-4">🏔️</div>
               <h2 className="text-2xl font-bold text-gray-900 mb-2">
                 Valfréjus
               </h2>
-              <p className="text-gray-600 lg:flex-grow">
+              <p className="text-gray-600 mt-auto">
                 Infos sur notre spot favorite
               </p>
             </div>
           </Link>
 
           <Link href="/sorties-club" className="group">
-            <div className="bg-white/70 rounded-lg shadow-lg p-8 hover:shadow-2xl transition-all transform hover:-translate-y-1 lg:h-48 lg:flex lg:flex-col">
+            <div className="bg-white/70 rounded-lg shadow-lg p-8 hover:shadow-2xl transition-all transform hover:-translate-y-1 h-full flex flex-col">
               <div className="text-5xl mb-4">🪂</div>
               <h2 className="text-2xl font-bold text-gray-900 mb-2">
                 Sorties Club
               </h2>
-              <p className="text-gray-600 lg:flex-grow">
+              <p className="text-gray-600 mt-auto">
                 Sessions et sorties du club
               </p>
             </div>
           </Link>
 
           <Link href="/calendrier" className="group">
-            <div className="bg-white/70 rounded-lg shadow-lg p-8 hover:shadow-2xl transition-all transform hover:-translate-y-1 lg:h-48 lg:flex lg:flex-col">
+            <div className="bg-white/70 rounded-lg shadow-lg p-8 hover:shadow-2xl transition-all transform hover:-translate-y-1 h-full flex flex-col">
               <div className="text-5xl mb-4">📆</div>
               <h2 className="text-2xl font-bold text-gray-900 mb-2">
                 Calendrier
               </h2>
-              <p className="text-gray-600 lg:flex-grow">
+              <p className="text-gray-600 mt-auto">
                 Dis quand tu viens à Valfréjus
               </p>
             </div>
           </Link>
 
           <Link href="/location" className="group">
-            <div className="bg-white/70 rounded-lg shadow-lg p-8 hover:shadow-2xl transition-all transform hover:-translate-y-1 lg:h-48 lg:flex lg:flex-col">
+            <div className="bg-white/70 rounded-lg shadow-lg p-8 hover:shadow-2xl transition-all transform hover:-translate-y-1 h-full flex flex-col">
               <div className="text-5xl mb-4">🏠</div>
               <h2 className="text-2xl font-bold text-gray-900 mb-2">
                 Location
               </h2>
-              <p className="text-gray-600 lg:flex-grow">
+              <p className="text-gray-600 mt-auto">
                 Appartements à Valfréjus
               </p>
             </div>
