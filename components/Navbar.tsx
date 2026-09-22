@@ -97,6 +97,9 @@ export default function Navbar() {
               <Link href="/location" className="text-white hover:text-yellow-200 transition-colors font-medium">
                 Location
               </Link>
+              <Link href="/boutique" className="text-white hover:text-yellow-200 transition-colors font-medium">
+                Boutique
+              </Link>
               <div className="flex items-center space-x-2 ml-4">
                 {user ? (
                   <>
@@ -207,6 +210,13 @@ export default function Navbar() {
             onClick={() => setIsOpen(false)}
           >
             Location
+          </Link>
+          <Link 
+            href="/boutique" 
+            className="block text-white hover:text-yellow-200 transition-colors font-medium py-3 border-b border-white/20"
+            onClick={() => setIsOpen(false)}
+          >
+            Boutique
           </Link>
           {user ? (
             <>
