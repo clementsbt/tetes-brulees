@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { getPrintfulProducts, getPrintfulProductById } from '@/lib/printful';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const id = searchParams.get('id');
@@ -11,6 +13,7 @@ export async function GET(request: Request) {
     return NextResponse.json({
       hasToken: !!process.env.PRINTFUL_TOKEN,
       tokenPrefix: process.env.PRINTFUL_TOKEN?.substring(0, 10) || 'undefined',
+      nodeEnv: process.env.NODE_ENV,
     });
   }
 
@@ -31,7 +34,7 @@ export async function GET(request: Request) {
   } catch (error: any) {
     console.error('API Error:', error);
     return NextResponse.json(
-      { error: error.message || 'Erreur lors de la récupération des produits' },
+      { error: error.message || error.toString() || 'Erreur lors de la récupération des produits' },
       { status: 500 }
     );
   }
