@@ -59,7 +59,7 @@ export default function ProductDetail({ params }: Props) {
 
   // Get images for current color - handle both string and array formats
   const getColorImages = () => {
-    if (!selectedColor || !product.colorImages) return [];
+    if (!product || !selectedColor || !product.colorImages) return [];
     const img = product.colorImages[selectedColor];
     if (Array.isArray(img)) return img;
     if (typeof img === 'string') return [img];
