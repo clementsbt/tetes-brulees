@@ -123,6 +123,7 @@ async function fetchStoreProductDetails(productId: number) {
       '/images/cap/5-panel-trucker-cap-navy-white-navy-left-front-6ab3cb4865d1e.png',
     ],
     'White-sticker': [
+      '/images/sticker/file_99---c23e7a8b-2a86-436e-9661-036a0729248a.jpg',
       '/images/sticker/kiss-cut-stickers-white-3x3-front-6ab3e6cb79e46.png',
       '/images/sticker/kiss-cut-stickers-white-15x3.75-front-6ab3e6cb7a100.png',
     ],
