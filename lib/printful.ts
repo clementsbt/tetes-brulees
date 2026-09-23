@@ -146,11 +146,22 @@ async function fetchStoreProductDetails(productId: number) {
     }
   });
   
-  // Use first design image as main image (thumbnail), use local Navy front image
-  const mainImage = localImages['Navy']?.[0] || (images.length > 0 ? images[0] : (allBlankImages.length > 0 ? allBlankImages[0] : syncProduct.thumbnail_url));
+  // Use first design image as main image (thumbnail), use local images
+  let mainImage = syncProduct.thumbnail_url;
+  if (syncProduct.id === 474737126) {
+    // Cap - use left front image
+    mainImage = localImages['Navy/ White/ Navy']?.[2] || mainImage;
+  } else {
+    // Hoodie - use Navy front image
+    mainImage = localImages['Navy']?.[0] || mainImage;
+  }
   
-  // Use Navy images as default when no color selected
-  const defaultImages = localImages['Navy'] || images;
+  // Use local images as default when no color selected
+  let defaultImages = localImages['Navy'] || images;
+  if (syncProduct.id === 474737126) {
+    // Cap - use cap images
+    defaultImages = localImages['Navy/ White/ Navy'] || images;
+  }
   
   return {
     id: String(syncProduct.id),
