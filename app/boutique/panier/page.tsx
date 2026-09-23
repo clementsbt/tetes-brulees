@@ -4,10 +4,21 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useCart } from '@/context/CartContext';
 
+interface ShippingRate {
+  id: string;
+  name: string;
+  price: number;
+  currency: string;
+  estimatedDays: number;
+}
+
 export default function CartPage() {
   const { items, removeItem, updateQuantity, clearCart, total } = useCart();
   const [showForm, setShowForm] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [shippingRates, setShippingRates] = useState<ShippingRate[]>([]);
+  const [selectedShipping, setSelectedShipping] = useState<ShippingRate | null>(null);
+  const [calculatingShipping, setCalculatingShipping] = useState(false);
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -19,8 +30,61 @@ export default function CartPage() {
     email: '',
   });
 
+  const calculateShipping = async () => {
+    if (!formData.address || !formData.city || !formData.postalCode || !formData.country) {
+      alert('Veuillez remplir votre adresse complète');
+      return;
+    }
+
+    setCalculatingShipping(true);
+    try {
+      const response = await fetch('/api/shipping', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          items: items.map(item => ({
+            id: item.id,
+            name: item.name,
+            price: item.price,
+            quantity: item.quantity,
+          })),
+          shippingAddress: {
+            address: formData.address,
+            city: formData.city,
+            postalCode: formData.postalCode,
+            country: formData.country,
+          },
+        }),
+      });
+
+      const data = await response.json();
+      if (data.shippingRates) {
+        setShippingRates(data.shippingRates);
+        // Auto-select cheapest option
+        if (data.shippingRates.length > 0) {
+          setSelectedShipping(data.shippingRates[0]);
+        }
+      } else {
+        alert(data.error || 'Erreur lors du calcul des frais de livraison');
+      }
+    } catch (error) {
+      console.error('Shipping error:', error);
+      alert('Erreur lors du calcul des frais de livraison');
+    } finally {
+      setCalculatingShipping(false);
+    }
+  };
+
+  const grandTotal = total + (selectedShipping?.price || 0);
+
   const handleCheckout = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!selectedShipping) {
+      alert('Veuillez sélectionner un mode de livraison');
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -35,9 +99,10 @@ export default function CartPage() {
         body: JSON.stringify({
           productId: 'cart',
           productName: `Commande boutique: ${productDescription}`,
-          price: total,
+          price: grandTotal,
           quantity: 1,
           shipping: formData,
+          shippingMethod: selectedShipping.name,
         }),
       });
 
@@ -285,19 +350,75 @@ export default function CartPage() {
                 />
               </div>
 
+              {/* Calcul des frais de livraison */}
+              <div className="bg-gray-50 p-4 rounded-lg">
+                <button
+                  type="button"
+                  onClick={calculateShipping}
+                  disabled={calculatingShipping}
+                  className="w-full bg-blue-500 text-white py-2 rounded-lg font-medium hover:bg-blue-600 transition-colors disabled:opacity-50 mb-4"
+                >
+                  {calculatingShipping ? 'Calcul en cours...' : 'Calculer les frais de livraison'}
+                </button>
+
+                {shippingRates.length > 0 && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Mode de livraison *
+                    </label>
+                    <div className="space-y-2">
+                      {shippingRates.map((rate) => (
+                        <label
+                          key={rate.id}
+                          className={`flex items-center justify-between p-3 border rounded-lg cursor-pointer transition-colors ${
+                            selectedShipping?.id === rate.id
+                              ? 'border-orange-500 bg-orange-50'
+                              : 'border-gray-300 hover:border-orange-500'
+                          }`}
+                        >
+                          <div className="flex items-center">
+                            <input
+                              type="radio"
+                              name="shipping"
+                              checked={selectedShipping?.id === rate.id}
+                              onChange={() => setSelectedShipping(rate)}
+                              className="mr-3"
+                            />
+                            <div>
+                              <p className="font-medium text-gray-800">{rate.name}</p>
+                              <p className="text-sm text-gray-500">
+                                {rate.estimatedDays ? `Livraison en ${rate.estimatedDays} jour${rate.estimatedDays > 1 ? 's' : ''}` : 'Livraison standard'}
+                              </p>
+                            </div>
+                          </div>
+                          <span className="font-semibold text-orange-600">{rate.price.toFixed(2)}€</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+
               <div className="bg-gray-50 p-4 rounded-lg mt-6">
-                <p className="text-sm text-gray-600 mb-2">Récitulatif :</p>
+                <p className="text-sm text-gray-600 mb-2">Récapitulatif :</p>
                 {items.map((item) => (
                   <p key={item.id} className="text-sm">
                     {item.name} x{item.quantity} = {item.price * item.quantity}€
                   </p>
                 ))}
-                <p className="text-xl font-bold text-orange-600 mt-2">Total: {total}€</p>
+                {selectedShipping && (
+                  <p className="text-sm mt-2">
+                    Livraison ({selectedShipping.name}) = {selectedShipping.price.toFixed(2)}€
+                  </p>
+                )}
+                <p className="text-xl font-bold text-orange-600 mt-2">
+                  Total: {grandTotal.toFixed(2)}€
+                </p>
               </div>
 
               <button
                 type="submit"
-                disabled={loading}
+                disabled={loading || !selectedShipping}
                 className="w-full bg-orange-600 text-white py-4 rounded-xl font-semibold text-lg hover:bg-orange-700 transition-colors disabled:opacity-50"
               >
                 {loading ? 'Chargement...' : 'Payer maintenant'}
