@@ -79,7 +79,7 @@ export default function Boutique() {
           {products.map((product) => (
             <div 
               key={product.id} 
-              className="bg-white rounded-xl shadow-md hover:shadow-xl transition-shadow overflow-hidden group"
+              className="bg-white rounded-xl shadow-md hover:shadow-xl transition-shadow overflow-hidden group border-2 border-white"
             >
               <div className="relative h-64 bg-gray-200">
                 {product.image ? (
