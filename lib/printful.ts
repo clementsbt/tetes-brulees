@@ -123,15 +123,12 @@ async function fetchStoreProductDetails(productId: number) {
     }
   });
   
-  // Use first blank product image as main image
-  const mainImage = allProductImages.length > 0 ? allProductImages[0] : syncProduct.thumbnail_url;
-  
   return {
     id: String(syncProduct.id),
     name: syncProduct.name,
     description: '',
     price: parseFloat(syncVariants[0]?.retail_price || '0'),
-    image: mainImage,
+    image: syncProduct.thumbnail_url,
     images: allProductImages.length > 0 ? allProductImages : images,
     colorImages,
     sizes,
