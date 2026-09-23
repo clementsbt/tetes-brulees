@@ -5,6 +5,7 @@ import { getPrintfulProducts, getPrintfulProductById } from '@/lib/printful';
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
+// API route for Printful products
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const id = searchParams.get('id');
