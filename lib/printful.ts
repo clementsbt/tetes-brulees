@@ -118,9 +118,9 @@ async function fetchStoreProductDetails(productId: number) {
       '/images/hoodie/unisex-heavy-blend-hoodie-white-right.jpg',
     ],
     'Navy/ White/ Navy': [
-      '/images/cap/5-panel-trucker-cap-navy-white-navy-front-6ab3cb4866090.jpg',
-      '/images/cap/5-panel-trucker-cap-navy-white-navy-back-6ab3cb48658ad.jpg',
-      '/images/cap/5-panel-trucker-cap-navy-white-navy-left-front-6ab3cb4865d1e.jpg',
+      '/images/cap/5-panel-trucker-cap-navy-white-navy-front-6ab3cb4866090.png',
+      '/images/cap/5-panel-trucker-cap-navy-white-navy-back-6ab3cb48658ad.png',
+      '/images/cap/5-panel-trucker-cap-navy-white-navy-left-front-6ab3cb4865d1e.png',
     ],
   };
 
