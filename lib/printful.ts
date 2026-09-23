@@ -90,16 +90,15 @@ async function fetchStoreProductDetails(productId: number) {
   });
   const images = Array.from(allImages);
   
-  // Extract all unique preview images from all variants (use for carousel)
+  // Extract all unique blank product images from variants (use for carousel)
   const allProductImages: string[] = [];
   const seenImages = new Set<string>();
   syncVariants.forEach((v: any) => {
-    v.files?.forEach((f: any) => {
-      if (f.preview_url && !seenImages.has(f.preview_url)) {
-        seenImages.add(f.preview_url);
-        allProductImages.push(f.preview_url);
-      }
-    });
+    // Get blank product images (without design)
+    if (v.product?.image && !seenImages.has(v.product.image)) {
+      seenImages.add(v.product.image);
+      allProductImages.push(v.product.image);
+    }
   });
   
   // Extract all images (front, back) per color
