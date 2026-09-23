@@ -29,7 +29,7 @@ interface Props {
 export default function ProductDetailClient({ product }: Props) {
   const { addItem } = useCart();
   const [selectedSize, setSelectedSize] = useState<string>('');
-  const [selectedColor, setSelectedColor] = useState<string>('');
+  const [selectedColor, setSelectedColor] = useState<string>(product.colors[0] || '');
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [addedToCart, setAddedToCart] = useState(false);
 
