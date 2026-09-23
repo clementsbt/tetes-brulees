@@ -1,15 +1,6 @@
 import axios from 'axios';
 
 const PRINTFUL_API_BASE = 'https://api.printful.com';
-const PRINTFUL_TOKEN = process.env.PRINTFUL_TOKEN;
-
-const printfulClient = axios.create({
-  baseURL: PRINTFUL_API_BASE,
-  headers: {
-    'Authorization': `Bearer ${PRINTFUL_TOKEN}`,
-    'Content-Type': 'application/json',
-  },
-});
 
 export interface PrintfulProduct {
   id: number;
@@ -41,13 +32,30 @@ export interface ProductWithVariants {
 
 // Liste des produits Printful à utiliser (par ID de produit)
 // T-shirts, Sweats, Casquettes, etc.
-const TARGET_PRODUCTS = [71, 14, 12, 73, 3, 71]; // 71=T-shirt, 14= hoodie, 12=casquette, 73=sweatshirt
+const TARGET_PRODUCTS = [71, 14, 12, 73, 3]; // 71=T-shirt, 14= hoodie, 12=casquette, 73=sweatshirt
+
+function getPrintfulClient() {
+  const token = process.env.PRINTFUL_TOKEN;
+  if (!token) {
+    throw new Error('PRINTFUL_TOKEN not set');
+  }
+  return axios.create({
+    baseURL: PRINTFUL_API_BASE,
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+  });
+}
 
 export async function getPrintfulProducts(): Promise<ProductWithVariants[]> {
+  const printfulClient = getPrintfulClient();
+  
   try {
     const products: ProductWithVariants[] = [];
     
     for (const productId of TARGET_PRODUCTS) {
+      console.log('Fetching product:', productId);
       const response = await printfulClient.get(`/products/${productId}`);
       const product = response.data.result;
       
@@ -66,14 +74,17 @@ export async function getPrintfulProducts(): Promise<ProductWithVariants[]> {
       });
     }
     
+    console.log('Products fetched:', products.length);
     return products;
-  } catch (error) {
-    console.error('Error fetching Printful products:', error);
-    return [];
+  } catch (error: any) {
+    console.error('Error fetching Printful products:', error.message, error.response?.data);
+    throw new Error(`Printful API error: ${error.message}`);
   }
 }
 
 export async function getPrintfulProductById(productId: string): Promise<ProductWithVariants | null> {
+  const printfulClient = getPrintfulClient();
+  
   try {
     const response = await printfulClient.get(`/products/${productId}`);
     const product = response.data.result;
@@ -91,8 +102,8 @@ export async function getPrintfulProductById(productId: string): Promise<Product
       colors,
       variants: product.variants,
     };
-  } catch (error) {
-    console.error('Error fetching Printful product:', error);
+  } catch (error: any) {
+    console.error('Error fetching Printful product:', error.message);
     return null;
   }
 }
@@ -114,6 +125,8 @@ export async function createPrintfulOrder(
     price?: string;
   }>
 ) {
+  const printfulClient = getPrintfulClient();
+  
   try {
     const response = await printfulClient.post('/orders', {
       recipient,
