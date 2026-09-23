@@ -122,13 +122,25 @@ async function fetchStoreProductDetails(productId: number) {
       '/images/cap/5-panel-trucker-cap-navy-white-navy-back-6ab3cb48658ad.png',
       '/images/cap/5-panel-trucker-cap-navy-white-navy-left-front-6ab3cb4865d1e.png',
     ],
+    'White-sticker': [
+      '/images/sticker/kiss-cut-stickers-white-3x3-front-6ab3e6cb79e46.png',
+      '/images/sticker/kiss-cut-stickers-white-15x3.75-front-6ab3e6cb7a100.png',
+    ],
   };
+
+  // Map Printful colors to local images for sticker product
+  const colorMapping: Record<string, string> = {};
+  if (syncProduct.id === 474787979) {
+    // Sticker product
+    colorMapping['White'] = 'White-sticker';
+  }
 
   // Extract front view images per color
   const colorImages: Record<string, string[]> = {};
   colors.forEach((color: string) => {
-    if (localImages[color]) {
-      colorImages[color] = localImages[color];
+    const localColor = colorMapping[color] || color;
+    if (localImages[localColor]) {
+      colorImages[color] = localImages[localColor];
     } else {
       // Fallback to Printful images if no local images
       const variant = syncVariants.find((v: any) => v.color === color);
@@ -151,6 +163,9 @@ async function fetchStoreProductDetails(productId: number) {
   if (syncProduct.id === 474737126) {
     // Cap - use left front image
     mainImage = localImages['Navy/ White/ Navy']?.[2] || mainImage;
+  } else if (syncProduct.id === 474787979) {
+    // Sticker - use first sticker image
+    mainImage = localImages['White-sticker']?.[0] || mainImage;
   } else {
     // Hoodie - use Navy front image
     mainImage = localImages['Navy']?.[0] || mainImage;
@@ -161,6 +176,9 @@ async function fetchStoreProductDetails(productId: number) {
   if (syncProduct.id === 474737126) {
     // Cap - use cap images
     defaultImages = localImages['Navy/ White/ Navy'] || images;
+  } else if (syncProduct.id === 474787979) {
+    // Sticker - use sticker images
+    defaultImages = localImages['White-sticker'] || images;
   }
   
   return {
