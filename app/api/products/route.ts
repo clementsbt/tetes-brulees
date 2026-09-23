@@ -29,12 +29,14 @@ export async function GET(request: Request) {
       return NextResponse.json(product);
     }
 
+    console.log('Fetching products...');
     const products = await getPrintfulProducts();
+    console.log('Products fetched:', products.length);
     return NextResponse.json(products);
   } catch (error: any) {
     console.error('API Error:', error);
     return NextResponse.json(
-      { error: error.message || error.toString() || 'Erreur lors de la récupération des produits' },
+      { error: error.message || error.toString() || 'Erreur lors de la récupération des produits', stack: error.stack },
       { status: 500 }
     );
   }
