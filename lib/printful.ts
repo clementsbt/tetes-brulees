@@ -1,0 +1,127 @@
+import axios from 'axios';
+
+const PRINTFUL_API_BASE = 'https://api.printful.com';
+const PRINTFUL_TOKEN = process.env.PRINTFUL_TOKEN;
+
+const printfulClient = axios.create({
+  baseURL: PRINTFUL_API_BASE,
+  headers: {
+    'Authorization': `Bearer ${PRINTFUL_TOKEN}`,
+    'Content-Type': 'application/json',
+  },
+});
+
+export interface PrintfulProduct {
+  id: number;
+  title: string;
+  type_name: string;
+  thumbnail_url: string;
+}
+
+export interface PrintfulVariant {
+  id: number;
+  product_id: number;
+  title: string;
+  size: string;
+  color: string;
+  price: string;
+  image?: string;
+}
+
+export interface ProductWithVariants {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  image: string;
+  sizes: string[];
+  colors: string[];
+  variants: PrintfulVariant[];
+}
+
+// Liste des produits Printful à utiliser (par ID de produit)
+// T-shirts, Sweats, Casquettes, etc.
+const TARGET_PRODUCTS = [71, 14, 12, 73, 3, 71]; // 71=T-shirt, 14= hoodie, 12=casquette, 73=sweatshirt
+
+export async function getPrintfulProducts(): Promise<ProductWithVariants[]> {
+  try {
+    const products: ProductWithVariants[] = [];
+    
+    for (const productId of TARGET_PRODUCTS) {
+      const response = await printfulClient.get(`/products/${productId}`);
+      const product = response.data.result;
+      
+      const sizes = [...new Set(product.variants.map((v: any) => v.size))] as string[];
+      const colors = [...new Set(product.variants.map((v: any) => v.color))] as string[];
+      
+      products.push({
+        id: String(product.id),
+        name: product.title,
+        description: product.type_name,
+        price: parseFloat(product.variants[0]?.price || '0'),
+        image: product.thumbnail_url,
+        sizes,
+        colors,
+        variants: product.variants,
+      });
+    }
+    
+    return products;
+  } catch (error) {
+    console.error('Error fetching Printful products:', error);
+    return [];
+  }
+}
+
+export async function getPrintfulProductById(productId: string): Promise<ProductWithVariants | null> {
+  try {
+    const response = await printfulClient.get(`/products/${productId}`);
+    const product = response.data.result;
+    
+    const sizes = [...new Set(product.variants.map((v: any) => v.size))] as string[];
+    const colors = [...new Set(product.variants.map((v: any) => v.color))] as string[];
+    
+    return {
+      id: String(product.id),
+      name: product.title,
+      description: product.type_name,
+      price: parseFloat(product.variants[0]?.price || '0'),
+      image: product.thumbnail_url,
+      sizes,
+      colors,
+      variants: product.variants,
+    };
+  } catch (error) {
+    console.error('Error fetching Printful product:', error);
+    return null;
+  }
+}
+
+export async function createPrintfulOrder(
+  recipient: {
+    name: string;
+    address1: string;
+    city: string;
+    state_code?: string;
+    country_code: string;
+    zip: string;
+    phone: string;
+    email: string;
+  },
+  items: Array<{
+    variant_id: number;
+    quantity: number;
+    price?: string;
+  }>
+) {
+  try {
+    const response = await printfulClient.post('/orders', {
+      recipient,
+      items,
+    });
+    return response.data;
+  } catch (error: any) {
+    console.error('Error creating Printful order:', error.response?.data || error.message);
+    throw error;
+  }
+}
