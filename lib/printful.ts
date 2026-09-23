@@ -23,16 +23,6 @@ export interface ProductWithVariants {
   variants: PrintfulVariant[];
 }
 
-// Liste des produits Printful à utiliser (par ID de catalogue)
-const TARGET_PRODUCTS = [
-  71,   // T-shirt Bella + Canvas 3001
-  438,  // T-shirt Gildan 5000
-  508,  // T-shirt Cotton Heritage
-  12,   // T-shirt Gildan Softstyle
-  146,  // Hoodie Gildan
-  145,  // Sweatshirt Gildan
-];
-
 function getPrintfulClient() {
   const token = process.env.PRINTFUL_TOKEN;
   if (!token) {
@@ -47,38 +37,37 @@ function getPrintfulClient() {
   });
 }
 
-async function fetchProductFromCatalog(productId: number) {
+// Fetch products from user's Printful store (not catalog)
+async function fetchStoreProducts() {
   const printfulClient = getPrintfulClient();
   
-  // Get product info from catalog
-  const productsResponse = await printfulClient.get('/catalog/products', {
-    params: { limit: 100 }
-  });
+  // Get products from the store
+  const response = await printfulClient.get('/store/products');
+  const products = response.data.result;
   
-  const product = productsResponse.data.result.products.find(
-    (p: any) => p.id === productId
-  );
+  console.log('Store products found:', products.length);
+  return products;
+}
+
+async function fetchStoreProductDetails(productId: number) {
+  const printfulClient = getPrintfulClient();
   
-  if (!product) {
-    throw new Error(`Product ${productId} not found in catalog`);
-  }
+  // Get product details with variants
+  const response = await printfulClient.get(`/store/products/${productId}`);
+  const productData = response.data.result;
   
-  // Get variants from catalog
-  const variantsResponse = await printfulClient.get('/catalog/variants', {
-    params: { product_id: productId, limit: 100 }
-  });
-  
-  const variants = variantsResponse.data.result.variants;
+  const syncProduct = productData.sync_product;
+  const syncVariants = productData.sync_variants;
   
   // Transform variants to our format
-  const transformedVariants: PrintfulVariant[] = variants.map((v: any) => ({
+  const transformedVariants: PrintfulVariant[] = syncVariants.map((v: any) => ({
     id: v.id,
-    product_id: v.product_id,
-    name: v.display_name,
+    product_id: v.sync_product_id,
+    name: v.name,
     size: v.size,
-    color: v.color?.color_name || '',
-    price: v.price,
-    image: v.image_url,
+    color: v.color,
+    price: v.retail_price,
+    image: v.product?.image || syncProduct.thumbnail_url,
   }));
   
   // Extract unique sizes and colors
@@ -86,11 +75,11 @@ async function fetchProductFromCatalog(productId: number) {
   const colors = [...new Set(transformedVariants.map(v => v.color).filter(Boolean))] as string[];
   
   return {
-    id: String(product.id),
-    name: product.display_name,
-    description: product.description?.replace(/<[^>]*>/g, '').substring(0, 200) || '',
-    price: parseFloat(variants[0]?.price || '0'),
-    image: product.image_url,
+    id: String(syncProduct.id),
+    name: syncProduct.name,
+    description: '',
+    price: parseFloat(syncVariants[0]?.retail_price || '0'),
+    image: syncProduct.thumbnail_url,
     sizes,
     colors,
     variants: transformedVariants,
@@ -99,15 +88,18 @@ async function fetchProductFromCatalog(productId: number) {
 
 export async function getPrintfulProducts(): Promise<ProductWithVariants[]> {
   try {
+    // Get products from the store (not catalog)
+    const storeProducts = await fetchStoreProducts();
+    
     const products: ProductWithVariants[] = [];
     
-    for (const productId of TARGET_PRODUCTS) {
-      console.log('Fetching product:', productId);
+    for (const storeProduct of storeProducts) {
+      console.log('Fetching store product:', storeProduct.id, storeProduct.name);
       try {
-        const product = await fetchProductFromCatalog(productId);
+        const product = await fetchStoreProductDetails(storeProduct.id);
         products.push(product);
       } catch (err) {
-        console.error(`Error fetching product ${productId}:`, err);
+        console.error(`Error fetching product ${storeProduct.id}:`, err);
       }
     }
     
@@ -121,7 +113,7 @@ export async function getPrintfulProducts(): Promise<ProductWithVariants[]> {
 
 export async function getPrintfulProductById(productId: string): Promise<ProductWithVariants | null> {
   try {
-    const product = await fetchProductFromCatalog(parseInt(productId));
+    const product = await fetchStoreProductDetails(parseInt(productId));
     return product;
   } catch (error: any) {
     console.error('Error fetching Printful product:', error.message);
