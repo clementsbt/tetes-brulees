@@ -90,6 +90,18 @@ async function fetchStoreProductDetails(productId: number) {
   });
   const images = Array.from(allImages);
   
+  // Extract all unique preview images from all variants (use for carousel)
+  const allProductImages: string[] = [];
+  const seenImages = new Set<string>();
+  syncVariants.forEach((v: any) => {
+    v.files?.forEach((f: any) => {
+      if (f.preview_url && !seenImages.has(f.preview_url)) {
+        seenImages.add(f.preview_url);
+        allProductImages.push(f.preview_url);
+      }
+    });
+  });
+  
   // Extract all images (front, back) per color
   const colorImages: Record<string, string[]> = {};
   syncVariants.forEach((v: any) => {
@@ -118,7 +130,7 @@ async function fetchStoreProductDetails(productId: number) {
     description: '',
     price: parseFloat(syncVariants[0]?.retail_price || '0'),
     image: syncProduct.thumbnail_url,
-    images,
+    images: allProductImages.length > 0 ? allProductImages : images,
     colorImages,
     sizes,
     colors,
