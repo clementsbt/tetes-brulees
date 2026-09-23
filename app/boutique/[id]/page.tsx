@@ -10,6 +10,7 @@ interface PrintfulProduct {
   description: string;
   price: number;
   image: string;
+  images: string[];
   sizes: string[];
   colors: string[];
   variants: Array<{
@@ -52,6 +53,7 @@ export default function ProductDetail({ params }: Props) {
 
   const [selectedSize, setSelectedSize] = useState<string>('');
   const [selectedColor, setSelectedColor] = useState<string>('');
+  const [selectedImage, setSelectedImage] = useState<string>('');
   const [addedToCart, setAddedToCart] = useState(false);
 
   const handleAddToCart = () => {
@@ -133,7 +135,13 @@ export default function ProductDetail({ params }: Props) {
           <div className="grid grid-cols-1 md:grid-cols-2">
             <div className="space-y-4 p-4">
               <div className="relative h-80 md:h-96 bg-white rounded-xl overflow-hidden">
-                {product.image ? (
+                {selectedImage ? (
+                  <img 
+                    src={selectedImage} 
+                    alt={product.name}
+                    className="w-full h-full object-contain"
+                  />
+                ) : product.image ? (
                   <img 
                     src={product.image} 
                     alt={product.name}
@@ -147,6 +155,20 @@ export default function ProductDetail({ params }: Props) {
                   </div>
                 )}
               </div>
+              {/* Thumbnails */}
+              {product.images && product.images.length > 0 && (
+                <div className="flex gap-2 overflow-x-auto pb-2">
+                  {product.images.map((img, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => setSelectedImage(img)}
+                      className={`flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 ${selectedImage === img ? 'border-orange-500' : 'border-gray-200'}`}
+                    >
+                      <img src={img} alt="" className="w-full h-full object-contain" />
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
 
             {/* Info */}

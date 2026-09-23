@@ -18,6 +18,7 @@ export interface ProductWithVariants {
   description: string;
   price: number;
   image: string;
+  images: string[];
   sizes: string[];
   colors: string[];
   variants: PrintfulVariant[];
@@ -74,12 +75,26 @@ async function fetchStoreProductDetails(productId: number) {
   const sizes = [...new Set(transformedVariants.map(v => v.size).filter(Boolean))] as string[];
   const colors = [...new Set(transformedVariants.map(v => v.color).filter(Boolean))] as string[];
   
+  // Extract all unique images from variant files
+  const allImages = new Set<string>();
+  syncVariants.forEach((v: any) => {
+    if (v.files) {
+      v.files.forEach((f: any) => {
+        if (f.preview_url && f.type !== 'back') {
+          allImages.add(f.preview_url);
+        }
+      });
+    }
+  });
+  const images = Array.from(allImages);
+  
   return {
     id: String(syncProduct.id),
     name: syncProduct.name,
     description: '',
     price: parseFloat(syncVariants[0]?.retail_price || '0'),
     image: syncProduct.thumbnail_url,
+    images,
     sizes,
     colors,
     variants: transformedVariants,
