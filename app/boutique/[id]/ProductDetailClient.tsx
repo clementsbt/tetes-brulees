@@ -1,0 +1,250 @@
+'use client';
+
+import { useState } from 'react';
+import Link from 'next/link';
+import { useCart } from '@/context/CartContext';
+
+interface PrintfulProduct {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  image: string;
+  images: string[];
+  colorImages: Record<string, string[]>;
+  sizes: string[];
+  colors: string[];
+  variants: Array<{
+    id: number;
+    size: string;
+    color: string;
+    price: string;
+  }>;
+}
+
+interface Props {
+  product: PrintfulProduct;
+}
+
+export default function ProductDetailClient({ product }: Props) {
+  const { addItem } = useCart();
+  const [selectedSize, setSelectedSize] = useState<string>('');
+  const [selectedColor, setSelectedColor] = useState<string>('');
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [addedToCart, setAddedToCart] = useState(false);
+
+  // Get images for current color - handle both string and array formats
+  const getColorImages = () => {
+    // If color is selected, use color images
+    if (selectedColor && product.colorImages) {
+      const img = product.colorImages[selectedColor];
+      if (Array.isArray(img)) return img;
+      if (typeof img === 'string') return [img];
+    }
+    // Otherwise, use product images (blank product images)
+    if (product.images && product.images.length > 0) {
+      return product.images;
+    }
+    // Fallback to main image
+    if (product.image) {
+      return [product.image];
+    }
+    return [];
+  };
+  const currentImages = getColorImages();
+
+  const handleAddToCart = () => {
+    addItem({
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      size: product.sizes.length > 1 && product.sizes[0] !== 'One size' ? selectedSize : undefined,
+      color: selectedColor,
+      quantity: 1,
+    });
+    setAddedToCart(true);
+    setTimeout(() => setAddedToCart(false), 2000);
+  };
+
+  const canAddToCart = !product || product.sizes.length === 0 || product.sizes[0] === 'One size' || (selectedSize && selectedColor);
+
+  return (
+    <div className="min-h-screen bg-gray-50 py-8">
+      <div className="container mx-auto px-4">
+        {/* Breadcrumb */}
+        <nav className="mb-8">
+          <ol className="flex items-center gap-2 text-sm">
+            <li>
+              <Link href="/" className="text-gray-500 hover:text-orange-600">
+                Accueil
+              </Link>
+            </li>
+            <li className="text-gray-400">/</li>
+            <li>
+              <Link href="/boutique" className="text-gray-500 hover:text-orange-600">
+                Boutique
+              </Link>
+            </li>
+            <li className="text-gray-400">/</li>
+            <li className="text-gray-800 font-medium">{product.name}</li>
+          </ol>
+        </nav>
+
+        <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
+          {/* Images */}
+          <div className="grid grid-cols-1 md:grid-cols-2">
+            <div className="space-y-4 p-4">
+              <div className="relative h-80 md:h-96 bg-white rounded-xl overflow-hidden">
+                {currentImages.length > 0 ? (
+                  <>
+                    <img 
+                      src={currentImages[currentImageIndex]} 
+                      alt={product.name}
+                      className="w-full h-full object-contain"
+                    />
+                    {/* Navigation arrows */}
+                    {currentImages.length > 1 && (
+                      <>
+                        <button
+                          onClick={() => setCurrentImageIndex((currentImageIndex - 1 + currentImages.length) % currentImages.length)}
+                          className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white p-2 rounded-full shadow-lg"
+                        >
+                          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                          </svg>
+                        </button>
+                        <button
+                          onClick={() => setCurrentImageIndex((currentImageIndex + 1) % currentImages.length)}
+                          className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white p-2 rounded-full shadow-lg"
+                        >
+                          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                          </svg>
+                        </button>
+                        {/* Dots indicator */}
+                        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+                          {currentImages.map((_, idx) => (
+                            <button
+                              key={idx}
+                              onClick={() => setCurrentImageIndex(idx)}
+                              className={`w-2 h-2 rounded-full ${idx === currentImageIndex ? 'bg-orange-500' : 'bg-gray-300'}`}
+                            />
+                          ))}
+                        </div>
+                      </>
+                    )}
+                  </>
+                ) : (
+                  <div className="absolute inset-0 flex items-center justify-center text-gray-400">
+                    <svg className="w-24 h-24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Info */}
+            <div className="p-8">
+              <h1 className="text-3xl font-bold text-gray-900 mb-4">
+                {product.name}
+              </h1>
+              
+              <p className="text-4xl font-bold text-orange-600 mb-6">
+                {product.price.toFixed(2)}€
+              </p>
+
+              <p className="text-gray-600 mb-6">
+                {product.description}
+              </p>
+
+              {/* Tailles */}
+              {product.sizes.length > 0 && product.sizes[0] !== 'One size' && (
+                <div className="mb-6">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Taille *
+                  </label>
+                  <div className="flex flex-wrap gap-2">
+                    {product.sizes.map((size) => (
+                      <button
+                        key={size}
+                        type="button"
+                        onClick={() => setSelectedSize(size)}
+                        className={`px-4 py-2 border rounded-lg transition-colors ${
+                          selectedSize === size
+                            ? 'border-orange-500 bg-orange-50 text-orange-600'
+                            : 'border-gray-300 hover:border-orange-500 hover:text-orange-600'
+                        }`}
+                      >
+                        {size}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Couleurs */}
+              {product.colors.length > 0 && (
+                <div className="mb-8">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Couleur *
+                  </label>
+                  <div className="flex flex-wrap gap-2">
+                    {product.colors.map((color) => (
+                      <button
+                        key={color}
+                        type="button"
+                        onClick={() => {
+                          setSelectedColor(color);
+                          setCurrentImageIndex(0);
+                        }}
+                        className={`px-4 py-2 border rounded-lg transition-colors ${
+                          selectedColor === color
+                            ? 'border-orange-500 bg-orange-50 text-orange-600'
+                            : 'border-gray-300 hover:border-orange-500 hover:text-orange-600'
+                        }`}
+                      >
+                        {color}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Boutons */}
+              <div className="space-y-3">
+                <button
+                  onClick={handleAddToCart}
+                  disabled={!canAddToCart || addedToCart}
+                  className="w-full bg-orange-600 text-white py-4 rounded-xl font-semibold text-lg hover:bg-orange-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {addedToCart ? 'Ajouté au panier !' : 'Ajouter au panier'}
+                </button>
+                
+                <Link
+                  href="/boutique/panier"
+                  className="block w-full bg-gray-200 text-gray-800 py-3 rounded-xl font-semibold text-center hover:bg-gray-300 transition-colors"
+                >
+                  Voir le panier
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Retour */}
+        <div className="mt-8 text-center">
+          <Link 
+            href="/boutique" 
+            className="inline-flex items-center text-orange-600 hover:text-orange-700 font-medium"
+          >
+            <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+            Retour à la boutique
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
+}
