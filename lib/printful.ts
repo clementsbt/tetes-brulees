@@ -19,7 +19,7 @@ export interface ProductWithVariants {
   price: number;
   image: string;
   images: string[];
-  colorImages: Record<string, string>;
+  colorImages: Record<string, string[]>;
   sizes: string[];
   colors: string[];
   variants: PrintfulVariant[];
@@ -90,18 +90,24 @@ async function fetchStoreProductDetails(productId: number) {
   });
   const images = Array.from(allImages);
   
-  // Extract preview images with design per color
-  const colorImages: Record<string, string> = {};
+  // Extract all images (front, back) per color
+  const colorImages: Record<string, string[]> = {};
   syncVariants.forEach((v: any) => {
     const color = v.color;
     if (color && !colorImages[color]) {
-      // Try to get preview image with design
-      const previewFile = v.files?.find((f: any) => f.type === 'preview' && f.preview_url);
-      if (previewFile?.preview_url) {
-        colorImages[color] = previewFile.preview_url;
-      } else if (v.product?.image) {
-        // Fallback to blank product image
-        colorImages[color] = v.product.image;
+      const images: string[] = [];
+      // Get preview (front) and back images
+      v.files?.forEach((f: any) => {
+        if (f.preview_url && (f.type === 'preview' || f.type === 'back')) {
+          images.push(f.preview_url);
+        }
+      });
+      // If no design images, fallback to blank product image
+      if (images.length === 0 && v.product?.image) {
+        images.push(v.product.image);
+      }
+      if (images.length > 0) {
+        colorImages[color] = images;
       }
     }
   });

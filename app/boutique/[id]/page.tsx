@@ -11,7 +11,7 @@ interface PrintfulProduct {
   price: number;
   image: string;
   images: string[];
-  colorImages: Record<string, string>;
+  colorImages: Record<string, string[]>;
   sizes: string[];
   colors: string[];
   variants: Array<{
@@ -54,7 +54,15 @@ export default function ProductDetail({ params }: Props) {
 
   const [selectedSize, setSelectedSize] = useState<string>('');
   const [selectedColor, setSelectedColor] = useState<string>('');
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [addedToCart, setAddedToCart] = useState(false);
+
+  // Get images for current color
+  const currentImages = selectedColor && product.colorImages?.[selectedColor] 
+    ? product.colorImages[selectedColor] 
+    : product.image 
+      ? [product.image] 
+      : [];
 
   const handleAddToCart = () => {
     if (!product) return;
@@ -135,18 +143,45 @@ export default function ProductDetail({ params }: Props) {
           <div className="grid grid-cols-1 md:grid-cols-2">
             <div className="space-y-4 p-4">
               <div className="relative h-80 md:h-96 bg-white rounded-xl overflow-hidden">
-                {selectedColor && product.colorImages?.[selectedColor] ? (
-                  <img 
-                    src={product.colorImages[selectedColor]} 
-                    alt={product.name}
-                    className="w-full h-full object-contain"
-                  />
-                ) : product.image ? (
-                  <img 
-                    src={product.image} 
-                    alt={product.name}
-                    className="w-full h-full object-contain"
-                  />
+                {currentImages.length > 0 ? (
+                  <>
+                    <img 
+                      src={currentImages[currentImageIndex]} 
+                      alt={product.name}
+                      className="w-full h-full object-contain"
+                    />
+                    {/* Navigation arrows */}
+                    {currentImages.length > 1 && (
+                      <>
+                        <button
+                          onClick={() => setCurrentImageIndex((currentImageIndex - 1 + currentImages.length) % currentImages.length)}
+                          className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white p-2 rounded-full shadow-lg"
+                        >
+                          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                          </svg>
+                        </button>
+                        <button
+                          onClick={() => setCurrentImageIndex((currentImageIndex + 1) % currentImages.length)}
+                          className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white p-2 rounded-full shadow-lg"
+                        >
+                          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                          </svg>
+                        </button>
+                        {/* Dots indicator */}
+                        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+                          {currentImages.map((_, idx) => (
+                            <button
+                              key={idx}
+                              onClick={() => setCurrentImageIndex(idx)}
+                              className={`w-2 h-2 rounded-full ${idx === currentImageIndex ? 'bg-orange-500' : 'bg-gray-300'}`}
+                            />
+                          ))}
+                        </div>
+                      </>
+                    )}
+                  </>
                 ) : (
                   <div className="absolute inset-0 flex items-center justify-center text-gray-400">
                     <svg className="w-24 h-24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -207,7 +242,10 @@ export default function ProductDetail({ params }: Props) {
                       <button
                         key={color}
                         type="button"
-                        onClick={() => setSelectedColor(color)}
+                        onClick={() => {
+                          setSelectedColor(color);
+                          setCurrentImageIndex(0);
+                        }}
                         className={`px-4 py-2 border rounded-lg transition-colors ${
                           selectedColor === color
                             ? 'border-orange-500 bg-orange-50 text-orange-600'
