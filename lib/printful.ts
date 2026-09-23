@@ -76,28 +76,27 @@ async function fetchStoreProductDetails(productId: number) {
   const sizes = [...new Set(transformedVariants.map(v => v.size).filter(Boolean))] as string[];
   const colors = [...new Set(transformedVariants.map(v => v.color).filter(Boolean))] as string[];
   
-  // Extract all unique images from variant files (excluding logo)
-  const allImages = new Set<string>();
+  // Extract all unique images WITH design from variant files (for carousel)
+  const allDesignImages = new Set<string>();
   syncVariants.forEach((v: any) => {
     if (v.files) {
       v.files.forEach((f: any) => {
-        // Exclude the logo (default type) and back images
-        if (f.preview_url && f.type === 'preview') {
-          allImages.add(f.preview_url);
+        // Get preview (front) and back images (WITH design)
+        if (f.preview_url && (f.type === 'preview' || f.type === 'back')) {
+          allDesignImages.add(f.preview_url);
         }
       });
     }
   });
-  const images = Array.from(allImages);
+  const images = Array.from(allDesignImages);
   
-  // Extract all unique blank product images from variants (use for carousel)
-  const allProductImages: string[] = [];
-  const seenImages = new Set<string>();
+  // Extract all unique blank product images from variants (for colorImages fallback)
+  const allBlankImages: string[] = [];
+  const seenBlankImages = new Set<string>();
   syncVariants.forEach((v: any) => {
-    // Get blank product images (without design)
-    if (v.product?.image && !seenImages.has(v.product.image)) {
-      seenImages.add(v.product.image);
-      allProductImages.push(v.product.image);
+    if (v.product?.image && !seenBlankImages.has(v.product.image)) {
+      seenBlankImages.add(v.product.image);
+      allBlankImages.push(v.product.image);
     }
   });
   
@@ -106,30 +105,33 @@ async function fetchStoreProductDetails(productId: number) {
   syncVariants.forEach((v: any) => {
     const color = v.color;
     if (color && !colorImages[color]) {
-      const images: string[] = [];
-      // Get preview (front) and back images
+      const colorImgList: string[] = [];
+      // Get preview (front) and back images (WITH design)
       v.files?.forEach((f: any) => {
         if (f.preview_url && (f.type === 'preview' || f.type === 'back')) {
-          images.push(f.preview_url);
+          colorImgList.push(f.preview_url);
         }
       });
       // If no design images, fallback to blank product image
-      if (images.length === 0 && v.product?.image) {
-        images.push(v.product.image);
+      if (colorImgList.length === 0 && v.product?.image) {
+        colorImgList.push(v.product.image);
       }
-      if (images.length > 0) {
-        colorImages[color] = images;
+      if (colorImgList.length > 0) {
+        colorImages[color] = colorImgList;
       }
     }
   });
+  
+  // Use first blank product image as main image (thumbnail)
+  const mainImage = allBlankImages.length > 0 ? allBlankImages[0] : syncProduct.thumbnail_url;
   
   return {
     id: String(syncProduct.id),
     name: syncProduct.name,
     description: '',
     price: parseFloat(syncVariants[0]?.retail_price || '0'),
-    image: syncProduct.thumbnail_url,
-    images: allProductImages.length > 0 ? allProductImages : images,
+    image: mainImage,
+    images: images.length > 0 ? images : allBlankImages,
     colorImages,
     sizes,
     colors,
