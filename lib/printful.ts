@@ -1,4 +1,4 @@
-// rebuild import axios from 'axios';
+import axios from 'axios';
 
 const PRINTFUL_API_BASE = 'https://api.printful.com';
 
