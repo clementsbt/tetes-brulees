@@ -57,12 +57,15 @@ export default function ProductDetail({ params }: Props) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [addedToCart, setAddedToCart] = useState(false);
 
-  // Get images for current color
-  const currentImages = selectedColor && product.colorImages?.[selectedColor] 
-    ? product.colorImages[selectedColor] 
-    : product.image 
-      ? [product.image] 
-      : [];
+  // Get images for current color - handle both string and array formats
+  const getColorImages = () => {
+    if (!selectedColor || !product.colorImages) return [];
+    const img = product.colorImages[selectedColor];
+    if (Array.isArray(img)) return img;
+    if (typeof img === 'string') return [img];
+    return [];
+  };
+  const currentImages = getColorImages();
 
   const handleAddToCart = () => {
     if (!product) return;
