@@ -17,6 +17,7 @@ export async function GET(request: Request) {
       hasToken: !!process.env.PRINTFUL_TOKEN,
       tokenPrefix: process.env.PRINTFUL_TOKEN?.substring(0, 10) || 'undefined',
       nodeEnv: process.env.NODE_ENV,
+      version: 'v3',
     });
   }
 
