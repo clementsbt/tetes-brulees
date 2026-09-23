@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import Link from 'next/link';
+import { useCart } from '@/context/CartContext';
 
 // Produits - à remplacer par des données réelles
 const products = [
@@ -48,36 +49,16 @@ const products = [
   },
 ];
 
-async function handleBuy(productId: string, productName: string, price: number) {
-  try {
-    const response = await fetch('/api/checkout', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        productId,
-        productName,
-        price,
-        quantity: 1,
-      }),
-    });
-
-    const data = await response.json();
-
-    if (data.url) {
-      window.location.href = data.url;
-    } else {
-      alert('Erreur lors de la création du paiement');
-    }
-  } catch (error) {
-    console.error('Payment error:', error);
-    alert('Erreur lors du paiement');
-  }
-}
-
 export default function Boutique() {
-  const [loading, setLoading] = useState<string | null>(null);
+  const { addItem } = useCart();
+
+  const handleAddToCart = (product: typeof products[0]) => {
+    addItem({
+      id: product.id,
+      name: product.name,
+      price: product.price,
+    });
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
@@ -115,16 +96,20 @@ export default function Boutique() {
                   <p className="text-2xl font-bold text-orange-600">
                     {product.price}€
                   </p>
-                  <button
-                    onClick={() => {
-                      setLoading(product.id);
-                      handleBuy(product.id, product.name, product.price);
-                    }}
-                    disabled={loading === product.id}
-                    className="bg-orange-500 text-white px-4 py-2 rounded-lg font-semibold hover:bg-orange-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {loading === product.id ? 'Paiement...' : 'Acheter'}
-                  </button>
+                  <div className="flex gap-2">
+                    <Link
+                      href={`/boutique/${product.id}`}
+                      className="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg font-semibold hover:bg-gray-300 transition-colors"
+                    >
+                      En savoir plus
+                    </Link>
+                    <button
+                      onClick={() => handleAddToCart(product)}
+                      className="bg-orange-500 text-white px-4 py-2 rounded-lg font-semibold hover:bg-orange-600 transition-colors"
+                    >
+                      Ajouter au panier
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>

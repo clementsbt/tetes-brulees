@@ -4,6 +4,7 @@ import "./globals.css";
 import Navbar from "../components/Navbar";
 import JsonLd from "../components/JsonLd";
 import Footer from "../components/Footer";
+import { Providers } from "../components/Providers";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -89,10 +90,12 @@ export default function RootLayout({
         <meta name="theme-color" content="#ea580c" />
       </head>
       <body className="min-h-full flex flex-col pt-16">
-        <JsonLd />
-        <Navbar />
-        {children}
-        <Footer />
+        <Providers>
+          <JsonLd />
+          <Navbar />
+          {children}
+          <Footer />
+        </Providers>
       </body>
     </html>
   );

@@ -4,6 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import CartButton from './CartButton';
 
 interface User {
   email: string;
@@ -100,6 +101,7 @@ export default function Navbar() {
               <Link href="/boutique" className="text-white hover:text-yellow-200 transition-colors font-medium">
                 Boutique
               </Link>
+              <CartButton />
               <div className="flex items-center space-x-2 ml-4">
                 {user ? (
                   <>
