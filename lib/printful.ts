@@ -105,14 +105,14 @@ async function fetchStoreProductDetails(productId: number) {
     'Navy': [
       '/images/hoodie/unisex-heavy-blend-hoodie-navy-front-6ab3c442363aa.jpg',
       '/images/hoodie/unisex-heavy-blend-hoodie-navy-back-6ab3c442367b6.jpg',
-      '/images/hoodie/unisex-heavy-blend-hoodie-navy-left-front-6ab3c442363aa.jpg',
-      '/images/hoodie/unisex-heavy-blend-hoodie-navy-right-front-6ab3c442363aa.jpg',
+      '/images/hoodie/unisex-heavy-blend-hoodie-navy-left-front-6ab3c4a3dc95c.jpg',
+      '/images/hoodie/unisex-heavy-blend-hoodie-navy-right-front-6ab3c4a3dcb37.jpg',
     ],
     'Ash': [
       '/images/hoodie/unisex-heavy-blend-hoodie-ash-front-6ab3c44236202.jpg',
       '/images/hoodie/unisex-heavy-blend-hoodie-ash-back-6ab3c44236771.jpg',
       '/images/hoodie/unisex-heavy-blend-hoodie-ash-left-front-6ab3c4a3dc921.jpg',
-      '/images/hoodie/unisex-heavy-blend-hoodie-ash-right-front-6ab3c4a3dc921.jpg',
+      '/images/hoodie/unisex-heavy-blend-hoodie-ash-right-front-6ab3c4a3dcafb.jpg',
     ],
     'White': [
       '/images/hoodie/unisex-heavy-blend-hoodie-white-front-6ab3c442363e8.jpg',
