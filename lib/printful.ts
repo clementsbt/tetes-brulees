@@ -30,9 +30,16 @@ export interface ProductWithVariants {
   variants: PrintfulVariant[];
 }
 
-// Liste des produits Printful à utiliser (par ID de produit)
-// T-shirts, Sweats, Casquettes, etc.
-const TARGET_PRODUCTS = [71, 14, 12, 73, 3]; // 71=T-shirt, 14= hoodie, 12=casquette, 73=sweatshirt
+// Liste des produits Printful à utiliser (par ID de catalogue)
+// Ces IDs viennent du catalogue Printful public
+const TARGET_PRODUCTS = [
+  71,   // T-shirt Bella + Canvas 3001
+  438,  // T-shirt Gildan 5000
+  508,  // T-shirt Cotton Heritage
+  12,   // T-shirt Gildan Softstyle
+  146,  // Hoodie Gildan
+  145,  // Sweatshirt Gildan
+];
 
 function getPrintfulClient() {
   const token = process.env.PRINTFUL_TOKEN;
