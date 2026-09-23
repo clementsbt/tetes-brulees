@@ -65,7 +65,7 @@ async function fetchProductFromCatalog(productId: number) {
   
   // Get variants from catalog
   const variantsResponse = await printfulClient.get('/catalog/variants', {
-    params: { product_id: productId, limit: 200 }
+    params: { product_id: productId, limit: 100 }
   });
   
   const variants = variantsResponse.data.result.variants;
