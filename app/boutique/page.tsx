@@ -1,7 +1,6 @@
 'use client';
 
 import Link from 'next/link';
-import { useCart } from '@/context/CartContext';
 
 // Produits - à remplacer par des données réelles
 const products = [
@@ -50,16 +49,6 @@ const products = [
 ];
 
 export default function Boutique() {
-  const { addItem } = useCart();
-
-  const handleAddToCart = (product: typeof products[0]) => {
-    addItem({
-      id: product.id,
-      name: product.name,
-      price: product.price,
-    });
-  };
-
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="container mx-auto px-4">
@@ -96,20 +85,12 @@ export default function Boutique() {
                   <p className="text-2xl font-bold text-orange-600">
                     {product.price}€
                   </p>
-                  <div className="flex gap-2">
-                    <Link
-                      href={`/boutique/${product.id}`}
-                      className="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg font-semibold hover:bg-gray-300 transition-colors"
-                    >
-                      En savoir plus
-                    </Link>
-                    <button
-                      onClick={() => handleAddToCart(product)}
-                      className="bg-orange-500 text-white px-4 py-2 rounded-lg font-semibold hover:bg-orange-600 transition-colors"
-                    >
-                      Ajouter au panier
-                    </button>
-                  </div>
+                  <Link
+                    href={`/boutique/${product.id}`}
+                    className="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg font-semibold hover:bg-gray-300 transition-colors"
+                  >
+                    En savoir plus
+                  </Link>
                 </div>
               </div>
             </div>
