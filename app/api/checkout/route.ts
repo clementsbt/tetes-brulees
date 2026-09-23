@@ -4,7 +4,7 @@ import { stripe } from '@/lib/stripe';
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { productId, productName, price, quantity = 1, shipping } = body;
+    const { productId, productName, price, quantity = 1, shipping, items, shippingMethod } = body;
 
     if (!productName || !price) {
       return NextResponse.json(
@@ -39,6 +39,8 @@ export async function POST(req: NextRequest) {
       cancel_url: `${req.headers.get('origin')}/boutique/${productId}`,
       metadata: {
         productId,
+        items: items ? JSON.stringify(items) : '[]',
+        shippingMethod: shippingMethod || 'standard',
         ...(shipping && {
           shipping_firstName: shipping.firstName,
           shipping_lastName: shipping.lastName,
