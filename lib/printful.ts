@@ -100,30 +100,55 @@ async function fetchStoreProductDetails(productId: number) {
     }
   });
   
+  // Use local custom images for carousel (provided by user)
+  const localImages: Record<string, string[]> = {
+    'Navy': [
+      '/images/hoodie/unisex-heavy-blend-hoodie-navy-front-6ab3c442363aa.jpg',
+      '/images/hoodie/unisex-heavy-blend-hoodie-navy-back-6ab3c442367b6.jpg',
+      '/images/hoodie/unisex-heavy-blend-hoodie-navy-left-front-6ab3c442363aa.jpg',
+      '/images/hoodie/unisex-heavy-blend-hoodie-navy-right-front-6ab3c442363aa.jpg',
+    ],
+    'Ash': [
+      '/images/hoodie/unisex-heavy-blend-hoodie-ash-front-6ab3c44236202.jpg',
+      '/images/hoodie/unisex-heavy-blend-hoodie-ash-back-6ab3c44236771.jpg',
+      '/images/hoodie/unisex-heavy-blend-hoodie-ash-left-front-6ab3c4a3dc921.jpg',
+      '/images/hoodie/unisex-heavy-blend-hoodie-ash-right-front-6ab3c4a3dc921.jpg',
+    ],
+    'White': [
+      '/images/hoodie/unisex-heavy-blend-hoodie-white-front-6ab3c442363e8.jpg',
+      '/images/hoodie/unisex-heavy-blend-hoodie-white-back-6ab3c442367eb.jpg',
+      '/images/hoodie/unisex-heavy-blend-hoodie-white-left-front-6ab3c4a3dc98a.jpg',
+      '/images/hoodie/unisex-heavy-blend-hoodie-white-right-front-6ab3c4a3dcb68.jpg',
+    ],
+  };
+
   // Extract front view images per color
   const colorImages: Record<string, string[]> = {};
-  syncVariants.forEach((v: any) => {
-    const color = v.color;
-    if (color && !colorImages[color]) {
-      const colorImgList: string[] = [];
-      // Get only preview (front view) images with design
-      v.files?.forEach((f: any) => {
-        if (f.preview_url && f.type === 'preview') {
-          colorImgList.push(f.preview_url);
+  colors.forEach((color: string) => {
+    if (localImages[color]) {
+      colorImages[color] = localImages[color];
+    } else {
+      // Fallback to Printful images if no local images
+      const variant = syncVariants.find((v: any) => v.color === color);
+      if (variant) {
+        const colorImgList: string[] = [];
+        variant.files?.forEach((f: any) => {
+          if (f.preview_url && f.type === 'preview') {
+            colorImgList.push(f.preview_url);
+          }
+        });
+        if (colorImgList.length > 0) {
+          colorImages[color] = colorImgList;
         }
-      });
-      // If no design images, fallback to blank product image
-      if (colorImgList.length === 0 && v.product?.image) {
-        colorImgList.push(v.product.image);
-      }
-      if (colorImgList.length > 0) {
-        colorImages[color] = colorImgList;
       }
     }
   });
   
-  // Use first design image as main image (thumbnail), fallback to blank
-  const mainImage = images.length > 0 ? images[0] : (allBlankImages.length > 0 ? allBlankImages[0] : syncProduct.thumbnail_url);
+  // Use first design image as main image (thumbnail), use local Navy front image
+  const mainImage = localImages['Navy']?.[0] || (images.length > 0 ? images[0] : (allBlankImages.length > 0 ? allBlankImages[0] : syncProduct.thumbnail_url));
+  
+  // Use Navy images as default when no color selected
+  const defaultImages = localImages['Navy'] || images;
   
   return {
     id: String(syncProduct.id),
@@ -131,7 +156,7 @@ async function fetchStoreProductDetails(productId: number) {
     description: '',
     price: parseFloat(syncVariants[0]?.retail_price || '0'),
     image: mainImage,
-    images: images.length > 0 ? images : allBlankImages,
+    images: defaultImages,
     colorImages,
     sizes,
     colors,
