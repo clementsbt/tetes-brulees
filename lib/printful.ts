@@ -90,13 +90,19 @@ async function fetchStoreProductDetails(productId: number) {
   });
   const images = Array.from(allImages);
   
-  // Extract images per color
+  // Extract preview images with design per color
   const colorImages: Record<string, string> = {};
   syncVariants.forEach((v: any) => {
     const color = v.color;
-    const img = v.product?.image;
-    if (color && img && !colorImages[color]) {
-      colorImages[color] = img;
+    if (color && !colorImages[color]) {
+      // Try to get preview image with design
+      const previewFile = v.files?.find((f: any) => f.type === 'preview' && f.preview_url);
+      if (previewFile?.preview_url) {
+        colorImages[color] = previewFile.preview_url;
+      } else if (v.product?.image) {
+        // Fallback to blank product image
+        colorImages[color] = v.product.image;
+      }
     }
   });
   
