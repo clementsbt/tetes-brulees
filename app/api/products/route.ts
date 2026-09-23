@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getPrintfulProducts, getPrintfulProductById } from '@/lib/printful';
 
+// Force dynamic rendering for fresh data
 export const dynamic = 'force-dynamic';
 
 export async function GET(request: Request) {
