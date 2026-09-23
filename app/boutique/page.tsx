@@ -1,7 +1,8 @@
-import Link from 'next/link';
-import Image from 'next/image';
+'use client';
 
-// Produits factices - à remplacer par des données réelles
+import { useState } from 'react';
+
+// Produits - à remplacer par des données réelles
 const products = [
   {
     id: '1',
@@ -47,7 +48,37 @@ const products = [
   },
 ];
 
+async function handleBuy(productId: string, productName: string, price: number) {
+  try {
+    const response = await fetch('/api/checkout', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        productId,
+        productName,
+        price,
+        quantity: 1,
+      }),
+    });
+
+    const data = await response.json();
+
+    if (data.url) {
+      window.location.href = data.url;
+    } else {
+      alert('Erreur lors de la création du paiement');
+    }
+  } catch (error) {
+    console.error('Payment error:', error);
+    alert('Erreur lors du paiement');
+  }
+}
+
 export default function Boutique() {
+  const [loading, setLoading] = useState<string | null>(null);
+
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="container mx-auto px-4">
@@ -62,9 +93,8 @@ export default function Boutique() {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {products.map((product) => (
-            <Link 
+            <div 
               key={product.id} 
-              href={`/boutique/${product.id}`}
               className="bg-white rounded-xl shadow-md hover:shadow-xl transition-shadow overflow-hidden group"
             >
               <div className="relative h-64 bg-gray-200">
@@ -81,11 +111,23 @@ export default function Boutique() {
                 <p className="text-gray-500 text-sm mb-4">
                   {product.description}
                 </p>
-                <p className="text-2xl font-bold text-orange-600">
-                  {product.price}€
-                </p>
+                <div className="flex items-center justify-between">
+                  <p className="text-2xl font-bold text-orange-600">
+                    {product.price}€
+                  </p>
+                  <button
+                    onClick={() => {
+                      setLoading(product.id);
+                      handleBuy(product.id, product.name, product.price);
+                    }}
+                    disabled={loading === product.id}
+                    className="bg-orange-500 text-white px-4 py-2 rounded-lg font-semibold hover:bg-orange-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {loading === product.id ? 'Paiement...' : 'Acheter'}
+                  </button>
+                </div>
               </div>
-            </Link>
+            </div>
           ))}
         </div>
       </div>
