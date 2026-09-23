@@ -52,7 +52,7 @@ async function fetchProductFromCatalog(productId: number) {
   
   // Get product info from catalog
   const productsResponse = await printfulClient.get('/catalog/products', {
-    params: { limit: 200 }
+    params: { limit: 100 }
   });
   
   const product = productsResponse.data.result.products.find(
