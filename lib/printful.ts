@@ -76,13 +76,13 @@ async function fetchStoreProductDetails(productId: number) {
   const sizes = [...new Set(transformedVariants.map(v => v.size).filter(Boolean))] as string[];
   const colors = [...new Set(transformedVariants.map(v => v.color).filter(Boolean))] as string[];
   
-  // Extract all unique images WITH design from variant files (for carousel)
+  // Extract all unique front view images WITH design from variant files (for carousel)
   const allDesignImages = new Set<string>();
   syncVariants.forEach((v: any) => {
     if (v.files) {
       v.files.forEach((f: any) => {
-        // Get preview (front) and back images (WITH design)
-        if (f.preview_url && (f.type === 'preview' || f.type === 'back')) {
+        // Get only preview (front view) images with design
+        if (f.preview_url && f.type === 'preview') {
           allDesignImages.add(f.preview_url);
         }
       });
@@ -100,15 +100,15 @@ async function fetchStoreProductDetails(productId: number) {
     }
   });
   
-  // Extract all images (front, back) per color
+  // Extract front view images per color
   const colorImages: Record<string, string[]> = {};
   syncVariants.forEach((v: any) => {
     const color = v.color;
     if (color && !colorImages[color]) {
       const colorImgList: string[] = [];
-      // Get preview (front) and back images (WITH design)
+      // Get only preview (front view) images with design
       v.files?.forEach((f: any) => {
-        if (f.preview_url && (f.type === 'preview' || f.type === 'back')) {
+        if (f.preview_url && f.type === 'preview') {
           colorImgList.push(f.preview_url);
         }
       });
