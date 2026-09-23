@@ -81,7 +81,7 @@ export default function Boutique() {
               key={product.id} 
               className="bg-white rounded-xl shadow-md hover:shadow-xl transition-shadow overflow-hidden group"
             >
-              <div className="relative h-64 bg-gray-200">
+              <div className="relative h-64 bg-white">
                 {product.image ? (
                   <img 
                     src={product.image} 
