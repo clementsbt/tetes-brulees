@@ -88,7 +88,7 @@ export default function RootLayout({
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         <meta name="theme-color" content="#ea580c" />
       </head>
-      <body className="min-h-full flex flex-col">
+      <body className="min-h-full flex flex-col pt-16">
         <JsonLd />
         <Navbar />
         {children}
