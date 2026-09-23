@@ -122,8 +122,8 @@ async function fetchStoreProductDetails(productId: number) {
     }
   });
   
-  // Use first blank product image as main image (thumbnail)
-  const mainImage = allBlankImages.length > 0 ? allBlankImages[0] : syncProduct.thumbnail_url;
+  // Use first design image as main image (thumbnail), fallback to blank
+  const mainImage = images.length > 0 ? images[0] : (allBlankImages.length > 0 ? allBlankImages[0] : syncProduct.thumbnail_url);
   
   return {
     id: String(syncProduct.id),
