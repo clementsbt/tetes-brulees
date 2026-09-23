@@ -78,7 +78,7 @@ export default function ProductDetail({ params }: Props) {
           <div className="animate-pulse">
             <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
               <div className="grid grid-cols-1 md:grid-cols-2">
-                <div className="h-96 bg-gray-300"></div>
+                <div className="h-96 bg-white"></div>
                 <div className="p-8">
                   <div className="h-8 bg-gray-300 rounded w-3/4 mb-4"></div>
                   <div className="h-12 bg-gray-300 rounded w-1/4 mb-6"></div>
@@ -132,7 +132,7 @@ export default function ProductDetail({ params }: Props) {
           {/* Images */}
           <div className="grid grid-cols-1 md:grid-cols-2">
             <div className="space-y-4 p-4">
-              <div className="relative h-80 md:h-96 bg-gray-200 rounded-xl overflow-hidden">
+              <div className="relative h-80 md:h-96 bg-white rounded-xl overflow-hidden">
                 {product.image ? (
                   <img 
                     src={product.image} 
