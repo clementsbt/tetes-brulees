@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, use } from 'react';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
@@ -73,7 +73,7 @@ interface Props {
 }
 
 export default function ProductDetail({ params }: Props) {
-  const { id } = (params as any).resolved || {};
+  const { id } = use(params);
   const product = products.find((p) => p.id === id);
 
   if (!product) {
