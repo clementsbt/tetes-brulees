@@ -3,6 +3,42 @@ import axios from 'axios';
 
 const PRINTFUL_TOKEN = process.env.PRINTFUL_TOKEN;
 
+// Fetch store products from Printful to get variant IDs
+async function getPrintfulVariants() {
+  const response = await axios.get('https://api.printful.com/store/products', {
+    headers: {
+      'Authorization': `Bearer ${PRINTFUL_TOKEN}`,
+      'Content-Type': 'application/json',
+    },
+  });
+
+  const variants: Record<string, any> = {};
+
+  for (const product of response.data.result) {
+    const detailResponse = await axios.get(`https://api.printful.com/store/products/${product.id}`, {
+      headers: {
+        'Authorization': `Bearer ${PRINTFUL_TOKEN}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    const syncVariants = detailResponse.data.result.sync_variants;
+    
+    for (const variant of syncVariants) {
+      // Create key from product id + size + color
+      const key = `${product.id}-${variant.size}-${variant.color}`;
+      variants[key] = {
+        id: variant.id,
+        productId: product.id,
+        size: variant.size,
+        color: variant.color,
+      };
+    }
+  }
+
+  return variants;
+}
+
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
@@ -22,27 +58,36 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Printful catalog variant IDs for our products
-    // Hoodie (product 146) - we need to find valid variant IDs
-    // Cap (product 100) - we need to find valid variant IDs
-    // For now, use a simplified approach with fixed fallback rates
-    
-    // Try to get shipping rates from Printful
-    // Note: This requires valid Printful catalog variant IDs which are different from store sync variant IDs
     let shippingRates = [];
     let printfulError = null;
-    
+
     try {
-      // These would need to be the Printful catalog variant IDs, not our store variant IDs
-      // For now, we'll return fallback rates based on the product type
-      const printfulItems = items.map((item: any) => ({
-        quantity: item.quantity || 1,
-        // Using placeholder - in production you'd map store IDs to Printful catalog IDs
-        variant_id: 1, // Placeholder that will cause error, triggering fallback
-      }));
+      // Get Printful variants to map cart items to variant IDs
+      const printfulVariants = await getPrintfulVariants();
+      
+      // Map cart items to Printful variant IDs
+      const printfulItems = items.map((item: any) => {
+        // Try to find matching variant by product id, size, and color
+        const variantKey = Object.keys(printfulVariants).find(key => 
+          key.includes(item.id) && 
+          (!item.size || key.includes(item.size)) &&
+          (!item.color || key.toLowerCase().includes(item.color.toLowerCase()))
+        );
+
+        const variant = variantKey ? printfulVariants[variantKey] : null;
+
+        return {
+          quantity: item.quantity || 1,
+          sync_variant_id: variant?.id || null,
+        };
+      }).filter((item: any) => item.sync_variant_id);
+
+      if (printfulItems.length === 0) {
+        throw new Error('No valid Printful variants found');
+      }
 
       const response = await axios.post(
-        'https://api.printful.com/shipping/rates',
+        'https://api.printful.com/store/shipping/rates',
         {
           recipient: {
             address1: shippingAddress.address,
@@ -74,11 +119,9 @@ export async function POST(req: NextRequest) {
 
     // If Printful failed or returned no rates, use fallback rates
     if (shippingRates.length === 0) {
-      // Calculate based on destination and item count
-      const baseRate = 5.90; // Base shipping cost
+      const baseRate = 5.90;
       const itemCount = items.reduce((sum: number, item: any) => sum + (item.quantity || 1), 0);
       
-      // Adjust based on country
       let countryMultiplier = 1;
       if (shippingAddress.country === 'FR') {
         countryMultiplier = 1;
@@ -87,7 +130,7 @@ export async function POST(req: NextRequest) {
       } else if (['IT', 'ES', 'PT', 'AT'].includes(shippingAddress.country)) {
         countryMultiplier = 1.4;
       } else {
-        countryMultiplier = 2; // Rest of Europe/world
+        countryMultiplier = 2;
       }
 
       const shippingCost = (baseRate * countryMultiplier) + (itemCount > 1 ? (itemCount - 1) * 2 : 0);
@@ -110,7 +153,6 @@ export async function POST(req: NextRequest) {
       ];
     }
 
-    // Sort by price
     shippingRates.sort((a: any, b: any) => a.price - b.price);
 
     return NextResponse.json({ shippingRates });
