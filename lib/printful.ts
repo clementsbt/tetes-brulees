@@ -1,6 +1,7 @@
 import axios from 'axios';
 
 const PRINTFUL_API_BASE = 'https://api.printful.com';
+const PRINTFUL_STORE_ID = '18795037';
 
 export interface PrintfulVariant {
   id: number;
@@ -44,7 +45,7 @@ async function fetchStoreProducts() {
   const printfulClient = getPrintfulClient();
   
   // Get products from the store
-  const response = await printfulClient.get('/store/products');
+  const response = await printfulClient.get(`/store/products?store_id=${PRINTFUL_STORE_ID}`);
   const products = response.data.result;
   
   console.log('Store products found:', products.length);
@@ -55,7 +56,7 @@ async function fetchStoreProductDetails(productId: number) {
   const printfulClient = getPrintfulClient();
   
   // Get product details with variants
-  const response = await printfulClient.get(`/store/products/${productId}`);
+  const response = await printfulClient.get(`/store/products/${productId}?store_id=${PRINTFUL_STORE_ID}`);
   const productData = response.data.result;
   
   const syncProduct = productData.sync_product;
