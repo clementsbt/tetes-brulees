@@ -2,10 +2,11 @@ import { NextRequest, NextResponse } from 'next/server';
 import axios from 'axios';
 
 const PRINTFUL_TOKEN = process.env.PRINTFUL_TOKEN;
+const PRINTFUL_STORE_ID = '18795037';
 
-// Fetch store products from Printful to get variant IDs
+// Fetch store products from Printful to get variant IDs (both sync and catalog)
 async function getPrintfulVariants() {
-  const response = await axios.get('https://api.printful.com/store/products', {
+  const response = await axios.get(`https://api.printful.com/store/products?store_id=${PRINTFUL_STORE_ID}`, {
     headers: {
       'Authorization': `Bearer ${PRINTFUL_TOKEN}`,
       'Content-Type': 'application/json',
@@ -15,7 +16,7 @@ async function getPrintfulVariants() {
   const variants: Record<string, any> = {};
 
   for (const product of response.data.result) {
-    const detailResponse = await axios.get(`https://api.printful.com/store/products/${product.id}`, {
+    const detailResponse = await axios.get(`https://api.printful.com/store/products/${product.id}?store_id=${PRINTFUL_STORE_ID}`, {
       headers: {
         'Authorization': `Bearer ${PRINTFUL_TOKEN}`,
         'Content-Type': 'application/json',
@@ -28,7 +29,8 @@ async function getPrintfulVariants() {
       // Create key from product id + size + color
       const key = `${product.id}-${variant.size}-${variant.color}`;
       variants[key] = {
-        id: variant.id,
+        id: variant.id,                    // sync_variant_id
+        variantId: variant.variant_id,   // catalog variant_id (for shipping API)
         productId: product.id,
         size: variant.size,
         color: variant.color,
@@ -65,7 +67,7 @@ export async function POST(req: NextRequest) {
       // Get Printful variants to map cart items to variant IDs
       const printfulVariants = await getPrintfulVariants();
       
-      // Map cart items to Printful variant IDs
+      // Map cart items to Printful variant IDs (use catalog variant_id for shipping API)
       const printfulItems = items.map((item: any) => {
         // Try to find matching variant by product id, size, and color
         const variantKey = Object.keys(printfulVariants).find(key => 
@@ -78,17 +80,18 @@ export async function POST(req: NextRequest) {
 
         return {
           quantity: item.quantity || 1,
-          sync_variant_id: variant?.id || null,
+          variant_id: variant?.variantId || null,  // Use catalog variant_id, not sync_variant_id
         };
-      }).filter((item: any) => item.sync_variant_id);
+      }).filter((item: any) => item.variant_id);
 
       if (printfulItems.length === 0) {
         throw new Error('No valid Printful variants found');
       }
 
       const response = await axios.post(
-        'https://api.printful.com/store/shipping/rates',
+        'https://api.printful.com/shipping/rates',
         {
+          store_id: PRINTFUL_STORE_ID,
           recipient: {
             address1: shippingAddress.address,
             city: shippingAddress.city,
