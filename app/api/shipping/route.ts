@@ -113,7 +113,7 @@ export async function POST(req: NextRequest) {
         name: rate.name,
         price: parseFloat(rate.rate),
         currency: rate.currency || 'EUR',
-        estimatedDays: rate.estimated_days,
+        estimatedDays: rate.minDeliveryDays ? `${rate.minDeliveryDays}-${rate.maxDeliveryDays}` : undefined,
       }));
     } catch (err: any) {
       printfulError = err.message;
