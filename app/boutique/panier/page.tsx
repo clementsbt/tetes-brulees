@@ -47,6 +47,8 @@ export default function CartPage() {
             name: item.name,
             price: item.price,
             quantity: item.quantity,
+            size: item.size,
+            color: item.color,
           })),
           shippingAddress: {
             address: formData.address,
